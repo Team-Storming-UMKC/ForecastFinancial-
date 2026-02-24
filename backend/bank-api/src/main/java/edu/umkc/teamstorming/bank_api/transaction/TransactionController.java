@@ -16,15 +16,24 @@ public class TransactionController {
     }
 
     @GetMapping
-    public List<Transaction> getTransactions(Authentication authentication) {
-        String email = authentication.getName();
-        return transactionService.getUserTransactions(email);
+    public List<Transaction> list(Authentication auth) {
+        return transactionService.list(auth.getName());
     }
 
     @PostMapping
-    public Transaction createTransaction(@RequestBody Transaction transaction,
-                                         Authentication authentication) {
-        String email = authentication.getName();
-        return transactionService.createTransaction(transaction, email);
+    public Transaction create(@RequestBody Transaction transaction, Authentication auth) {
+        return transactionService.create(auth.getName(), transaction);
+    }
+
+    @PutMapping("/{id}")
+    public Transaction update(@PathVariable Long id,
+                              @RequestBody Transaction transaction,
+                              Authentication auth) {
+        return transactionService.update(auth.getName(), id, transaction);
+    }
+
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id, Authentication auth) {
+        transactionService.delete(auth.getName(), id);
     }
 }

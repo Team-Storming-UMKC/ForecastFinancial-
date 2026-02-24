@@ -1,5 +1,6 @@
 package edu.umkc.teamstorming.bank_api.transaction;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import edu.umkc.teamstorming.bank_api.user.User;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
@@ -21,6 +22,7 @@ public class Transaction {
 
     private String category;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
