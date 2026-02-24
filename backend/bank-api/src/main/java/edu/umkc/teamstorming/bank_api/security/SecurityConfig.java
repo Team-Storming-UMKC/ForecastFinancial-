@@ -43,7 +43,6 @@ public class SecurityConfig {
                 .requestMatchers("/api/**").authenticated()
                 .anyRequest().permitAll()
             )
-            //not using Spring's username/password auth yet:
             .httpBasic(Customizer.withDefaults());
 
         http.addFilterBefore(new BearerTokenFilter(tokenService), UsernamePasswordAuthenticationFilter.class);
