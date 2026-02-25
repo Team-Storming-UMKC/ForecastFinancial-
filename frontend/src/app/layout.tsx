@@ -5,6 +5,7 @@ import { AppRouterCacheProvider } from "@mui/material-nextjs/v15-appRouter";
 // import { AppRouterCacheProvider } from "@mui/material-nextjs/v16-appRouter";
 
 import Providers from "./providers";
+import { ToastProvider } from "@/components/toast/ToastProvider";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -29,7 +30,11 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <AppRouterCacheProvider options={{ enableCssLayer: true }}>
-          <Providers>{children}</Providers>
+          <Providers>
+            <ToastProvider>
+              {children}
+            </ToastProvider>
+          </Providers>
         </AppRouterCacheProvider>
       </body>
     </html>
