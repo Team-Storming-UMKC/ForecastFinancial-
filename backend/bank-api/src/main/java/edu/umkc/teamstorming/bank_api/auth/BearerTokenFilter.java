@@ -33,10 +33,10 @@ public class BearerTokenFilter extends OncePerRequestFilter {
             String email = tokenService.validateAndGetEmail(token);
 
             if (email != null) {
-                // keep your existing attribute (optional)
+
                 request.setAttribute("authedEmail", email);
 
-                // ✅ set Spring Security auth so .authenticated() works
+
                 var authentication =
                         new UsernamePasswordAuthenticationToken(email, null, List.of());
                 SecurityContextHolder.getContext().setAuthentication(authentication);

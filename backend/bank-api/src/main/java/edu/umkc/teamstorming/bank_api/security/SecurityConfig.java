@@ -41,9 +41,9 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
                 .requestMatchers(HttpMethod.GET, "/auth/me").permitAll()
                 .requestMatchers("/api/**").authenticated()
+                .requestMatchers("/transactions/**").authenticated()
                 .anyRequest().permitAll()
             )
-            //not using Spring's username/password auth yet:
             .httpBasic(Customizer.withDefaults());
 
         http.addFilterBefore(new BearerTokenFilter(tokenService), UsernamePasswordAuthenticationFilter.class);
