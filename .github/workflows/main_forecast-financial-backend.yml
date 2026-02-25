@@ -26,7 +26,12 @@ jobs:
 
       - name: Build with Maven
         run: mvn clean install -f backend/bank-api/pom.xml
-
+        env:
+          DB_URL: ${{ secrets.DB_URL }}
+          SPRING_DATASOURCE_USERNAME: ${{ secrets.SPRING_DATASOURCE_USERNAME }}
+          SPRING_DATASOURCE_PASSWORD: ${{ secrets.SPRING_DATASOURCE_PASSWORD }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
@@ -62,4 +67,5 @@ jobs:
           package: '*.jar'
 
           
+
 
