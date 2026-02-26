@@ -11,28 +11,16 @@ import {
   ToggleButtonGroup,
   Typography,
 } from "@mui/material";
-import {
-  ResponsiveContainer,
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  Tooltip,
-  CartesianGrid,
-  PieChart,
-  Pie,
-  Cell,
-  Legend,
-  BarChart,
-  Bar,
-} from "recharts";
 import type { Transaction } from "@/types/transaction";
+import StatsRow from "./StatsRow";
+import SpendingTrendChart from "./SpendingTrendChart";
+import TopCategoriesChart from "./TopCategoriesChart";
+import TopMerchantsChart from "./TopMerchantsChart";
 
 type RangeKey = "7d" | "30d" | "90d";
 type GroupKey = "day" | "week" | "month";
 
 function parseDateOnly(yyyyMmDd: string) {
-  // Safe local-date parsing (avoids UTC shifting issues)
   const [y, m, d] = yyyyMmDd.split("-").map(Number);
   return new Date(y, (m ?? 1) - 1, d ?? 1);
 }
@@ -45,9 +33,8 @@ function formatGroupKey(date: Date, group: GroupKey) {
   if (group === "day") return `${yyyy}-${mm}-${dd}`;
   if (group === "month") return `${yyyy}-${mm}`;
 
-  // week key (Monday start)
   const d2 = new Date(date);
-  const day = (d2.getDay() + 6) % 7; // Mon=0..Sun=6
+  const day = (d2.getDay() + 6) % 7;
   d2.setDate(d2.getDate() - day);
   const wyyyy = d2.getFullYear();
   const wmm = String(d2.getMonth() + 1).padStart(2, "0");
@@ -55,11 +42,11 @@ function formatGroupKey(date: Date, group: GroupKey) {
   return `Wk ${wyyyy}-${wmm}-${wdd}`;
 }
 
-function money(n: number) {
-  return n.toLocaleString(undefined, { style: "currency", currency: "USD" });
+interface TransactionChartsProps {
+  refreshKey?: number;
 }
 
-export default function TransactionCharts() {
+export default function TransactionCharts({ refreshKey }: TransactionChartsProps) {
   const [range, setRange] = React.useState<RangeKey>("30d");
   const [group, setGroup] = React.useState<GroupKey>("day");
 
@@ -81,12 +68,11 @@ export default function TransactionCharts() {
         const json = (await r.json()) as Transaction[];
         if (!alive) return;
 
-        // Optional: sort by date asc
         json.sort((a, b) => a.date.localeCompare(b.date));
         setData(json);
-      } catch (e: any) {
+      } catch (e: unknown) {
         if (!alive) return;
-        setError(e?.message ?? "Failed to load transactions");
+        setError(e instanceof Error ? e.message : "Failed to load transactions");
       } finally {
         if (!alive) return;
         setLoading(false);
@@ -97,7 +83,7 @@ export default function TransactionCharts() {
     return () => {
       alive = false;
     };
-  }, []);
+  }, [refreshKey]);
 
   const filtered = React.useMemo(() => {
     const days = range === "7d" ? 7 : range === "30d" ? 30 : 90;
@@ -118,7 +104,6 @@ export default function TransactionCharts() {
     }
 
     const rows = Array.from(map.values());
-    // sort for day/month
     if (group !== "week") rows.sort((a, b) => a.key.localeCompare(b.key));
     return rows;
   }, [filtered, group]);
@@ -152,8 +137,6 @@ export default function TransactionCharts() {
       .sort((a, b) => b.value - a.value)
       .slice(0, 6);
   }, [filtered]);
-
-  const pieColors = ["#8884d8","#82ca9d","#ffc658","#ff7f7f","#8dd1e1","#a4de6c","#d0ed57","#d88884"];
 
   return (
     <Card variant="outlined" sx={{ borderRadius: 3 }}>
@@ -195,103 +178,18 @@ export default function TransactionCharts() {
           <Typography color="text.secondary">No transactions in this range.</Typography>
         ) : (
           <>
-            <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "repeat(3, 1fr)" }, gap: 2, mb: 2 }}>
-              <Stat label="Total spending" value={money(totalSpending)} />
-              <Stat label="Transactions" value={String(filtered.length)} />
-              <Stat
-                label="Avg / transaction"
-                value={money(totalSpending / Math.max(1, filtered.length))}
-              />
-            </Box>
+            <StatsRow totalSpending={totalSpending} transactionCount={filtered.length} />
 
             <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", lg: "2fr 1fr" }, gap: 2 }}>
-              <Card variant="outlined" sx={{ borderRadius: 3 }}>
-                <CardContent>
-                  <Typography fontWeight={700} sx={{ mb: 1 }}>
-                    Spending Trend
-                  </Typography>
-
-                  <Box sx={{ height: 280 }}>
-                    <ResponsiveContainer width="100%" height="100%">
-                      <LineChart data={timeSeries}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="key" tickMargin={8} />
-                        <YAxis tickFormatter={(v) => `$${v}`} />
-                        <Tooltip formatter={(v: any) => money(Number(v))} />
-                        <Legend />
-                        <Line type="monotone" dataKey="spending" name="Spending" dot={false} strokeWidth={2} />
-                      </LineChart>
-                    </ResponsiveContainer>
-                  </Box>
-                </CardContent>
-              </Card>
-
-              <Card variant="outlined" sx={{ borderRadius: 3 }}>
-                <CardContent>
-                  <Typography fontWeight={700} sx={{ mb: 1 }}>
-                    Top Categories
-                  </Typography>
-
-                  <Box sx={{ height: 280 }}>
-                    <ResponsiveContainer width="100%" height="100%">
-                      <PieChart>
-                        <Pie data={categoryData} dataKey="value" nameKey="name" outerRadius={90} label>
-                          {categoryData.map((_, i) => (
-                            <Cell key={i} fill={pieColors[i % pieColors.length]} />
-                          ))}
-                        </Pie>
-                        <Tooltip formatter={(v: any) => money(Number(v))} />
-                        <Legend />
-                      </PieChart>
-                    </ResponsiveContainer>
-                  </Box>
-                </CardContent>
-              </Card>
+              <SpendingTrendChart data={timeSeries} />
+              <TopCategoriesChart data={categoryData} />
             </Box>
 
             <Box sx={{ mt: 2 }}>
-              <Card variant="outlined" sx={{ borderRadius: 3 }}>
-                <CardContent>
-                  <Typography fontWeight={700} sx={{ mb: 1 }}>
-                    Top Merchants
-                  </Typography>
-
-                  <Box sx={{ height: 220 }}>
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={topMerchants}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="name" hide />
-                        <YAxis tickFormatter={(v) => `$${v}`} />
-                        <Tooltip formatter={(v: any) => money(Number(v))} />
-                        <Legend />
-                        <Bar dataKey="value" name="Spending" />
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </Box>
-
-                  <Typography variant="caption" color="text.secondary">
-                    (Bars are your top merchants in this range.)
-                  </Typography>
-                </CardContent>
-              </Card>
+              <TopMerchantsChart data={topMerchants} />
             </Box>
           </>
         )}
-      </CardContent>
-    </Card>
-  );
-}
-
-function Stat({ label, value }: { label: string; value: string }) {
-  return (
-    <Card variant="outlined" sx={{ borderRadius: 3 }}>
-      <CardContent>
-        <Typography variant="body2" color="text.secondary">
-          {label}
-        </Typography>
-        <Typography variant="h6" fontWeight={800}>
-          {value}
-        </Typography>
       </CardContent>
     </Card>
   );

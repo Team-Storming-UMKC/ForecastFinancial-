@@ -3,9 +3,11 @@
 import * as React from "react";
 import { Box, Button, Stack, Typography } from "@mui/material";
 import TransactionsPanel from "@/components/transactions/TransactionsPanel";
+import TransactionCharts from "@/components/dashboard/TransactionCharts";
 
 export default function DashboardPage() {
     const [email, setEmail] = React.useState<string | null>(null);
+    const [chartsKey, setChartsKey] = React.useState(0);
 
     React.useEffect(() => {
         async function loadUser() {
@@ -43,8 +45,11 @@ export default function DashboardPage() {
             </Stack>
 
             <Box sx={{ mt: 4 }}>
-                <TransactionsPanel />
+                <TransactionsPanel onDataChange={() => setChartsKey((k) => k + 1)} />
             </Box>
+            <div style={{ display: "grid", gap: 16 }}>
+                <TransactionCharts refreshKey={chartsKey} />
+            </div>
         </Box>
     );
 }
