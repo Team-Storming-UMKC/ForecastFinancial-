@@ -6,7 +6,11 @@ import TransactionForm, { TransactionDraft } from "./TransactionForm";
 import TransactionList, { Transaction } from "./TransactionList";
 import { useToast } from "@/components/toast/ToastProvider";
 
-export default function TransactionsPanel() {
+interface TransactionsPanelProps {
+    onDataChange?: () => void;
+}
+
+export default function TransactionsPanel({ onDataChange }: TransactionsPanelProps) {
     const { showToast } = useToast();
 
     const [loading, setLoading] = React.useState(true);
@@ -54,6 +58,7 @@ export default function TransactionsPanel() {
 
             showToast("Transaction added.", { severity: "success" });
             await load();
+            onDataChange?.();
         } catch (e: unknown) {
             const msg = e instanceof Error ? e.message : "Unexpected error occurred";
             showToast(msg, { severity: "error" });
@@ -93,6 +98,7 @@ export default function TransactionsPanel() {
 
             showToast("Transaction updated.", { severity: "success" });
             await load();
+            onDataChange?.();
         } catch (e: unknown) {
             const msg = e instanceof Error ? e.message : "Unexpected error occurred";
             showToast(msg, { severity: "error" });
@@ -111,6 +117,7 @@ export default function TransactionsPanel() {
 
             showToast("Transaction deleted.", { severity: "success" });
             await load();
+            onDataChange?.();
         } catch (e: unknown) {
             const msg = e instanceof Error ? e.message : "Unexpected error occurred";
             showToast(msg, { severity: "error" });
