@@ -6,7 +6,7 @@ import { tintedGlass } from "@/theme/tintedGlass";
 export default function FloatingNavbar({ children, sx, ...props }: AppBarProps) {
     return (
         <AppBar
-            position="fixed"
+            position="absolute"
             elevation={0}
             {...props}
             sx={{
@@ -27,7 +27,7 @@ export default function FloatingNavbar({ children, sx, ...props }: AppBarProps) 
         >
             <Toolbar
                 sx={{
-                    borderRadius: "20px",
+                    borderRadius: "16px",
                     minHeight: "72px",
                     ...tintedGlass,
                     position: "relative",
@@ -55,7 +55,7 @@ export default function FloatingNavbar({ children, sx, ...props }: AppBarProps) 
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "space-between",
-                        px: { xs: "12px !important", sm: "16px !important", md: "20px !important" },
+                        pl: 3,
                         py: 1,
                         gap: 3,
                     }}

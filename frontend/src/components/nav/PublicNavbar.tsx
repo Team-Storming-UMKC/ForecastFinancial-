@@ -41,18 +41,18 @@ export default function PublicNavbar() {
                         color="inherit"
                         component={Link}
                         href="/login"
-                        sx={{ color: "rgba(255,255,255,0.8)", px: 10, py: 10 }}
+                        sx={{ color: "rgba(255,255,255,0.8)", px: 2, py: 2 }}
                     >
                         Login
                     </Button>
 
                     <Button
-                        size="large"
+                        size="medium"
                         variant="contained"
                         color="primary"
                         component={Link}
                         href="/get-started"
-                        sx={{ borderRadius: "10px", px: 15, py: 10 }}
+                        sx={{ borderRadius: "10px", px: 2, py: 2 }}
                     >
                         Get Started
                     </Button>

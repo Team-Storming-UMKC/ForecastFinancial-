@@ -125,12 +125,11 @@ export default function TransactionsPanel({ onDataChange }: TransactionsPanelPro
     }
 
     return (
-        <Box>
-            <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 1 }}>
+        <Stack spacing={"25px !important"}>
+            <Stack direction="row" alignItems="center" justifyContent="space-between">
                 <Typography variant="h6" fontWeight={800}>
-                    Transactions (Dummy UI)
+                    Transactions
                 </Typography>
-
                 <Button variant="outlined" onClick={load} disabled={loading}>
                     Refresh
                 </Button>
@@ -139,6 +138,6 @@ export default function TransactionsPanel({ onDataChange }: TransactionsPanelPro
             <TransactionForm onCreate={handleCreate} />
 
             <TransactionList loading={loading} transactions={transactions} />
-        </Box>
+        </Stack>
     );
 }

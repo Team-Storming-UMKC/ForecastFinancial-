@@ -29,28 +29,23 @@ export default function DashboardPage() {
 
     return (
         <Container maxWidth="lg" sx={{ py: 4 }}>
-            <Stack direction="row" alignItems="center" justifyContent="space-between">
-                <Box>
-                    <Typography variant="h4" fontWeight={700}>
-                        Dashboard
-                    </Typography>
-                    <Typography sx={{ mt: 1, color: "text.secondary" }}>
-                        {email ? `Logged in as: ${email}` : "Loading..."}
-                    </Typography>
-                </Box>
+            <Stack spacing={"32px !important"}>
+                {/* Header */}
+                <Stack direction="row" alignItems="center" justifyContent="space-between">
+                    <Box>
+                        <Typography variant="h4" fontWeight={700}>
+                            Dashboard
+                        </Typography>
+                        <Typography sx={{ mt: 1, color: "text.secondary" }}>
+                            {email ? `Logged in as: ${email}` : "Loading..."}
+                        </Typography>
+                    </Box>
+                </Stack>
 
-                <Button variant="outlined" onClick={handleLogout}>
-                    Logout
-                </Button>
-            </Stack>
-
-            <Box sx={{ mt: 4 }}>
                 <TransactionsPanel onDataChange={() => setChartsKey((k) => k + 1)} />
-            </Box>
 
-            <Box sx={{ display: "grid", gap: 2, mt: 4 }}>
                 <TransactionCharts refreshKey={chartsKey} />
-            </Box>
+            </Stack>
         </Container>
     );
 }
