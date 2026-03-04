@@ -39,7 +39,7 @@ export default function RegisterPage() {
     }
 
     return (
-        <Box sx={{ px: { xs: 2, md: 6 }, py: 6, display: "flex", justifyContent: "center" }}>
+        <Box sx={{ px: { xs: 2, md: 6 }, py: 6, display: "flex", justifyContent: "center", alignItems: "center", minHeight: "80vh" }}>
             <Paper sx={{ p: 4, width: "100%", maxWidth: 420 }}>
                 <Typography variant="h5" fontWeight={700}>
                     Register

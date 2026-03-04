@@ -2,99 +2,97 @@
 
 import Link from "next/link";
 import {
-  AppBar,
-  Box,
-  Button,
-  Toolbar,
-  Typography,
-  IconButton,
-  Menu,
-  MenuItem,
+    AppBar,
+    Box,
+    Button,
+    Toolbar,
+    Typography,
+    IconButton,
+    Menu,
+    MenuItem,
+    Container,
 } from "@mui/material";
 import { useState } from "react";
 
 export default function AuthNavbar() {
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const open = Boolean(anchorEl);
 
-  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
+    const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+        setAnchorEl(event.currentTarget);
+    };
 
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-  };
+    const handleMenuClose = () => {
+        setAnchorEl(null);
+    };
 
-  const handleLogout = async () => {
-    await fetch("/api/auth/logout", { method: "POST", credentials: "include" });
-    window.location.href = "/login";
-  };
+    const handleLogout = async () => {
+        await fetch("/api/auth/logout", { method: "POST", credentials: "include" });
+        window.location.href = "/login";
+    };
 
-  return (
-    <AppBar position="static" elevation={0} color="transparent">
-      <Toolbar sx={{ px: { xs: 2, md: 6 }, py: 1 }}>
-        {/* Logo / Brand */}
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-          <Box
+    return (
+        <AppBar
+            position="absolute"
+            elevation={0}
             sx={{
-              width: 36,
-              height: 36,
-              borderRadius: 2,
-              bgcolor: "background.paper",
-              border: "1px solid",
-              borderColor: "divider",
+                bgcolor: "transparent",
+                top: 24,
+                left: 0,
+                right: 0,
+                width: "100%",      // Ensures the AppBar spans the whole screen
+                display: "flex",    // Helps with alignment
+                alignItems: "center",
+                backgroundImage: "none", // Removes MUI default dark mode gradients
             }}
-          />
-          <Typography
-            variant="h6"
-            fontWeight={700}
-            component={Link}
-            href="/dashboard"
-            sx={{ textDecoration: "none", color: "inherit" }}
-          >
-            Forecast
-          </Typography>
-        </Box>
+        >
+            <Container maxWidth="lg">
+                <Toolbar
+                    sx={{
+                        borderRadius: "100px",
+                        bgcolor: "rgba(255, 255, 255, 0.9)",
+                        backdropFilter: "blur(10px)",
+                        border: "1px solid",
+                        borderColor: "divider",
 
-        <Box sx={{ flexGrow: 1 }} />
+                        px: { xs: 3, md: 5 },
 
-        {/* Main nav links */}
-        <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
-          <Button component={Link} href="/dashboard" color="inherit">
-            Dashboard
-          </Button>
-          <Button component={Link} href="/accounts" color="inherit">
-            Accounts
-          </Button>
-          <Button component={Link} href="/reports" color="inherit">
-            Reports
-          </Button>
+                        minHeight: { xs: "56px", md: "64px" },
 
-          {/* Profile Menu */}
-          <IconButton
-            onClick={handleMenuOpen}
-            sx={{
-              ml: 1,
-              width: 36,
-              height: 36,
-              borderRadius: 2,
-              border: "1px solid",
-              borderColor: "divider",
-            }}
-          >
-            {/* Placeholder avatar */}
-            <Box sx={{ width: 18, height: 18, bgcolor: "text.primary", borderRadius: "50%" }} />
-          </IconButton>
+                        display: "flex",
+                        justifyContent: "space-between",
 
-          <Menu anchorEl={anchorEl} open={open} onClose={handleMenuClose}>
-            <MenuItem component={Link} href="/settings" onClick={handleMenuClose}>
-              Settings
-            </MenuItem>
-            <MenuItem onClick={handleLogout}>Logout</MenuItem>
-          </Menu>
-        </Box>
-      </Toolbar>
-    </AppBar>
-  );
+                        "&.MuiToolbar-gutters": {
+                            px: { xs: 3, md: 5 },
+                        },
+                    }}
+                >
+                    {/* Logo */}
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                        <Box sx={{ width: 32, height: 32, borderRadius: 1.5, bgcolor: "primary.main" }} />
+                        <Typography variant="h6" fontWeight={700} component={Link} href="/dashboard" sx={{ textDecoration: "none", color: "text.primary" }}>
+                            Forecast
+                        </Typography>
+                    </Box>
+
+                    <Box sx={{ flexGrow: 1 }} />
+
+                    {/* Links */}
+                    <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+                        <Button component={Link} href="/dashboard" color="inherit" sx={{ borderRadius: "20px" }}>Dashboard</Button>
+                        <Button component={Link} href="/accounts" color="inherit" sx={{ borderRadius: "20px" }}>Accounts</Button>
+
+                        <IconButton onClick={handleMenuOpen} sx={{ ml: 1, border: "1px solid", borderColor: "divider" }}>
+                            <Box sx={{ width: 18, height: 18, bgcolor: "text.primary", borderRadius: "50%" }} />
+                        </IconButton>
+
+                        <Menu anchorEl={anchorEl} open={open} onClose={handleMenuClose}>
+                            <MenuItem onClick={handleMenuClose}>Settings</MenuItem>
+                            <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                        </Menu>
+                    </Box>
+                </Toolbar>
+            </Container>
+        </AppBar>
+    );
 }
-
