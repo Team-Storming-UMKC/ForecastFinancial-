@@ -17,16 +17,13 @@ const theme = createTheme({
     },
   },
 
-  shape: {
-    borderRadius: 16, // Slightly more rounded for that "liquid" feel
-  },
+
 
   components: {
     MuiButton: {
       styleOverrides: {
         root: {
           borderRadius: 12,
-          padding: "10px 24px",
           textTransform: "none",
           fontWeight: 700,
           // Liquid Glow effect

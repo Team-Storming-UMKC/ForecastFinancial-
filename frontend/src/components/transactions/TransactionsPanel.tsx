@@ -138,7 +138,7 @@ export default function TransactionsPanel({ onDataChange }: TransactionsPanelPro
 
             <TransactionForm onCreate={handleCreate} />
 
-            <TransactionList loading={loading} transactions={transactions} onEdit={handleEdit} onDelete={handleDelete} />
+            <TransactionList loading={loading} transactions={transactions} />
         </Box>
     );
 }

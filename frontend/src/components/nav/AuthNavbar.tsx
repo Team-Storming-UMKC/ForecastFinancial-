@@ -13,6 +13,7 @@ import {
     Container,
 } from "@mui/material";
 import { useState } from "react";
+import FloatingNavbar from "@/components/layout/FloatingAppBar";
 
 export default function AuthNavbar() {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -35,45 +36,7 @@ export default function AuthNavbar() {
         window.location.href = "/settings";
     }
     return (
-        <AppBar
-            position="absolute"
-            elevation={0}
-            sx={{
-                bgcolor: "transparent",
-                top: 24,
-                left: 0,
-                right: 0,
-                width: "100%",      // Ensures the AppBar spans the whole screen
-                display: "flex",    // Helps with alignment
-                alignItems: "center",
-                backgroundImage: "none", // Removes MUI default dark mode gradients
-            }}
-        >
-            <Container maxWidth="lg">
-                <Toolbar
-                    sx={{
-                        borderRadius: "16px", // Rounded Rectangle
-                        // DARK GLASS EFFECT
-                        bgcolor: "rgba(10, 15, 25, 0.7)",
-                        backdropFilter: "blur(16px) saturate(150%)",
-
-                        // The "Light Catch" Border
-                        border: "1px solid rgba(255, 255, 255, 0.1)",
-                        boxShadow: "0px 20px 40px rgba(0, 0, 0, 0.4)",
-
-                        py: { xs: 1, md: 1.5 },
-                        px: { xs: 3, md: 4 },
-                        display: "flex",
-                        justifyContent: "space-between",
-                        minHeight: "72px",
-
-                        // Ensuring icons/text don't hug the rounded corners
-                        "&.MuiToolbar-root": {
-                            paddingLeft: { xs: "24px", md: "32px" },
-                            paddingRight: { xs: "16px", md: "20px" },
-                        },
-                    }}
-                >
+      <FloatingNavbar>
                     {/* Logo */}
                     <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                         <Box sx={{ width: 32, height: 32, borderRadius: 1.5, bgcolor: "primary.main" }} />
@@ -98,8 +61,6 @@ export default function AuthNavbar() {
                             <MenuItem onClick={handleLogout}>Logout</MenuItem>
                         </Menu>
                     </Box>
-                </Toolbar>
-            </Container>
-        </AppBar>
+          </FloatingNavbar>
     );
 }
