@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Box, Button, Stack, Typography } from "@mui/material";
+import { Box, Button, Stack, Typography, Container } from "@mui/material";
 import TransactionsPanel from "@/components/transactions/TransactionsPanel";
 import TransactionCharts from "@/components/dashboard/TransactionCharts";
 
@@ -28,29 +28,25 @@ export default function DashboardPage() {
     }
 
     return (
-        <Box sx={{ p: 3 }}>
-            <Stack direction="row" alignItems="center" justifyContent="space-between">
-                <Box>
-                    <Typography variant="h4" fontWeight={700}>
-                        Dashboard
-                    </Typography>
-                    <Typography sx={{ mt: 1 }}>
-                        {email ? `Logged in as: ${email}` : "Loading..."}
-                    </Typography>
-                </Box>
+        <Container maxWidth="lg" sx={{ py: 4 }}>
+            <Stack spacing={"32px !important"}>
+                {/* Header */}
+                <Stack direction="row" alignItems="center" justifyContent="space-between">
+                    <Box>
+                        <Typography variant="h4" fontWeight={700}>
+                            Dashboard
+                        </Typography>
+                        <Typography sx={{ mt: 1, color: "text.secondary" }}>
+                            {email ? `Logged in as: ${email}` : "Loading..."}
+                        </Typography>
+                    </Box>
+                </Stack>
 
-                <Button variant="outlined" onClick={handleLogout}>
-                    Logout
-                </Button>
-            </Stack>
-
-            <Box sx={{ mt: 4 }}>
                 <TransactionsPanel onDataChange={() => setChartsKey((k) => k + 1)} />
-            </Box>
-            <div style={{ display: "grid", gap: 16 }}>
+
                 <TransactionCharts refreshKey={chartsKey} />
-            </div>
-        </Box>
+            </Stack>
+        </Container>
     );
 }
 

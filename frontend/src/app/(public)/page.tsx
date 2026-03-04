@@ -8,6 +8,8 @@ export default function Home() {
         py: { xs: 6, md: 10 },
         display: "flex",
         justifyContent: "center",
+        alignItems: "center",
+        minHeight: "80vh",
       }}
     >
       <Typography variant="h3" fontWeight={700}>
