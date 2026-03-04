@@ -31,6 +31,9 @@ export default function AuthNavbar() {
         window.location.href = "/login";
     };
 
+    const handleSettings = () => {
+        window.location.href = "/settings";
+    }
     return (
         <AppBar
             position="absolute"
@@ -49,21 +52,25 @@ export default function AuthNavbar() {
             <Container maxWidth="lg">
                 <Toolbar
                     sx={{
-                        borderRadius: "100px",
-                        bgcolor: "rgba(255, 255, 255, 0.9)",
-                        backdropFilter: "blur(10px)",
-                        border: "1px solid",
-                        borderColor: "divider",
+                        borderRadius: "16px", // Rounded Rectangle
+                        // DARK GLASS EFFECT
+                        bgcolor: "rgba(10, 15, 25, 0.7)",
+                        backdropFilter: "blur(16px) saturate(150%)",
 
-                        px: { xs: 3, md: 5 },
+                        // The "Light Catch" Border
+                        border: "1px solid rgba(255, 255, 255, 0.1)",
+                        boxShadow: "0px 20px 40px rgba(0, 0, 0, 0.4)",
 
-                        minHeight: { xs: "56px", md: "64px" },
-
+                        py: { xs: 1, md: 1.5 },
+                        px: { xs: 3, md: 4 },
                         display: "flex",
                         justifyContent: "space-between",
+                        minHeight: "72px",
 
-                        "&.MuiToolbar-gutters": {
-                            px: { xs: 3, md: 5 },
+                        // Ensuring icons/text don't hug the rounded corners
+                        "&.MuiToolbar-root": {
+                            paddingLeft: { xs: "24px", md: "32px" },
+                            paddingRight: { xs: "16px", md: "20px" },
                         },
                     }}
                 >
@@ -87,7 +94,7 @@ export default function AuthNavbar() {
                         </IconButton>
 
                         <Menu anchorEl={anchorEl} open={open} onClose={handleMenuClose}>
-                            <MenuItem onClick={handleMenuClose}>Settings</MenuItem>
+                            <MenuItem onClick={handleSettings}>Settings</MenuItem>
                             <MenuItem onClick={handleLogout}>Logout</MenuItem>
                         </Menu>
                     </Box>

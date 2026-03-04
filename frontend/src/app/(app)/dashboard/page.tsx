@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Box, Button, Stack, Typography } from "@mui/material";
+import { Box, Button, Stack, Typography, Container } from "@mui/material";
 import TransactionsPanel from "@/components/transactions/TransactionsPanel";
 import TransactionCharts from "@/components/dashboard/TransactionCharts";
 
@@ -28,13 +28,13 @@ export default function DashboardPage() {
     }
 
     return (
-        <Box sx={{ p: 3 }}>
+        <Container maxWidth="lg" sx={{ py: 4 }}>
             <Stack direction="row" alignItems="center" justifyContent="space-between">
                 <Box>
                     <Typography variant="h4" fontWeight={700}>
                         Dashboard
                     </Typography>
-                    <Typography sx={{ mt: 1 }}>
+                    <Typography sx={{ mt: 1, color: "text.secondary" }}>
                         {email ? `Logged in as: ${email}` : "Loading..."}
                     </Typography>
                 </Box>
@@ -47,10 +47,11 @@ export default function DashboardPage() {
             <Box sx={{ mt: 4 }}>
                 <TransactionsPanel onDataChange={() => setChartsKey((k) => k + 1)} />
             </Box>
-            <div style={{ display: "grid", gap: 16 }}>
+
+            <Box sx={{ display: "grid", gap: 2, mt: 4 }}>
                 <TransactionCharts refreshKey={chartsKey} />
-            </div>
-        </Box>
+            </Box>
+        </Container>
     );
 }
 

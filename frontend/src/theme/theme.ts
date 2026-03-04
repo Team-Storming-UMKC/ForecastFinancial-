@@ -2,51 +2,55 @@ import { createTheme } from "@mui/material/styles";
 
 const theme = createTheme({
   palette: {
-    mode: "light",
+    mode: "dark", // Switch to dark mode
     primary: {
-      main: "#1e40af", // deep blue
-    },
-    secondary: {
-      main: "#0ea5e9",
+      main: "#ff6b00", // Vibrant Orange
+      contrastText: "#ffffff",
     },
     background: {
-      default: "#0066ff",
-      paper: "#ffffff",
+      default: "#050a15", // Deep midnight blue/black background
+      paper: "rgba(15, 20, 30, 0.6)", // Translucent dark glass
+    },
+    text: {
+      primary: "#ffffff",
+      secondary: "rgba(255, 255, 255, 0.7)",
     },
   },
-
-  typography: {
-    fontFamily: "var(--font-geist-sans), Arial, sans-serif",
-    h4: {
-      fontWeight: 600,
-    },
-    button: {
-      textTransform: "none",
-      fontWeight: 600,
-    },
-  },
-
 
   shape: {
-    borderRadius: 0,
+    borderRadius: 16, // Slightly more rounded for that "liquid" feel
   },
 
   components: {
-  MuiButton: {
-    styleOverrides: {
-      root: {
-        borderRadius: 0,
-        padding: "10px 20px",
-        minHeight: 44,
-        minWidth: 120,      
-        whiteSpace: "nowrap",
-        flexShrink: 0,       
-        lineHeight: 1.2,
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          borderRadius: 12,
+          padding: "10px 24px",
+          textTransform: "none",
+          fontWeight: 700,
+          // Liquid Glow effect
+          transition: "all 0.3s ease-in-out",
+          "&:hover": {
+            transform: "translateY(-2px)",
+            boxShadow: "0px 8px 20px rgba(255, 107, 0, 0.4)",
+          },
+        },
+        containedPrimary: {
+          background: "linear-gradient(135deg, #ff6b00 0%, #ff9500 100%)",
+          border: "1px solid rgba(255, 255, 255, 0.1)",
+        },
+        outlined: {
+          borderColor: "rgba(255, 255, 255, 0.2)",
+          backdropFilter: "blur(4px)",
+          "&:hover": {
+            backgroundColor: "rgba(255, 255, 255, 0.05)",
+            borderColor: "#ff6b00",
+          },
+        },
       },
     },
   },
-},
 });
 
 export default theme;
-
