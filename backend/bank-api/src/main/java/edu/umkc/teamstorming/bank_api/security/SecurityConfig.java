@@ -42,7 +42,9 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/auth/me").permitAll()
                 .requestMatchers("/api/**").authenticated()
                 .requestMatchers("/transactions/**").authenticated()
+                .requestMatchers("/api/data/extract").permitAll()
                 .anyRequest().permitAll()
+
             )
             .httpBasic(Customizer.withDefaults());
 
