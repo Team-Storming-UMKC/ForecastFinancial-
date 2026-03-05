@@ -48,7 +48,7 @@ public class LmStudioParser {
         return msg.content().trim();
     }
 
-    private ExtractedFinancialEntitiesDto readEntitiesJson(String content) {
+    public ExtractedFinancialEntitiesDto readEntitiesJson(String content) {
         // Optional safety: remove ```json fences if the model ever violates your “JSON only” rule
         String cleaned = stripCodeFences(content);
 
