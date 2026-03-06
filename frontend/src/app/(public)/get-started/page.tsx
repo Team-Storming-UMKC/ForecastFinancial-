@@ -2,14 +2,17 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { Box, Button, Paper, TextField, Typography } from "@mui/material";
+import { IconButton, InputAdornment, OutlinedInput, Typography } from "@mui/material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
+import AuthCard from "@/components/auth/AuthCard";
+import { inputSx } from "@/components/auth/authStyles";
 
 export default function RegisterPage() {
     const router = useRouter();
 
     const [email, setEmail] = React.useState("");
     const [password, setPassword] = React.useState("");
+    const [showPassword, setShowPassword] = React.useState(false);
     const [loading, setLoading] = React.useState(false);
     const [error, setError] = React.useState<string | null>(null);
 
@@ -39,55 +42,51 @@ export default function RegisterPage() {
     }
 
     return (
-        <Box sx={{ px: { xs: 2, md: 6 }, py: 6, display: "flex", justifyContent: "center" }}>
-            <Paper sx={{ p: 4, width: "100%", maxWidth: 420 }}>
-                <Typography variant="h5" fontWeight={700}>
-                    Register
+        <AuthCard
+            title="Create an account"
+            submitLabel="Create account"
+            onSubmit={handleRegister}
+            loading={loading}
+            footerLink={{ label: "Already have an account? Sign in", href: "/login" }}
+        >
+            <OutlinedInput
+                fullWidth
+                type="email"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                autoComplete="email"
+                required
+                sx={inputSx}
+            />
+
+            <OutlinedInput
+                fullWidth
+                type={showPassword ? "text" : "password"}
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                autoComplete="new-password"
+                required
+                endAdornment={
+                    <InputAdornment position="end">
+                        <IconButton
+                            onClick={() => setShowPassword((prev) => !prev)}
+                            edge="end"
+                            sx={{ color: "rgba(255,255,255,0.4)" }}
+                        >
+                            {showPassword ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
+                        </IconButton>
+                    </InputAdornment>
+                }
+                sx={inputSx}
+            />
+
+            {error && (
+                <Typography color="error" fontSize="0.85rem">
+                    {error}
                 </Typography>
-
-                <Box
-                    component="form"
-                    onSubmit={handleRegister}
-                    sx={{ mt: 3, display: "flex", flexDirection: "column", gap: 2 }}
-                >
-                    <TextField
-                        label="Email"
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        autoComplete="email"
-                        fullWidth
-                        required
-                    />
-
-                    <TextField
-                        label="Password"
-                        type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        autoComplete="new-password"
-                        fullWidth
-                        required
-                    />
-
-                    {error && (
-                        <Typography sx={{ mt: 0.5 }} color="error">
-                            {error}
-                        </Typography>
-                    )}
-
-                    <Button type="submit" variant="contained" disabled={loading} sx={{ mt: 1, minHeight: 44 }}>
-                        {loading ? "Creating..." : "Create account"}
-                    </Button>
-
-                    <Typography variant="body2" sx={{ mt: 1 }}>
-                        Already have an account?{" "}
-                        <Typography component={Link} href="/login" sx={{ textDecoration: "none" }}>
-                            Login
-                        </Typography>
-                    </Typography>
-                </Box>
-            </Paper>
-        </Box>
+            )}
+        </AuthCard>
     );
 }
