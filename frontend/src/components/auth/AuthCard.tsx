@@ -3,6 +3,7 @@
 import * as React from "react";
 import { Box, Button, Link, Typography } from "@mui/material";
 import { tintedGlass } from "@/theme/tintedGlass";
+import Image from "next/image";
 
 export interface AuthCardProps {
     /** e.g. "Welcome back" or "Create an account" */
@@ -86,16 +87,14 @@ export default function AuthCard({
                         }}
                     >
                         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                            <Box
-                                sx={{
-                                    width: 28,
-                                    height: 28,
-                                    borderRadius: "8px",
-                                    bgcolor: "primary.main",
-                                    boxShadow: "0px 0px 14px rgba(255,107,0,0.55)",
-                                    flexShrink: 0,
-                                }}
-                            />
+                            <Box sx={{ width: 32, height: 32, position: "relative" }}>
+                                <Image
+                                    src="/logo.svg"
+                                    alt="Logo"
+                                    fill
+                                    style={{ objectFit: "contain", borderRadius: "6px" }}
+                                />
+                            </Box>
                             <Typography
                                 variant="body1"
                                 fontWeight={800}

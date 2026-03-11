@@ -3,21 +3,21 @@
 import Link from "next/link";
 import { Box, Button, Typography } from "@mui/material";
 import FloatingNavbar from "@/components/layout/FloatingAppBar";
+import Image from "next/image";
 
 export default function PublicNavbar() {
     return (
         <FloatingNavbar>
                 {/* Logo Section */}
                 <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                    <Box
-                        sx={{
-                            width: 32,
-                            height: 32,
-                            borderRadius: "8px",
-                            bgcolor: "primary.main",
-                            boxShadow: "0px 0px 15px rgba(255,107,0,0.5)",
-                        }}
-                    />
+                    <Box sx={{ width: 32, height: 32, position: "relative" }}>
+                        <Image
+                            src="/logo.svg"
+                            alt="Logo"
+                            fill
+                            style={{ objectFit: "contain", borderRadius: "6px" }}
+                        />
+                    </Box>
 
                     <Typography
                         variant="h6"
