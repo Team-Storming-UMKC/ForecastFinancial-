@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import {
     Box,
     Button,
@@ -40,15 +41,14 @@ export default function AuthNavbar() {
         <FloatingNavbar>
             {/* Logo */}
             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                <Box
-                    sx={{
-                        width: 32,
-                        height: 32,
-                        borderRadius: 1.5,
-                        bgcolor: "primary.main",
-                        boxShadow: "0px 0px 14px rgba(255,107,0,0.5)",
-                    }}
-                />
+                <Box sx={{ width: 32, height: 32, position: "relative" }}>
+                    <Image
+                        src="/logo.svg"
+                        alt="Logo"
+                        fill
+                        style={{ objectFit: "contain", borderRadius: "6px" }}
+                    />
+                </Box>
                 <Typography
                     variant="h6"
                     fontWeight={700}
