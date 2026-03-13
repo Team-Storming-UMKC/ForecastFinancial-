@@ -84,19 +84,6 @@ export default function LoginPage() {
                 }
                 sx={{
                     ...inputSx,
-
-                    "&.MuiOutlinedInput-root": {
-                        pr: 0,
-                    },
-
-                    "&.MuiOutlinedInput-adornedEnd": {
-                        pr: 0,
-                    },
-
-                    /* remove extra input padding */
-                    "& .MuiOutlinedInput-input": {
-                        pr: 0,
-                    },
                 }}
             />
 
