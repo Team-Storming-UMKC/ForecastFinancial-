@@ -56,7 +56,8 @@ export default function FloatingNavbar({ children, sx, ...props }: AppBarProps) 
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "space-between",
-                        px: 3,
+                        pl: 3,
+                        pr: 1,
                         py: 1,
                         gap: 3,
                     }}

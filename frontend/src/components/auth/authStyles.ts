@@ -5,7 +5,7 @@ export const inputSx = {
     bgcolor: "rgba(255,255,255,0.04)",
     "& input": {
         paddingLeft: "14px",
-        paddingRight: "14px",
+        paddingRight: "0px",
         paddingTop: "12px",
         paddingBottom: "12px",
     },

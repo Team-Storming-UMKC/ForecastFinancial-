@@ -69,17 +69,35 @@ export default function LoginPage() {
                 autoComplete="current-password"
                 required
                 endAdornment={
-                    <InputAdornment position="end">
+                    <InputAdornment position="end" sx={{ m: 0 }}>
                         <IconButton
                             onClick={() => setShowPassword((prev) => !prev)}
-                            edge="end"
-                            sx={{ color: "rgba(255,255,255,0.4)" }}
+                            sx={{ color: "rgba(255,255,255,0.4)", p: 0 }}
                         >
-                            {showPassword ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
+                            {showPassword ? (
+                                <VisibilityOff fontSize="small" />
+                            ) : (
+                                <Visibility fontSize="small" />
+                            )}
                         </IconButton>
                     </InputAdornment>
                 }
-                sx={inputSx}
+                sx={{
+                    ...inputSx,
+
+                    "&.MuiOutlinedInput-root": {
+                        pr: 0,
+                    },
+
+                    "&.MuiOutlinedInput-adornedEnd": {
+                        pr: 0,
+                    },
+
+                    /* remove extra input padding */
+                    "& .MuiOutlinedInput-input": {
+                        pr: 0,
+                    },
+                }}
             />
 
             {error && (
