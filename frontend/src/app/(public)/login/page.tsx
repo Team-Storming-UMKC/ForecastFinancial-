@@ -2,17 +2,18 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import { IconButton, InputAdornment, OutlinedInput, Typography } from "@mui/material";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { Typography, useTheme } from "@mui/material";
 import AuthCard from "@/components/auth/AuthCard";
-import { inputSx } from "@/components/auth/authStyles";
+import AuthInputField from "@/components/auth/AuthInputField";
+import { getLoginPageStyles } from "./page.styles";
 
 export default function LoginPage() {
     const router = useRouter();
+    const theme = useTheme();
+    const styles = getLoginPageStyles(theme);
 
     const [email, setEmail] = React.useState("");
     const [password, setPassword] = React.useState("");
-    const [showPassword, setShowPassword] = React.useState(false);
     const [loading, setLoading] = React.useState(false);
     const [error, setError] = React.useState<string | null>(null);
 
@@ -49,7 +50,7 @@ export default function LoginPage() {
             loading={loading}
             footerLink={{ label: "Forgot password?", href: "/forgot-password" }}
         >
-            <OutlinedInput
+            <AuthInputField
                 fullWidth
                 type="email"
                 placeholder="Email"
@@ -57,38 +58,21 @@ export default function LoginPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 autoComplete="email"
                 required
-                sx={inputSx}
             />
 
-            <OutlinedInput
+            <AuthInputField
                 fullWidth
-                type={showPassword ? "text" : "password"}
+                type="password"
+                withPasswordToggle
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 autoComplete="current-password"
                 required
-                endAdornment={
-                    <InputAdornment position="end" sx={{ m: 0 }}>
-                        <IconButton
-                            onClick={() => setShowPassword((prev) => !prev)}
-                            sx={{ color: "rgba(255,255,255,0.4)", p: 0 }}
-                        >
-                            {showPassword ? (
-                                <VisibilityOff fontSize="small" />
-                            ) : (
-                                <Visibility fontSize="small" />
-                            )}
-                        </IconButton>
-                    </InputAdornment>
-                }
-                sx={{
-                    ...inputSx,
-                }}
             />
 
             {error && (
-                <Typography color="error" fontSize="0.85rem">
+                <Typography sx={styles.errorText}>
                     {error}
                 </Typography>
             )}
