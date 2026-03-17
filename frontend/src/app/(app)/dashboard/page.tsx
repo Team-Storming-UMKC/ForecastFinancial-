@@ -4,10 +4,36 @@ import * as React from "react";
 import { Box, Button, Stack, Typography, Container } from "@mui/material";
 import TransactionsPanel from "@/components/transactions/TransactionsPanel";
 import TransactionCharts from "@/components/dashboard/TransactionCharts";
+import type { Transaction } from "@/types/transaction";
 
 export default function DashboardPage() {
     const [email, setEmail] = React.useState<string | null>(null);
+    const [loading, setLoading] = React.useState(true);
+    const [transactions, setTransactions] = React.useState<Transaction[]>([]);
     const [chartsKey, setChartsKey] = React.useState(0);
+
+    const loadTransactions = React.useCallback(async () => {
+        setLoading(true);
+        try {
+            const res = await fetch("/api/transactions", { cache: "no-store" });
+            if (!res.ok) {
+                throw new Error(`Failed to load transactions (${res.status})`);
+            }
+
+            const data: unknown = await res.json();
+            const nextTransactions = Array.isArray(data)
+                ? (data as Transaction[])
+                : Array.isArray((data as { transactions?: unknown })?.transactions)
+                    ? ((data as { transactions: Transaction[] }).transactions)
+                    : [];
+
+            setTransactions(nextTransactions);
+        } catch {
+            setTransactions([]);
+        } finally {
+            setLoading(false);
+        }
+    }, []);
 
     React.useEffect(() => {
         async function loadUser() {
@@ -19,8 +45,14 @@ export default function DashboardPage() {
             const data = await res.json();
             setEmail(data.email);
         }
-        loadUser();
+        void loadUser();
+        void loadTransactions();
     }, []);
+
+    async function handleTransactionsChanged() {
+        await loadTransactions();
+        setChartsKey((k) => k + 1);
+    }
 
     async function handleLogout() {
         await fetch("/api/auth/logout", { method: "POST" });
@@ -42,7 +74,11 @@ export default function DashboardPage() {
                     </Box>
                 </Stack>
 
-                <TransactionsPanel onDataChange={() => setChartsKey((k) => k + 1)} />
+                <TransactionsPanel
+                    loading={loading}
+                    transactions={transactions}
+                    onChanged={handleTransactionsChanged}
+                />
 
                 <TransactionCharts refreshKey={chartsKey} />
             </Stack>

@@ -30,16 +30,21 @@ export type Transaction = {
 export default function RecentTransactionsTable({
                                                     loading,
                                                     transactions,
+                                                    onEdit,
+                                                    onDelete,
                                                     onImport,
                                                     onShowMore,
                                                 }: {
     loading: boolean;
-    transactions: Transaction[];
+    transactions?: Transaction[];
+    onEdit?: (tx: Transaction) => void | Promise<void>;
+    onDelete?: (id: number) => void | Promise<void>;
     onImport?: () => void | Promise<void>;
     onShowMore?: () => void | Promise<void>;
 }) {
     const theme = useTheme();
     const isSm = useMediaQuery(theme.breakpoints.down("sm"));
+    const rows = Array.isArray(transactions) ? transactions : [];
 
     return (
         <Box
@@ -105,7 +110,7 @@ export default function RecentTransactionsTable({
                             Loading…
                         </Typography>
                     </Stack>
-                ) : transactions.length === 0 ? (
+                ) : rows.length === 0 ? (
                     <Typography variant="body2" color="text.secondary" sx={{ py: 2 }}>
                         No transactions yet.
                     </Typography>
@@ -132,11 +137,16 @@ export default function RecentTransactionsTable({
                                     <TableCell align="right" sx={{ color: "text.secondary", fontWeight: 700 }}>
                                         Amount
                                     </TableCell>
+                                    {(onEdit || onDelete) && (
+                                        <TableCell align="right" sx={{ color: "text.secondary", fontWeight: 700 }}>
+                                            Actions
+                                        </TableCell>
+                                    )}
                                 </TableRow>
                             </TableHead>
 
                             <TableBody>
-                                {transactions.map((tx) => {
+                                {rows.map((tx) => {
                                     const amt = Number(tx.amount);
                                     const isNeg = amt < 0;
 
@@ -173,6 +183,36 @@ export default function RecentTransactionsTable({
                                                     {isNeg ? "-" : "+"}${Math.abs(amt).toFixed(2)}
                                                 </Box>
                                             </TableCell>
+
+                                            {(onEdit || onDelete) && (
+                                                <TableCell align="right">
+                                                    <Stack
+                                                        direction="row"
+                                                        spacing={1}
+                                                        justifyContent="flex-end"
+                                                    >
+                                                        {onEdit && (
+                                                            <Button
+                                                                size="small"
+                                                                variant="text"
+                                                                onClick={() => onEdit(tx)}
+                                                            >
+                                                                Edit
+                                                            </Button>
+                                                        )}
+                                                        {onDelete && (
+                                                            <Button
+                                                                size="small"
+                                                                color="error"
+                                                                variant="text"
+                                                                onClick={() => onDelete(tx.id)}
+                                                            >
+                                                                Delete
+                                                            </Button>
+                                                        )}
+                                                    </Stack>
+                                                </TableCell>
+                                            )}
                                         </TableRow>
                                     );
                                 })}
