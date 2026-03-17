@@ -132,10 +132,12 @@ export default function AuthNavbar() {
                                 mt: 1,
                                 minWidth: 180,
                                 borderRadius: "14px",
-                                background: "linear-gradient(135deg, rgba(20,30,50,0.97), rgba(10,15,25,0.97))",
+                                bgcolor: "background.paper",
+                                color: "text.primary",
                                 backdropFilter: "blur(22px)",
                                 WebkitBackdropFilter: "blur(22px)",
-                                border: "1px solid rgba(255,255,255,0.08)",
+                                border: "1px solid",
+                                borderColor: "divider",
                                 boxShadow: "0 16px 40px rgba(0,0,0,0.5)",
                                 overflow: "hidden",
                             },
@@ -148,12 +150,12 @@ export default function AuthNavbar() {
                             gap: 1.5,
                             py: 1.25,
                             px: 2,
-                            color: "rgba(255,255,255,0.8)",
+                            color: "text.primary",
                             fontSize: 14,
                             fontWeight: 600,
                             "&:hover": {
-                                bgcolor: "rgba(255,255,255,0.06)",
-                                color: "#fff",
+                                bgcolor: "action.hover",
+                                color: "text.primary",
                             },
                         }}
                     >
@@ -161,7 +163,7 @@ export default function AuthNavbar() {
                         Settings
                     </MenuItem>
 
-                    <Divider sx={{ borderColor: "rgba(255,255,255,0.07)", mx: 1 }} />
+                    <Divider sx={{ borderColor: "divider", mx: 1 }} />
 
                     <MenuItem
                         onClick={handleLogout}
@@ -169,12 +171,12 @@ export default function AuthNavbar() {
                             gap: 1.5,
                             py: 1.25,
                             px: 2,
-                            color: "rgba(255,100,100,0.85)",
+                            color: "error.light",
                             fontSize: 14,
                             fontWeight: 600,
                             "&:hover": {
-                                bgcolor: "rgba(255,80,80,0.08)",
-                                color: "#ff6b6b",
+                                bgcolor: "action.hover",
+                                color: "error.main",
                             },
                         }}
                     >
