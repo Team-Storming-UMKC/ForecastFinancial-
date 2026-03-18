@@ -1,30 +1,53 @@
-import { Theme } from "@mui/material/styles";
+import { alpha } from "@mui/material/styles";
+import type { SxProps, Theme } from "@mui/material/styles";
 
-export const getSegmentedControlStyles = (theme: Theme) => ({
+type SegmentedControlStyles = {
+  container: SxProps<Theme>;
+  indicator: SxProps<Theme>;
+  item: SxProps<Theme>;
+  itemActive: SxProps<Theme>;
+};
+
+export const getSegmentedControlStyles = (theme: Theme): SegmentedControlStyles => ({
   container: {
+    position: "relative",
     display: "flex",
     alignItems: "center",
-    gap: "4px",
-    padding: "4px",
-    borderRadius: "23px",
-    backgroundColor: "rgba(255, 135, 15, 0.05)",
+    gap: theme.spacing(0.5),
+    padding: theme.spacing(0.5),
+    borderRadius: theme.customTokens.radii.card,
+    backgroundColor: alpha(theme.palette.primary.main, 0.05),
     backdropFilter: "blur(6px)",
     WebkitBackdropFilter: "blur(6px)",
     width: "fit-content",
     height: "fit-content",
+    overflow: "hidden",
+  },
+  indicator: {
+    position: "absolute",
+    top: theme.spacing(0.5),
+    left: 0,
+    height: theme.spacing(4),
+    borderRadius: theme.customTokens.radii.card,
+    backgroundColor: theme.palette.primary.main,
+    boxShadow: theme.shadows[1],
+    transition: "transform 0.3s ease, width 0.3s ease, opacity 0.2s ease",
+    zIndex: 0,
   },
   item: {
+    position: "relative",
+    zIndex: 1,
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    padding: "0 12px",
-    height: "32px",
-    borderRadius: "23px",
+    padding: `0 ${theme.spacing(1.5)}`,
+    height: theme.spacing(4),
+    borderRadius: theme.customTokens.radii.card,
     border: "none",
     backgroundColor: "transparent",
     cursor: "pointer",
-    transition: "all 0.3s ease",
-    ...theme.typography.body1,
+    transition: "color 0.3s ease, opacity 0.2s ease",
+    typography: "body1",
     fontWeight: 500,
     color: theme.palette.text.primary,
     "&:hover": {
@@ -35,13 +58,10 @@ export const getSegmentedControlStyles = (theme: Theme) => ({
     },
   },
   itemActive: {
-    backgroundColor: theme.palette.primary.main,
     color: theme.palette.primary.contrastText,
     fontWeight: 600,
-    boxShadow: "0px 1px 2px rgba(0, 0, 0, 0.05)",
     "&:hover": {
       opacity: 1,
-      boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
     },
   },
 });
