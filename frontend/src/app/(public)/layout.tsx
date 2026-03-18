@@ -9,11 +9,15 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
   const pathname = usePathname();
   const theme = useTheme();
   const styles = getPublicLayoutStyles(theme);
-  
+
+    const hideNavbarOn = ["/login", "/get-started"];
+    const shouldHideNavbar = hideNavbarOn.some(
+        (route) => pathname === route || pathname.startsWith(`${route}/`)
+    );
 
   return (
     <Box sx={styles.root}>
-      <PublicNavbar />
+        {!shouldHideNavbar && <PublicNavbar />}
       <Box sx={styles.content}>{children}</Box>
     </Box>
   );
