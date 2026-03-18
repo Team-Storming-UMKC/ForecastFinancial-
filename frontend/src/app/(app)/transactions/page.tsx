@@ -2,15 +2,14 @@
 
 import * as React from "react";
 import { Box, Button, Stack, Typography } from "@mui/material";
+import { CloudUploadOutlined } from "@mui/icons-material";
 import TransactionsPanel from "@/components/transactions/TransactionsPanel";
-import TransactionCharts from "@/components/dashboard/TransactionCharts";
 import type { Transaction } from "@/types/transaction";
 
-export default function DashboardPage() {
+export default function TransactionsPage() {
     const [email, setEmail] = React.useState<string | null>(null);
     const [loading, setLoading] = React.useState(true);
     const [transactions, setTransactions] = React.useState<Transaction[]>([]);
-    const [chartsKey, setChartsKey] = React.useState(0);
 
     const loadTransactions = React.useCallback(async () => {
         setLoading(true);
@@ -47,16 +46,15 @@ export default function DashboardPage() {
         }
         void loadUser();
         void loadTransactions();
-    }, []);
+    }, [loadTransactions]);
+
+    const handleImportTransactions = async () => {
+        // TODO: Implement import transactions functionality
+        console.log("Import transactions clicked");
+    };
 
     async function handleTransactionsChanged() {
         await loadTransactions();
-        setChartsKey((k) => k + 1);
-    }
-
-    async function handleLogout() {
-        await fetch("/api/auth/logout", { method: "POST" });
-        window.location.href = "/login";
     }
 
     return (
@@ -66,16 +64,37 @@ export default function DashboardPage() {
                 <Stack direction="row" alignItems="center" justifyContent="space-between">
                     <Box>
                         <Typography variant="h4" fontWeight={700}>
-                            Dashboard
+                            Transactions
                         </Typography>
                         <Typography sx={{ mt: 1, color: "text.secondary" }}>
                             {email ? `Logged in as: ${email}` : "Loading..."}
                         </Typography>
                     </Box>
+
+                    {/* Import Transactions Button */}
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        startIcon={<CloudUploadOutlined />}
+                        onClick={handleImportTransactions}
+                        sx={{
+                            borderRadius: "8px",
+                            textTransform: "none",
+                            fontWeight: 600,
+                            px: 2.5,
+                            py: 1.25,
+                        }}
+                    >
+                        Import Transactions
+                    </Button>
                 </Stack>
-                <TransactionCharts refreshKey={chartsKey} />
+
+                <TransactionsPanel
+                    loading={loading}
+                    transactions={transactions}
+                    onChanged={handleTransactionsChanged}
+                />
             </Stack>
         </Box>
     );
 }
-

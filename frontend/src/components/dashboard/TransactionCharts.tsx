@@ -11,11 +11,22 @@ import {
   Typography,
 } from "@mui/material";
 import type { Transaction } from "@/types/transaction";
-import { tintedGlass } from "@/theme/tintedGlass";
 import StatsRow from "./StatsRow";
 import SpendingTrendChart from "./SpendingTrendChart";
 import TopCategoriesChart from "./TopCategoriesChart";
 import TopMerchantsChart from "./TopMerchantsChart";
+import {
+  rootSx,
+  contentSx,
+  headerSx,
+  titleSx,
+  subtitleSx,
+  toggleButtonSx,
+  dividerSx,
+  loadingSx,
+  emptySx,
+  chartGridSx,
+} from "./TransactionCharts.styles";
 
 type RangeKey = "7d" | "30d" | "90d";
 type GroupKey = "day" | "week" | "month";
@@ -41,20 +52,6 @@ function formatGroupKey(date: Date, group: GroupKey) {
   const wdd = String(d2.getDate()).padStart(2, "0");
   return `Wk ${wyyyy}-${wmm}-${wdd}`;
 }
-
-const toggleSx = {
-  color: "rgba(255,255,255,0.5)",
-  borderColor: "rgba(255,255,255,0.1)",
-  fontWeight: 700,
-  fontSize: 12,
-  "&.Mui-selected": {
-    color: "#fff",
-    bgcolor: "rgba(255,107,0,0.25)",
-    borderColor: "rgba(255,107,0,0.4)",
-    "&:hover": { bgcolor: "rgba(255,107,0,0.35)" },
-  },
-  "&:hover": { bgcolor: "rgba(255,255,255,0.05)" },
-};
 
 interface TransactionChartsProps {
   refreshKey?: number;
@@ -146,32 +143,15 @@ export default function TransactionCharts({ refreshKey }: TransactionChartsProps
   }, [filtered]);
 
   return (
-      <Box
-          sx={{
-            ...tintedGlass,
-            borderRadius: "20px",
-            p: { xs: 2, md: 3 },
-            position: "relative",
-            overflow: "hidden",
-            "&::before": {
-              content: '""',
-              position: "absolute",
-              inset: 0,
-              borderRadius: "inherit",
-              background: "linear-gradient(135deg, rgba(255,255,255,0.07) 0%, transparent 60%)",
-              pointerEvents: "none",
-              zIndex: 0,
-            },
-          }}
-      >
-        <Box sx={{ position: "relative", zIndex: 1 }}>
+      <Box sx={rootSx}>
+        <Box sx={contentSx}>
           {/* Header */}
-          <Stack direction="row" alignItems="center" flexWrap="wrap" gap={2} sx={{ mb: 0 }}>
+          <Stack sx={headerSx}>
             <Box>
-              <Typography variant="h6" fontWeight={800} sx={{ color: "text.primary", letterSpacing: "-0.3px" }}>
+              <Typography variant="h6" sx={titleSx}>
                 Transaction Insights
               </Typography>
-              <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.4)" }}>
+              <Typography variant="body2" sx={subtitleSx}>
                 Trends and breakdowns for your spending.
               </Typography>
             </Box>
@@ -185,7 +165,7 @@ export default function TransactionCharts({ refreshKey }: TransactionChartsProps
                 size="small"
             >
               {(["7d", "30d", "90d"] as RangeKey[]).map((v) => (
-                  <ToggleButton key={v} value={v} sx={toggleSx}>{v}</ToggleButton>
+                  <ToggleButton key={v} value={v} sx={toggleButtonSx}>{v}</ToggleButton>
               ))}
             </ToggleButtonGroup>
 
@@ -196,30 +176,30 @@ export default function TransactionCharts({ refreshKey }: TransactionChartsProps
                 size="small"
             >
               {(["day", "week", "month"] as GroupKey[]).map((v) => (
-                  <ToggleButton key={v} value={v} sx={toggleSx}>
+                  <ToggleButton key={v} value={v} sx={toggleButtonSx}>
                     {v.charAt(0).toUpperCase() + v.slice(1)}
                   </ToggleButton>
               ))}
             </ToggleButtonGroup>
           </Stack>
 
-          <Divider sx={{ my: 2, borderColor: "rgba(255,255,255,0.08)" }} />
+          <Divider sx={dividerSx} />
 
           {loading ? (
-              <Box sx={{ py: 6, display: "flex", justifyContent: "center" }}>
+              <Box sx={loadingSx}>
                 <CircularProgress sx={{ color: "primary.main" }} />
               </Box>
           ) : error ? (
               <Typography color="error">{error}</Typography>
           ) : filtered.length === 0 ? (
-              <Typography sx={{ color: "rgba(255,255,255,0.4)" }}>
+              <Typography sx={emptySx}>
                 No transactions in this range.
               </Typography>
           ) : (
-              <Stack spacing={2}>
+              <Stack spacing={2.25}>
                 <StatsRow totalSpending={totalSpending} transactionCount={filtered.length} />
 
-                <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", lg: "2fr 1fr" }, gap: 2 }}>
+                <Box sx={chartGridSx}>
                   <SpendingTrendChart data={timeSeries} />
                   <TopCategoriesChart data={categoryData} />
                 </Box>

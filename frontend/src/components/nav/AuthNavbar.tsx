@@ -2,21 +2,41 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter, usePathname } from "next/navigation";
 import {
     Box,
-    Button,
     Typography,
     Menu,
     MenuItem,
     Divider,
 } from "@mui/material";
 import { KeyboardArrowDown, SettingsOutlined, LogoutOutlined } from "@mui/icons-material";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import FloatingNavbar from "@/components/layout/FloatingAppBar";
+import SegmentedControl from "@/components/SegmentedControl";
 
 export default function AuthNavbar() {
+    const router = useRouter();
+    const pathname = usePathname();
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
+
+    // Determine active segmented control based on current path
+    const activeNav = useMemo(() => {
+        if (pathname.includes("dashboard")) return "dashboard";
+        if (pathname.includes("transactions")) return "transactions";
+        if (pathname.includes("recurring")) return "recurring";
+        return "dashboard";
+    }, [pathname]);
+
+    const handleNavChange = (id: string) => {
+        const routes: Record<string, string> = {
+            dashboard: "/dashboard",
+            transactions: "/transactions",
+            recurring: "/recurring-bills",
+        };
+        router.push(routes[id]);
+    };
 
     const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
@@ -54,36 +74,29 @@ export default function AuthNavbar() {
                     fontWeight={700}
                     component={Link}
                     href="/dashboard"
-                    sx={{ textDecoration: "none", color: "text.primary" }}
+                    sx={{ textDecoration: "none", color: "primary.main" }}
                 >
-                    Forecast
+                    Forecast Financial
                 </Typography>
             </Box>
 
-            {/* Links + Avatar */}
-            <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
-                <Button
-                    component={Link}
-                    href="/dashboard"
-                    color="inherit"
-                    sx={{ borderRadius: "10px", color: "rgba(255,255,255,0.75)" }}
-                >
-                    Dashboard
-                </Button>
-                <Button
-                    component={Link}
-                    href="/accounts"
-                    color="inherit"
-                    sx={{ borderRadius: "10px", color: "rgba(255,255,255,0.75)" }}
-                >
-                    Accounts
-                </Button>
+            {/* Navigation Segmented Control + Avatar */}
+            <Box sx={{ display: "flex", gap: 3, alignItems: "center" }}>
+                {/* Segmented Control */}
+                <SegmentedControl
+                    items={[
+                        { id: "dashboard", label: "Dashboard" },
+                        { id: "transactions", label: "Transactions" },
+                        { id: "recurring", label: "Recurring Bills" },
+                    ]}
+                    activeId={activeNav}
+                    onChange={handleNavChange}
+                />
 
                 {/* Avatar + Arrow trigger */}
                 <Box
                     onClick={handleMenuOpen}
                     sx={{
-                        ml: 1,
                         display: "flex",
                         alignItems: "center",
                         gap: 0.5,
@@ -132,10 +145,12 @@ export default function AuthNavbar() {
                                 mt: 1,
                                 minWidth: 180,
                                 borderRadius: "14px",
-                                background: "linear-gradient(135deg, rgba(20,30,50,0.97), rgba(10,15,25,0.97))",
+                                bgcolor: "background.paper",
+                                color: "text.primary",
                                 backdropFilter: "blur(22px)",
                                 WebkitBackdropFilter: "blur(22px)",
-                                border: "1px solid rgba(255,255,255,0.08)",
+                                border: "1px solid",
+                                borderColor: "divider",
                                 boxShadow: "0 16px 40px rgba(0,0,0,0.5)",
                                 overflow: "hidden",
                             },
@@ -148,12 +163,12 @@ export default function AuthNavbar() {
                             gap: 1.5,
                             py: 1.25,
                             px: 2,
-                            color: "rgba(255,255,255,0.8)",
+                            color: "text.primary",
                             fontSize: 14,
                             fontWeight: 600,
                             "&:hover": {
-                                bgcolor: "rgba(255,255,255,0.06)",
-                                color: "#fff",
+                                bgcolor: "action.hover",
+                                color: "text.primary",
                             },
                         }}
                     >
@@ -161,7 +176,7 @@ export default function AuthNavbar() {
                         Settings
                     </MenuItem>
 
-                    <Divider sx={{ borderColor: "rgba(255,255,255,0.07)", mx: 1 }} />
+                    <Divider sx={{ borderColor: "divider", mx: 1 }} />
 
                     <MenuItem
                         onClick={handleLogout}
@@ -169,12 +184,12 @@ export default function AuthNavbar() {
                             gap: 1.5,
                             py: 1.25,
                             px: 2,
-                            color: "rgba(255,100,100,0.85)",
+                            color: "error.light",
                             fontSize: 14,
                             fontWeight: 600,
                             "&:hover": {
-                                bgcolor: "rgba(255,80,80,0.08)",
-                                color: "#ff6b6b",
+                                bgcolor: "action.hover",
+                                color: "error.main",
                             },
                         }}
                     >

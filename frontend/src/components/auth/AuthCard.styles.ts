@@ -1,0 +1,47 @@
+import { Theme } from "@mui/material/styles";
+
+export const getAuthCardStyles = (theme: Theme) => ({
+  page: {
+    minHeight: "100vh",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    px: { xs: theme.spacing(2), sm: theme.spacing(3) },
+    py: { xs: theme.spacing(6), sm: theme.spacing(8) },
+    backgroundColor: "background.default",
+    backgroundImage: theme.customTokens.surfaces.pageGradient,
+  },
+  form: {
+    position: "relative",
+    width: "100%",
+    maxWidth: 410,
+    minWidth: { xs: "auto", sm: 320 },
+    p: { xs: theme.spacing(2.5), sm: theme.spacing(3) },
+    display: "flex",
+    flexDirection: "column",
+    gap: theme.spacing(3),
+    borderRadius: `${theme.customTokens.radii.card}px`,
+    border: theme.customTokens.borders.subtle,
+    backgroundColor: theme.customTokens.surfaces.authCard,
+    backdropFilter: "blur(6px)",
+    WebkitBackdropFilter: "blur(6px)",
+    boxShadow: theme.customTokens.elevation.authCardInset,
+  },
+  content: {
+    display: "flex",
+    flexDirection: "column",
+    gap: theme.spacing(2),
+  },
+  footerLink: {
+    alignSelf: "flex-start",
+    color: theme.customTokens.text.link,
+    ...theme.typography.body1,
+    textDecoration: "underline",
+    textUnderlineOffset: "2px",
+    textDecorationColor: theme.customTokens.text.linkMuted,
+    "&:hover": {
+      textDecorationColor: theme.customTokens.text.link,
+      opacity: 0.9,
+    },
+  },
+});
