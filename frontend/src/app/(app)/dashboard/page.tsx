@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Box, Button, Stack, Typography, Container } from "@mui/material";
+import { Box, Button, Stack, Typography } from "@mui/material";
 import TransactionsPanel from "@/components/transactions/TransactionsPanel";
 import TransactionCharts from "@/components/dashboard/TransactionCharts";
 import type { Transaction } from "@/types/transaction";
@@ -60,8 +60,8 @@ export default function DashboardPage() {
     }
 
     return (
-        <Container maxWidth="lg" sx={{ py: 4 }}>
-            <Stack spacing={"32px !important"}>
+        <Box sx={{ width: "100%", px: { xs: 2, sm: 3, md: 4 }, py: 4 }}>
+            <Stack spacing={4} sx={{ width: "100%" }}>
                 {/* Header */}
                 <Stack direction="row" alignItems="center" justifyContent="space-between">
                     <Box>
@@ -79,10 +79,8 @@ export default function DashboardPage() {
                     transactions={transactions}
                     onChanged={handleTransactionsChanged}
                 />
-
-
             </Stack>
-        </Container>
+        </Box>
     );
 }
 
