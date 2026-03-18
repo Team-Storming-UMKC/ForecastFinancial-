@@ -26,6 +26,7 @@ export default function FloatingNavbar({ children, sx, ...props }: AppBarProps) 
             }}
         >
             <Toolbar
+                disableGutters
                 sx={{
                     borderRadius: "16px",
                     minHeight: "72px",
@@ -56,6 +57,7 @@ export default function FloatingNavbar({ children, sx, ...props }: AppBarProps) 
                         alignItems: "center",
                         justifyContent: "space-between",
                         pl: 3,
+                        pr: 1,
                         py: 1,
                         gap: 3,
                     }}
