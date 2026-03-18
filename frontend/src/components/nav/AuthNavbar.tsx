@@ -2,21 +2,41 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter, usePathname } from "next/navigation";
 import {
     Box,
-    Button,
     Typography,
     Menu,
     MenuItem,
     Divider,
 } from "@mui/material";
 import { KeyboardArrowDown, SettingsOutlined, LogoutOutlined } from "@mui/icons-material";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import FloatingNavbar from "@/components/layout/FloatingAppBar";
+import SegmentedControl from "@/components/SegmentedControl";
 
 export default function AuthNavbar() {
+    const router = useRouter();
+    const pathname = usePathname();
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
+
+    // Determine active segmented control based on current path
+    const activeNav = useMemo(() => {
+        if (pathname.includes("dashboard")) return "dashboard";
+        if (pathname.includes("transactions")) return "transactions";
+        if (pathname.includes("recurring")) return "recurring";
+        return "dashboard";
+    }, [pathname]);
+
+    const handleNavChange = (id: string) => {
+        const routes: Record<string, string> = {
+            dashboard: "/dashboard",
+            transactions: "/transactions",
+            recurring: "/recurring-bills",
+        };
+        router.push(routes[id]);
+    };
 
     const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
@@ -54,36 +74,29 @@ export default function AuthNavbar() {
                     fontWeight={700}
                     component={Link}
                     href="/dashboard"
-                    sx={{ textDecoration: "none", color: "text.primary" }}
+                    sx={{ textDecoration: "none", color: "primary.main" }}
                 >
-                    Forecast
+                    Forecast Financial
                 </Typography>
             </Box>
 
-            {/* Links + Avatar */}
-            <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
-                <Button
-                    component={Link}
-                    href="/dashboard"
-                    color="inherit"
-                    sx={{ borderRadius: "10px", color: "rgba(255,255,255,0.75)" }}
-                >
-                    Dashboard
-                </Button>
-                <Button
-                    component={Link}
-                    href="/accounts"
-                    color="inherit"
-                    sx={{ borderRadius: "10px", color: "rgba(255,255,255,0.75)" }}
-                >
-                    Accounts
-                </Button>
+            {/* Navigation Segmented Control + Avatar */}
+            <Box sx={{ display: "flex", gap: 3, alignItems: "center" }}>
+                {/* Segmented Control */}
+                <SegmentedControl
+                    items={[
+                        { id: "dashboard", label: "Dashboard" },
+                        { id: "transactions", label: "Transactions" },
+                        { id: "recurring", label: "Recurring Bills" },
+                    ]}
+                    activeId={activeNav}
+                    onChange={handleNavChange}
+                />
 
                 {/* Avatar + Arrow trigger */}
                 <Box
                     onClick={handleMenuOpen}
                     sx={{
-                        ml: 1,
                         display: "flex",
                         alignItems: "center",
                         gap: 0.5,
