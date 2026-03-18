@@ -1,6 +1,16 @@
-import { Theme } from "@mui/material/styles";
+import type { CSSProperties } from "react";
+import type { SxProps, Theme } from "@mui/material/styles";
 
-export const getBrandHeaderStyles = (theme: Theme) => ({
+type BrandHeaderStyles = {
+  root: SxProps<Theme>;
+  brandRow: SxProps<Theme>;
+  logo: SxProps<Theme>;
+  logoImage: CSSProperties;
+  brandText: SxProps<Theme>;
+  title: SxProps<Theme>;
+};
+
+export const getBrandHeaderStyles = (theme: Theme): BrandHeaderStyles => ({
   root: {
     display: "flex",
     flexDirection: "column",
@@ -21,11 +31,9 @@ export const getBrandHeaderStyles = (theme: Theme) => ({
     objectFit: "contain" as const,
   },
   brandText: {
-    ...theme.typography.h6,
     color: "primary.main",
   },
   title: {
-    ...theme.typography.h3,
     color: "text.primary",
     textAlign: "center",
   },
