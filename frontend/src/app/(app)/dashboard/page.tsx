@@ -73,14 +73,14 @@ export default function DashboardPage() {
                         </Typography>
                     </Box>
                 </Stack>
-
+                <TransactionCharts refreshKey={chartsKey} />
                 <TransactionsPanel
                     loading={loading}
                     transactions={transactions}
                     onChanged={handleTransactionsChanged}
                 />
 
-                <TransactionCharts refreshKey={chartsKey} />
+
             </Stack>
         </Container>
     );
