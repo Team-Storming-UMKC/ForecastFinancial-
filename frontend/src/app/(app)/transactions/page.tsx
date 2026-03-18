@@ -3,7 +3,7 @@
 import * as React from "react";
 import { Box, Button, Stack, Typography } from "@mui/material";
 import { CloudUploadOutlined } from "@mui/icons-material";
-import TransactionList from "@/components/transactions/TransactionList";
+import TransactionsPanel from "@/components/transactions/TransactionsPanel";
 import type { Transaction } from "@/types/transaction";
 
 export default function TransactionsPage() {
@@ -89,17 +89,10 @@ export default function TransactionsPage() {
                     </Button>
                 </Stack>
 
-                {/* Transactions List */}
-                <TransactionList
+                <TransactionsPanel
                     loading={loading}
                     transactions={transactions}
-                    onEdit={() => {
-                        // TODO: Implement edit functionality
-                    }}
-                    onDelete={() => {
-                        // TODO: Implement delete and reload
-                        void handleTransactionsChanged();
-                    }}
+                    onChanged={handleTransactionsChanged}
                 />
             </Stack>
         </Box>

@@ -4,7 +4,6 @@ import * as React from "react";
 import {
   Box,
   Button,
-  Chip,
   Dialog,
   DialogActions,
   DialogContent,
@@ -38,9 +37,7 @@ export default function TransactionsPanel({
   const { showToast } = useToast();
   const [editingTransaction, setEditingTransaction] = React.useState<Transaction | null>(null);
   const [transactionToDelete, setTransactionToDelete] = React.useState<Transaction | null>(null);
-
-  const incomeCount = transactions.filter((tx) => Number(tx.amount) > 0).length;
-  const expenseCount = transactions.filter((tx) => Number(tx.amount) < 0).length;
+  
 
   async function handleCreate(draft: TransactionDraft) {
     try {
