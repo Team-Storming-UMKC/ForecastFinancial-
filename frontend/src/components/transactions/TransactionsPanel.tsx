@@ -133,22 +133,24 @@ export default function TransactionsPanel({
           <Typography variant="h6" fontWeight={800}>
             Transactions
           </Typography>
-          <Typography color="text.secondary" sx={{ mt: 0.5 }}>
-            Keep entries clean and readable so your charts and summaries stay accurate.
-          </Typography>
         </Box>
 
         <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap">
-          <Chip label={`${transactions.length} total`} sx={{ bgcolor: "rgba(255,255,255,0.08)", color: "text.primary" }} />
-          <Chip label={`${incomeCount} income`} sx={{ bgcolor: "rgba(46, 125, 50, 0.18)", color: "success.light" }} />
-          <Chip label={`${expenseCount} expenses`} sx={{ bgcolor: "rgba(211, 47, 47, 0.18)", color: "error.light" }} />
           <Button variant="outlined" onClick={onChanged} disabled={loading}>
             Refresh
           </Button>
         </Stack>
       </Stack>
 
-      <Stack spacing={2}>
+      <Box
+        sx={(theme) => ({
+          display: "grid",
+          rowGap: theme.spacing(3),
+          [theme.breakpoints.up("md")]: {
+            rowGap: theme.spacing(4),
+          },
+        })}
+      >
         <TransactionForm
           onCreate={editingTransaction ? handleUpdate : handleCreate}
           initialDraft={editingTransaction ? toDraft(editingTransaction) : undefined}
@@ -171,7 +173,7 @@ export default function TransactionsPanel({
             setTransactionToDelete(tx);
           }}
         />
-      </Stack>
+      </Box>
 
       <Dialog
         open={Boolean(transactionToDelete)}
