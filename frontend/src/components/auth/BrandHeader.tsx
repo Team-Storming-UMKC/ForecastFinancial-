@@ -16,13 +16,9 @@ export default function BrandHeader({ title }: BrandHeaderProps) {
         <Box sx={styles.logo}>
           <Image src="/logo.svg" alt="Forecast Financial logo" fill style={styles.logoImage} />
         </Box>
-        <Typography variant="h6" sx={{ color: "primary.main" }}>
-          Forecast Financial
-        </Typography>
+        <Typography sx={styles.brandText}>Forecast Financial</Typography>
       </Box>
-      <Typography variant="h3" sx={{ color: "text.primary", textAlign: "center" }}>
-        {title}
-      </Typography>
+      <Typography sx={styles.title}>{title}</Typography>
     </Box>
   );
 }
