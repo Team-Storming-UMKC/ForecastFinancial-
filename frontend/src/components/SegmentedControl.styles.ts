@@ -1,14 +1,7 @@
 import { alpha } from "@mui/material/styles";
-import type { SxProps, Theme } from "@mui/material/styles";
+import type { Theme } from "@mui/material/styles";
 
-type SegmentedControlStyles = {
-  container: SxProps<Theme>;
-  indicator: SxProps<Theme>;
-  item: SxProps<Theme>;
-  itemActive: SxProps<Theme>;
-};
-
-export const getSegmentedControlStyles = (theme: Theme): SegmentedControlStyles => ({
+export const getSegmentedControlStyles = (theme: Theme) => ({
   container: {
     position: "relative",
     display: "flex",
@@ -24,7 +17,7 @@ export const getSegmentedControlStyles = (theme: Theme): SegmentedControlStyles 
     overflow: "hidden",
   },
   indicator: {
-    position: "absolute",
+    position: "absolute" as const,
     top: theme.spacing(0.5),
     left: 0,
     height: theme.spacing(4),
@@ -35,7 +28,7 @@ export const getSegmentedControlStyles = (theme: Theme): SegmentedControlStyles 
     zIndex: 0,
   },
   item: {
-    position: "relative",
+    position: "relative" as const,
     zIndex: 1,
     display: "flex",
     alignItems: "center",
@@ -44,12 +37,16 @@ export const getSegmentedControlStyles = (theme: Theme): SegmentedControlStyles 
     height: theme.spacing(4),
     borderRadius: theme.customTokens.radii.card,
     border: "none",
+    outline: "none",
     backgroundColor: "transparent",
     cursor: "pointer",
     transition: "color 0.3s ease, opacity 0.2s ease",
     typography: "body1",
     fontWeight: 500,
     color: theme.palette.text.primary,
+    appearance: "none",
+    WebkitAppearance: "none",
+
     "&:hover": {
       opacity: 0.8,
     },
