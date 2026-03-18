@@ -1,143 +1,205 @@
 "use client";
 
 import * as React from "react";
-import { Box, Button, Stack, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Stack,
+  Typography,
+} from "@mui/material";
 import TransactionForm, { TransactionDraft } from "./TransactionForm";
-import TransactionList, { Transaction } from "./TransactionList";
+import TransactionList from "./TransactionList";
+import type { Transaction } from "@/types/transaction";
 import { useToast } from "@/components/toast/ToastProvider";
 
-interface TransactionsPanelProps {
-    onDataChange?: () => void;
+function toDraft(tx: Transaction): TransactionDraft {
+  return {
+    merchantName: tx.merchantName,
+    amount: String(tx.amount),
+    date: tx.date,
+    category: tx.category,
+  };
 }
 
-export default function TransactionsPanel({ onDataChange }: TransactionsPanelProps) {
-    const { showToast } = useToast();
+export default function TransactionsPanel({
+  loading,
+  transactions,
+  onChanged,
+}: {
+  loading: boolean;
+  transactions: Transaction[];
+  onChanged: () => Promise<void> | void;
+}) {
+  const { showToast } = useToast();
+  const [editingTransaction, setEditingTransaction] = React.useState<Transaction | null>(null);
+  const [transactionToDelete, setTransactionToDelete] = React.useState<Transaction | null>(null);
+  
 
-    const [loading, setLoading] = React.useState(true);
-    const [transactions, setTransactions] = React.useState<Transaction[]>([]);
+  async function handleCreate(draft: TransactionDraft) {
+    try {
+      const r = await fetch("/api/transactions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          merchantName: draft.merchantName,
+          amount: Number(draft.amount),
+          date: draft.date,
+          category: draft.category,
+        }),
+      });
 
-    async function load() {
-        setLoading(true);
-        try {
-            const r = await fetch("/api/transactions", { cache: "no-store" });
-            if (!r.ok) {
-                const text = await r.text().catch(() => "");
-                throw new Error(text || `Failed to load (${r.status})`);
-            }
-            setTransactions((await r.json()) as Transaction[]);
-        } catch (e: unknown) {
-            const msg = e instanceof Error ? e.message : "Unexpected error occurred";
-            showToast(msg, { severity: "error" });
-        } finally {
-            setLoading(false);
-        }
+      if (!r.ok) {
+        const text = await r.text().catch(() => "");
+        throw new Error(text || `Create failed (${r.status})`);
+      }
+
+      showToast("Transaction added.", { severity: "success" });
+      await onChanged();
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : "Unexpected error occurred";
+      showToast(msg, { severity: "error" });
     }
+  }
 
-    React.useEffect(() => {
-        load();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+  async function handleUpdate(draft: TransactionDraft) {
+    if (!editingTransaction) return;
 
-    async function handleCreate(draft: TransactionDraft) {
-        try {
-            const r = await fetch("/api/transactions", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    merchantName: draft.merchantName,
-                    amount: Number(draft.amount),
-                    date: draft.date,
-                    category: draft.category,
-                }),
-            });
+    try {
+      const r = await fetch(`/api/transactions/${editingTransaction.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          merchantName: draft.merchantName,
+          amount: Number(draft.amount),
+          category: draft.category,
+          date: draft.date,
+        }),
+      });
 
-            if (!r.ok) {
-                const text = await r.text().catch(() => "");
-                throw new Error(text || `Create failed (${r.status})`);
-            }
+      if (!r.ok) {
+        const text = await r.text().catch(() => "");
+        throw new Error(text || `Update failed (${r.status})`);
+      }
 
-            showToast("Transaction added.", { severity: "success" });
-            await load();
-            onDataChange?.();
-        } catch (e: unknown) {
-            const msg = e instanceof Error ? e.message : "Unexpected error occurred";
-            showToast(msg, { severity: "error" });
-        }
+      setEditingTransaction(null);
+      showToast("Transaction updated.", { severity: "success" });
+      await onChanged();
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : "Unexpected error occurred";
+      showToast(msg, { severity: "error" });
     }
+  }
 
-    async function handleEdit(tx: Transaction) {
-        // dummy edit (easy to replace later with a dialog)
-        const newMerchant = window.prompt("Merchant name:", tx.merchantName);
-        if (newMerchant === null) return;
+  async function handleDeleteConfirmed() {
+    if (!transactionToDelete) return;
 
-        const newAmountStr = window.prompt("Amount:", String(tx.amount));
-        if (newAmountStr === null) return;
+    try {
+      const r = await fetch(`/api/transactions/${transactionToDelete.id}`, { method: "DELETE" });
+      if (!r.ok) {
+        const text = await r.text().catch(() => "");
+        throw new Error(text || `Delete failed (${r.status})`);
+      }
 
-        const newCategory = window.prompt("Category:", tx.category);
-        if (newCategory === null) return;
+      if (editingTransaction?.id === transactionToDelete.id) {
+        setEditingTransaction(null);
+      }
 
-        const newDate = window.prompt("Date (YYYY-MM-DD):", tx.date);
-        if (newDate === null) return;
-
-        try {
-            const r = await fetch(`/api/transactions/${tx.id}`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    merchantName: newMerchant,
-                    amount: Number(newAmountStr),
-                    category: newCategory,
-                    date: newDate,
-                }),
-            });
-
-            if (!r.ok) {
-                const text = await r.text().catch(() => "");
-                throw new Error(text || `Update failed (${r.status})`);
-            }
-
-            showToast("Transaction updated.", { severity: "success" });
-            await load();
-            onDataChange?.();
-        } catch (e: unknown) {
-            const msg = e instanceof Error ? e.message : "Unexpected error occurred";
-            showToast(msg, { severity: "error" });
-        }
+      setTransactionToDelete(null);
+      showToast("Transaction deleted.", { severity: "success" });
+      await onChanged();
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : "Unexpected error occurred";
+      showToast(msg, { severity: "error" });
     }
+  }
 
-    async function handleDelete(id: number) {
-        if (!window.confirm("Delete this transaction?")) return;
+  return (
+    <Box>
+      <Stack
+        direction={{ xs: "column", md: "row" }}
+        alignItems={{ xs: "flex-start", md: "center" }}
+        justifyContent="space-between"
+        sx={{ mb: 2 }}
+        spacing={1.5}
+      >
+        <Box>
+          <Typography variant="h6" fontWeight={800}>
+            Transactions
+          </Typography>
+        </Box>
 
-        try {
-            const r = await fetch(`/api/transactions/${id}`, { method: "DELETE" });
-            if (!r.ok) {
-                const text = await r.text().catch(() => "");
-                throw new Error(text || `Delete failed (${r.status})`);
-            }
-
-            showToast("Transaction deleted.", { severity: "success" });
-            await load();
-            onDataChange?.();
-        } catch (e: unknown) {
-            const msg = e instanceof Error ? e.message : "Unexpected error occurred";
-            showToast(msg, { severity: "error" });
-        }
-    }
-
-    return (
-        <Stack spacing={"25px !important"}>
-            <Stack direction="row" alignItems="center" justifyContent="space-between">
-                <Typography variant="h6" fontWeight={800}>
-                    Transactions
-                </Typography>
-                <Button variant="outlined" onClick={load} disabled={loading}>
-                    Refresh
-                </Button>
-            </Stack>
-
-            <TransactionForm onCreate={handleCreate} />
-
-            <TransactionList loading={loading} transactions={transactions} />
+        <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap">
+          <Button variant="outlined" onClick={onChanged} disabled={loading}>
+            Refresh
+          </Button>
         </Stack>
-    );
+      </Stack>
+
+      <Box
+        sx={(theme) => ({
+          display: "grid",
+          rowGap: theme.spacing(3),
+          [theme.breakpoints.up("md")]: {
+            rowGap: theme.spacing(4),
+          },
+        })}
+      >
+        <TransactionForm
+          onCreate={editingTransaction ? handleUpdate : handleCreate}
+          initialDraft={editingTransaction ? toDraft(editingTransaction) : undefined}
+          title={editingTransaction ? "Edit transaction" : "Add transaction"}
+          description={
+            editingTransaction
+              ? "Update the fields below and save when the transaction looks right."
+              : "Add a merchant, amount, date, and category. Suggested categories are there to speed things up."
+          }
+          submitLabel={editingTransaction ? "Save changes" : "Add transaction"}
+          onCancel={editingTransaction ? () => setEditingTransaction(null) : undefined}
+        />
+
+        <TransactionList
+          loading={loading}
+          transactions={transactions}
+          onEdit={(tx) => setEditingTransaction(tx)}
+          onDelete={(id) => {
+            const tx = transactions.find((item) => item.id === id) ?? null;
+            setTransactionToDelete(tx);
+          }}
+        />
+      </Box>
+
+      <Dialog
+        open={Boolean(transactionToDelete)}
+        onClose={() => setTransactionToDelete(null)}
+        PaperProps={{
+          sx: {
+            background: "rgba(28, 28, 30, 0.96)",
+            color: "text.primary",
+            border: "1px solid rgba(255,255,255,0.12)",
+            borderRadius: 3,
+            backdropFilter: "blur(24px)",
+          },
+        }}
+      >
+        <DialogTitle>Delete transaction?</DialogTitle>
+        <DialogContent>
+          <Typography color="text.secondary">
+            {transactionToDelete
+              ? `Remove ${transactionToDelete.merchantName} from ${transactionToDelete.date}.`
+              : "This action cannot be undone."}
+          </Typography>
+        </DialogContent>
+        <DialogActions sx={{ px: 3, pb: 2.5 }}>
+          <Button onClick={() => setTransactionToDelete(null)}>Cancel</Button>
+          <Button color="error" variant="contained" onClick={handleDeleteConfirmed}>
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </Box>
+  );
 }
