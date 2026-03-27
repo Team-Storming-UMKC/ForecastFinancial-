@@ -1,0 +1,1 @@
+export type HeroPhase = "storm" | "transition" | "sunny";
