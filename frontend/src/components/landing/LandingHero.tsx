@@ -115,13 +115,15 @@ export default function LandingHero() {
                     style={{
                         position: "absolute",
                         bottom: 40,
-                        left: "50%",
-                        transform: "translateX(-50%)",
+                        width: "100%",
+                        display: "flex",
+                        justifyContent: "center",
                         zIndex: 6,
-                        width: "min(92vw, 980px)",
                     }}
                 >
-                    <DashboardMockup />
+                    <div style={{ width: "min(92vw, 980px)" }}>
+                        <DashboardMockup />
+                    </div>
                 </motion.div>
             )}
         </Box>
