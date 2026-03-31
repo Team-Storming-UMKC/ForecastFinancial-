@@ -33,7 +33,7 @@ export default function SpendingTrendChart({
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="key" tickMargin={8} />
               <YAxis tickFormatter={(v) => `$${v}`} />
-              <Tooltip formatter={(value: ValueType) => formatMoney(Number(value))} />
+              <Tooltip formatter={(value: ValueType | undefined) => formatMoney(Number(value ?? 0))} />
               <Legend />
               <Line type="monotone" dataKey="spending" name="Spending" dot={false} strokeWidth={2} />
             </LineChart>

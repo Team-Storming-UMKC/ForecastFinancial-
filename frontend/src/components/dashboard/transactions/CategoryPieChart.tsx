@@ -28,7 +28,7 @@ export default function CategoryPieChart({
                   <Cell key={i} fill={colors[i % colors.length]} />
                 ))}
               </Pie>
-              <Tooltip formatter={(value: ValueType) => formatMoney(Number(value))} />
+              <Tooltip formatter={(value: ValueType | undefined) => formatMoney(Number(value ?? 0))} />
               <Legend />
             </PieChart>
           </ResponsiveContainer>

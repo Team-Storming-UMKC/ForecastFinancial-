@@ -24,7 +24,7 @@ export default function TopMerchantsBarChart({
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="name" hide />
               <YAxis tickFormatter={(v) => `$${v}`} />
-              <Tooltip formatter={(value: ValueType) => formatMoney(Number(value))} />
+              <Tooltip formatter={(value: ValueType | undefined) => formatMoney(Number(value ?? 0))} />
               <Legend />
               <Bar dataKey="value" name="Spending" />
             </BarChart>
