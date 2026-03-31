@@ -1,9 +1,9 @@
 "use client";
-
 import * as React from "react";
-import { Box, Button, Stack, Typography } from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
 import TransactionsPanel from "@/components/transactions/TransactionsPanel";
 import TransactionCharts from "@/components/dashboard/TransactionCharts";
+import RawDataInput from "@/components/dashboard/RawDataInput";
 import type { Transaction } from "@/types/transaction";
 
 export default function DashboardPage() {
@@ -19,14 +19,12 @@ export default function DashboardPage() {
             if (!res.ok) {
                 throw new Error(`Failed to load transactions (${res.status})`);
             }
-
             const data: unknown = await res.json();
             const nextTransactions = Array.isArray(data)
                 ? (data as Transaction[])
                 : Array.isArray((data as { transactions?: unknown })?.transactions)
                     ? ((data as { transactions: Transaction[] }).transactions)
                     : [];
-
             setTransactions(nextTransactions);
         } catch {
             setTransactions([]);
@@ -73,9 +71,13 @@ export default function DashboardPage() {
                         </Typography>
                     </Box>
                 </Stack>
+
+                {/* AI Data Import */}
+                <RawDataInput onExtractionComplete={handleTransactionsChanged} />
+
+                {/* Charts */}
                 <TransactionCharts refreshKey={chartsKey} />
             </Stack>
         </Box>
     );
 }
-
