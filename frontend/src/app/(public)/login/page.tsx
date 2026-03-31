@@ -35,7 +35,7 @@ export default function LoginPage() {
             }
 
             router.push("/dashboard");
-        } catch (err) {
+        } catch {
             setError("Login failed. Check your email and password.");
         } finally {
             setLoading(false);
