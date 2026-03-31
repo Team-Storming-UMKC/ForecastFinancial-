@@ -35,7 +35,7 @@ export default function RegisterPage() {
             }
 
             router.push("/login");
-        } catch (err) {
+        } catch {
             setError("Registration failed. Try a different email.");
         } finally {
             setLoading(false);
