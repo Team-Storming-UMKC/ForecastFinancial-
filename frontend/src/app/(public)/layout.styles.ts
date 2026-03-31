@@ -1,6 +1,4 @@
-import { Theme } from "@mui/material/styles";
-
-export const getPublicLayoutStyles = (theme: Theme) => ({
+export const getPublicLayoutStyles = () => ({
   root: {
     minHeight: "100vh",
     bgcolor: "background.default",

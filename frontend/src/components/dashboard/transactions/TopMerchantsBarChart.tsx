@@ -2,6 +2,7 @@
 
 import { Card, CardContent, Typography, Box } from "@mui/material";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, Legend } from "recharts";
+import type { ValueType } from "recharts/types/component/DefaultTooltipContent";
 
 export default function TopMerchantsBarChart({
   data,
@@ -23,7 +24,7 @@ export default function TopMerchantsBarChart({
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="name" hide />
               <YAxis tickFormatter={(v) => `$${v}`} />
-              <Tooltip formatter={(v: any) => formatMoney(Number(v))} />
+              <Tooltip formatter={(value: ValueType) => formatMoney(Number(value))} />
               <Legend />
               <Bar dataKey="value" name="Spending" />
             </BarChart>

@@ -2,6 +2,7 @@
 
 import { Card, CardContent, Typography, Box } from "@mui/material";
 import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
+import type { ValueType } from "recharts/types/component/DefaultTooltipContent";
 
 export default function CategoryPieChart({
   data,
@@ -27,7 +28,7 @@ export default function CategoryPieChart({
                   <Cell key={i} fill={colors[i % colors.length]} />
                 ))}
               </Pie>
-              <Tooltip formatter={(v: any) => formatMoney(Number(v))} />
+              <Tooltip formatter={(value: ValueType) => formatMoney(Number(value))} />
               <Legend />
             </PieChart>
           </ResponsiveContainer>

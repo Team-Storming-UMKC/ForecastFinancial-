@@ -1,6 +1,7 @@
 "use client";
 
 import { Card, CardContent, Typography, Box } from "@mui/material";
+import type { ValueType } from "recharts/types/component/DefaultTooltipContent";
 import {
   ResponsiveContainer,
   LineChart,
@@ -32,7 +33,7 @@ export default function SpendingTrendChart({
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="key" tickMargin={8} />
               <YAxis tickFormatter={(v) => `$${v}`} />
-              <Tooltip formatter={(v: any) => formatMoney(Number(v))} />
+              <Tooltip formatter={(value: ValueType) => formatMoney(Number(value))} />
               <Legend />
               <Line type="monotone" dataKey="spending" name="Spending" dot={false} strokeWidth={2} />
             </LineChart>

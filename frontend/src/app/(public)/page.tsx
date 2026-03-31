@@ -1,4 +1,3 @@
-import { Box, Typography } from "@mui/material";
 import LandingHero from "@/components/landing/LandingHero";
 
 export default function Home() {
