@@ -14,7 +14,7 @@ import type { Transaction } from "@/types/transaction";
 import StatsRow from "./StatsRow";
 import SpendingTrendChart from "./SpendingTrendChart";
 import TopCategoriesChart from "./TopCategoriesChart";
-import TopMerchantsChart from "./TopMerchantsChart";
+import SpendingPerCategoryChart from "./SpendingPerCategoryChart";
 import {
   rootSx,
   contentSx,
@@ -130,18 +130,6 @@ export default function TransactionCharts({ refreshKey }: TransactionChartsProps
       [filtered]
   );
 
-  const topMerchants = React.useMemo(() => {
-    const map = new Map<string, number>();
-    for (const t of filtered) {
-      const m = (t.merchantName || "Unknown").trim() || "Unknown";
-      map.set(m, (map.get(m) ?? 0) + Math.abs(Number(t.amount) || 0));
-    }
-    return Array.from(map.entries())
-        .map(([name, value]) => ({ name, value }))
-        .sort((a, b) => b.value - a.value)
-        .slice(0, 6);
-  }, [filtered]);
-
   return (
       <Box sx={rootSx}>
         <Box sx={contentSx}>
@@ -204,7 +192,7 @@ export default function TransactionCharts({ refreshKey }: TransactionChartsProps
                   <TopCategoriesChart data={categoryData} />
                 </Box>
 
-                <TopMerchantsChart data={topMerchants} />
+                <SpendingPerCategoryChart data={categoryData} />
               </Stack>
           )}
         </Box>
