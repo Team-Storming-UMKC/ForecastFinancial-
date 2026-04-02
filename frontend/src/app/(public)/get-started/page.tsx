@@ -3,35 +3,87 @@
 import * as React from "react";
 import { useRouter } from "next/navigation";
 import { Typography, useTheme } from "@mui/material";
+import AuthFieldGrid from "@/components/auth/AuthFieldGrid";
 import AuthCard from "@/components/auth/AuthCard";
+import AuthDateField from "@/components/auth/AuthDateField";
 import AuthInputField from "@/components/auth/AuthInputField";
 import { getRegisterPageStyles } from "./page.styles";
+
+function normalizeDateOfBirth(value: string) {
+    const digits = value.replace(/\D/g, "");
+
+    if (digits.length !== 8) {
+        return null;
+    }
+
+    const month = Number(digits.slice(0, 2));
+    const day = Number(digits.slice(2, 4));
+    const year = Number(digits.slice(4, 8));
+
+    const parsedDate = new Date(year, month - 1, day);
+    const isValidDate =
+        parsedDate.getFullYear() === year &&
+        parsedDate.getMonth() === month - 1 &&
+        parsedDate.getDate() === day;
+
+    if (!isValidDate) {
+        return null;
+    }
+
+    return `${year.toString().padStart(4, "0")}-${month
+        .toString()
+        .padStart(2, "0")}-${day.toString().padStart(2, "0")}`;
+}
 
 export default function RegisterPage() {
     const router = useRouter();
     const theme = useTheme();
     const styles = getRegisterPageStyles(theme);
 
+    const [firstName, setFirstName] = React.useState("");
+    const [lastName, setLastName] = React.useState("");
+    const [dateOfBirth, setDateOfBirth] = React.useState("");
     const [email, setEmail] = React.useState("");
     const [password, setPassword] = React.useState("");
+    const [confirmPassword, setConfirmPassword] = React.useState("");
     const [loading, setLoading] = React.useState(false);
     const [error, setError] = React.useState<string | null>(null);
 
-    async function handleRegister(e: React.FormEvent) {
+    async function handleRegister(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
         setError(null);
+
+        const normalizedDateOfBirth = normalizeDateOfBirth(dateOfBirth);
+
+        if (password !== confirmPassword) {
+            setError("Passwords do not match.");
+            return;
+        }
+
+        if (!normalizedDateOfBirth) {
+            setError("Enter date of birth as MMDDYYYY or MM/DD/YYYY.");
+            return;
+        }
+
         setLoading(true);
 
         try {
             const res = await fetch("/api/auth/register", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email, password }),
+                body: JSON.stringify({
+                    firstName,
+                    lastName,
+                    dateOfBirth: normalizedDateOfBirth,
+                    email,
+                    password,
+                }),
             });
 
             if (!res.ok) {
-                const t = await res.text();
-                throw new Error(t || "Registration failed");
+                const errorResponse = await res.json();
+                setError(errorResponse.message || "Registration failed");
+                return;
             }
 
             router.push("/login");
@@ -42,40 +94,81 @@ export default function RegisterPage() {
         }
     }
 
+
     return (
         <AuthCard
-            title="Create an account"
-            submitLabel="Create account"
+            title="Welcome back"
+            submitLabel="Sign Up"
             onSubmit={handleRegister}
             loading={loading}
             footerLink={{ label: "Already have an account? Sign in", href: "/login" }}
         >
-            <AuthInputField
-                fullWidth
-                type="email"
-                placeholder="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                autoComplete="email"
-                required
-            />
+                <AuthFieldGrid>
+                    <AuthInputField
+                        fullWidth
+                        placeholder="First Name*"
+                        value={firstName}
+                        onChange={(e) => setFirstName(e.target.value)}
+                        autoComplete="given-name"
+                        required
+                    />
 
-            <AuthInputField
-                fullWidth
-                type="password"
-                withPasswordToggle
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                autoComplete="new-password"
-                required
-            />
+                    <AuthInputField
+                        fullWidth
+                        placeholder="Last Name*"
+                        value={lastName}
+                        onChange={(e) => setLastName(e.target.value)}
+                        autoComplete="family-name"
+                        required
+                    />
+                </AuthFieldGrid>
 
-            {error && (
-                <Typography sx={styles.errorText}>
-                    {error}
-                </Typography>
-            )}
+                <AuthDateField
+                    fullWidth
+                    placeholder="Date of Birth (MM/DD/YY)*"
+                    value={dateOfBirth}
+                    onChange={setDateOfBirth}
+                    autoComplete="bday"
+                    required
+                />
+
+                <AuthInputField
+                    fullWidth
+                    type="email"
+                    placeholder="Email*"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    autoComplete="email"
+                    required
+                />
+
+                <AuthInputField
+                    fullWidth
+                    type="password"
+                    withPasswordToggle
+                    placeholder="Password*"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    autoComplete="new-password"
+                    required
+                />
+
+                <AuthInputField
+                    fullWidth
+                    type="password"
+                    withPasswordToggle
+                    placeholder="Confirm Password*"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    autoComplete="new-password"
+                    required
+                />
+
+                {error && (
+                    <Typography sx={styles.errorText}>
+                        {error}
+                    </Typography>
+                )}
         </AuthCard>
     );
 }
