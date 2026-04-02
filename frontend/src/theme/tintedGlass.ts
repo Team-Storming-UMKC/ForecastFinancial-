@@ -1,13 +1,13 @@
 export const tintedGlass = {
-  background: "rgba(28, 28, 30, 0.55)",
+  background: "rgba(255, 255, 255, 0.02)",
 
-  backdropFilter: "blur(30px) saturate(180%)",
-  WebkitBackdropFilter: "blur(30px) saturate(180%)",
+  backdropFilter: "blur(10px)",
+  WebkitBackdropFilter: "blur(10px)",
 
-  border: "1px solid rgba(255,255,255,0.12)",
+  border: "0.5px solid rgba(255, 255, 255, 0.05)",
 
   boxShadow: `
-    0 10px 30px rgba(0,0,0,0.35),
-    inset 0 1px 0 rgba(255,255,255,0.15)
+    inset 0 -2px 4px rgba(0, 0, 0, 0.20),
+    inset 0 2px 4px rgba(255, 255, 255, 0.25)
   `,
 };
