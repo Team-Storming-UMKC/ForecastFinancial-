@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Box, BoxProps, useTheme } from "@mui/material";
+import { Box, BoxProps, SxProps, Theme, useTheme } from "@mui/material";
 
 interface AuthFieldGridProps extends Omit<BoxProps, "children"> {
   children: React.ReactNode;
@@ -13,20 +13,21 @@ export default function AuthFieldGrid({
   ...props
 }: AuthFieldGridProps) {
   const theme = useTheme();
+  const baseSx: SxProps<Theme> = {
+    display: "grid",
+    gap: theme.spacing(2),
+    gridTemplateColumns: {
+      xs: "1fr",
+      sm: `repeat(${columns}, minmax(0, 1fr))`,
+    },
+  };
+  const mergedSx: SxProps<Theme> = sx
+    ? [baseSx, ...(Array.isArray(sx) ? sx : [sx])]
+    : baseSx;
 
   return (
     <Box
-      sx={[
-        {
-          display: "grid",
-          gap: theme.spacing(2),
-          gridTemplateColumns: {
-            xs: "1fr",
-            sm: `repeat(${columns}, minmax(0, 1fr))`,
-          },
-        },
-        sx,
-      ]}
+      sx={mergedSx}
       {...props}
     >
       {children}
