@@ -28,7 +28,7 @@ class transaction_service_test {
         userRepository = Mockito.mock(UserRepository.class);
         transactionService = new TransactionService(transactionRepository, userRepository);
 
-        mockUser = new User("user@example.com", "hashedpassword");
+        mockUser = new User("Test", "User", "user@example.com", "hashedpassword", LocalDate.of(2000, 1, 1));
         when(userRepository.findByEmail("user@example.com")).thenReturn(Optional.of(mockUser));
     }
 
@@ -98,7 +98,7 @@ class transaction_service_test {
 
     @Test
     void create_overridesClientProvidedUser() {
-        User fakeUser = new User("hacker@example.com", "hash");
+        User fakeUser = new User("Fake", "User", "hacker@example.com", "hash", LocalDate.of(2000, 1, 1));
         Transaction incoming = new Transaction("Amazon", new BigDecimal("10.00"), LocalDate.now(), "Shopping", fakeUser);
         when(transactionRepository.save(incoming)).thenReturn(incoming);
 
