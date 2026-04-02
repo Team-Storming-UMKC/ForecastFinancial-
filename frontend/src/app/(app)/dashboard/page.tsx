@@ -44,18 +44,7 @@ export default function DashboardPage() {
             setEmail(data.email);
         }
         void loadUser();
-        void loadTransactions();
     }, []);
-
-    async function handleTransactionsChanged() {
-        await loadTransactions();
-        setChartsKey((k) => k + 1);
-    }
-
-    async function handleLogout() {
-        await fetch("/api/auth/logout", { method: "POST" });
-        window.location.href = "/login";
-    }
 
     return (
         <Box sx={{ width: "100%", px: { xs: 2, sm: 3, md: 4 }, py: 4 }}>

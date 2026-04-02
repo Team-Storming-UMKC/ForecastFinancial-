@@ -20,6 +20,14 @@ interface RawDataInputProps {
     onExtractionComplete: () => Promise<void>;
 }
 
+interface ExtractResponseItem {
+    date?: string;
+    merchant?: string;
+    amount?: number;
+    category?: string;
+    confidence?: number;
+}
+
 export default function RawDataInput({ onExtractionComplete }: RawDataInputProps) {
     const [rawData, setRawData] = React.useState("");
     const [loading, setLoading] = React.useState(false);
@@ -39,19 +47,26 @@ export default function RawDataInput({ onExtractionComplete }: RawDataInputProps
 
             if (!res.ok) throw new Error("Extraction failed");
 
-            const data = await res.json();
+            const data: unknown = await res.json();
 
             const raw = Array.isArray(data) ? data : [data];
 
-            const transactions: ExtractedTransaction[] = raw.map((item: any, idx: number) => ({
+            const transactions: ExtractedTransaction[] = raw.map((item, idx: number) => {
+                const parsed =
+                    item && typeof item === "object"
+                        ? (item as ExtractResponseItem)
+                        : {};
+
+                return {
                 id: `tx-${idx}`,
-                date: item.date ?? new Date().toISOString().split("T")[0],
-                description: item.merchant ?? "Unknown",
-                amount: item.amount ?? 0,
-                category: item.category ?? undefined,
-                confidence: item.confidence ?? undefined,
+                date: parsed.date ?? new Date().toISOString().split("T")[0],
+                description: parsed.merchant ?? "Unknown",
+                amount: parsed.amount ?? 0,
+                category: parsed.category ?? undefined,
+                confidence: parsed.confidence ?? undefined,
                 status: "confirmed" as const,
-            }));
+                };
+            });
 
             const extractionResult: ExtractionResult = {
                 extractedAt: new Date().toISOString(),
