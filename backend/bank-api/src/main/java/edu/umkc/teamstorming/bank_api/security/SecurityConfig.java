@@ -40,6 +40,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                 .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
                 .requestMatchers(HttpMethod.GET, "/auth/me").permitAll()
+                .requestMatchers("/users/**").authenticated()
                 .requestMatchers("/api/**").authenticated()
                 .requestMatchers("/transactions/**").authenticated()
                 .requestMatchers("/api/data/extract").permitAll()

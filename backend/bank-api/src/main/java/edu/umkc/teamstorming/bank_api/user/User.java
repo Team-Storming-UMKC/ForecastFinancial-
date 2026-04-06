@@ -34,6 +34,9 @@ public class User {
     @Column(name = "date_of_birth", nullable = false)
     private LocalDate dateOfBirth;
 
+    @Column(name = "profile_picture_url", length = 1024)
+    private String profilePictureUrl;
+
     @Column(
             name = "created_at",
             updatable = false,
@@ -68,6 +71,9 @@ public class User {
 
     public LocalDate getDateOfBirth() { return dateOfBirth; }
     public void setDateOfBirth(LocalDate dateOfBirth) { this.dateOfBirth = dateOfBirth; }
+
+    public String getProfilePictureUrl() { return profilePictureUrl; }
+    public void setProfilePictureUrl(String profilePictureUrl) { this.profilePictureUrl = profilePictureUrl; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
 }
