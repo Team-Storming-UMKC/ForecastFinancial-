@@ -4,6 +4,9 @@ import edu.umkc.teamstorming.bank_api.user.User;
 import edu.umkc.teamstorming.bank_api.user.UserRepository;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import java.time.LocalDate;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -25,8 +28,11 @@ public class AuthController {
     }
 
     public record RegisterRequest(
+            @NotBlank String firstName,
+            @NotBlank String lastName,
             @NotBlank @Email String email,
-            @NotBlank String password
+            @NotBlank String password,
+            @NotNull LocalDate dateOfBirth
     ) {}
 
     public record LoginRequest(
@@ -35,7 +41,7 @@ public class AuthController {
     ) {}
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
+    public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request) {
         String email = request.email().toLowerCase().trim();
 
         if (userRepository.existsByEmail(email)) {
@@ -43,7 +49,15 @@ public class AuthController {
         }
 
         String hash = passwordEncoder.encode(request.password());
-        User user = new User(email, hash);
+
+        User user = new User(
+                request.firstName(),
+                request.lastName(),
+                email,
+                hash,
+                request.dateOfBirth()
+        );
+
         userRepository.save(user);
 
         return ResponseEntity.status(201).body(Map.of("status", "created"));

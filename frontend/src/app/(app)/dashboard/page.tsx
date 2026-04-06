@@ -1,11 +1,16 @@
 "use client";
-
 import * as React from "react";
 import { Box, Stack, Typography } from "@mui/material";
 import TransactionCharts from "@/components/dashboard/TransactionCharts";
+import RawDataInput from "@/components/dashboard/RawDataInput";
 
 export default function DashboardPage() {
     const [email, setEmail] = React.useState<string | null>(null);
+    const [chartsKey, setChartsKey] = React.useState(0);
+
+    const loadTransactions = React.useCallback(async () => {
+        setChartsKey((k) => k + 1);
+    }, []);
 
     React.useEffect(() => {
         async function loadUser() {
@@ -18,7 +23,12 @@ export default function DashboardPage() {
             setEmail(data.email);
         }
         void loadUser();
-    }, []);
+        void loadTransactions();
+    }, [loadTransactions]);
+
+    async function handleTransactionsChanged() {
+        await loadTransactions();
+    }
 
     return (
         <Box sx={{ width: "100%", px: { xs: 2, sm: 3, md: 4 }, py: 4 }}>
@@ -34,9 +44,13 @@ export default function DashboardPage() {
                         </Typography>
                     </Box>
                 </Stack>
-                <TransactionCharts />
+
+                {/* AI Data Import */}
+                <RawDataInput onExtractionComplete={handleTransactionsChanged} />
+
+                {/* Charts */}
+                <TransactionCharts refreshKey={chartsKey} />
             </Stack>
         </Box>
     );
 }
-

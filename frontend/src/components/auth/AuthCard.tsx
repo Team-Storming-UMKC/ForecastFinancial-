@@ -12,7 +12,7 @@ export interface AuthCardProps {
     /** Label for the submit button */
     submitLabel: string;
     /** Called when form is submitted */
-    onSubmit: (e: React.FormEvent) => void;
+    onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
     /** The form fields to render (inputs, checkboxes, etc.) */
     children: React.ReactNode;
     /** Optional footer link e.g. "Forgot password?" or "Already have an account?" */
