@@ -10,6 +10,7 @@ import org.mockito.Mockito;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.time.LocalDate;
 import java.util.Map;
 import java.util.Optional;
 
@@ -38,7 +39,13 @@ class AuthControllerTest {
         when(userRepository.existsByEmail("newuser@example.com")).thenReturn(false);
         when(passwordEncoder.encode("password123")).thenReturn("hashedpassword");
 
-        var request = new AuthController.RegisterRequest("newuser@example.com", "password123");
+        var request = new AuthController.RegisterRequest(
+                "New",
+                "User",
+                "newuser@example.com",
+                "password123",
+                LocalDate.of(2000, 1, 1)
+        );
         ResponseEntity<?> response = authController.register(request);
 
         assertEquals(201, response.getStatusCode().value());
@@ -49,7 +56,13 @@ class AuthControllerTest {
     void register_duplicateEmail_returns409() {
         when(userRepository.existsByEmail("existing@example.com")).thenReturn(true);
 
-        var request = new AuthController.RegisterRequest("existing@example.com", "password123");
+        var request = new AuthController.RegisterRequest(
+                "Existing",
+                "User",
+                "existing@example.com",
+                "password123",
+                LocalDate.of(2000, 1, 1)
+        );
         ResponseEntity<?> response = authController.register(request);
 
         assertEquals(409, response.getStatusCode().value());
@@ -61,7 +74,13 @@ class AuthControllerTest {
         when(userRepository.existsByEmail("upper@example.com")).thenReturn(false);
         when(passwordEncoder.encode(any())).thenReturn("hashed");
 
-        var request = new AuthController.RegisterRequest("UPPER@example.com", "password123");
+        var request = new AuthController.RegisterRequest(
+                "Upper",
+                "Case",
+                "UPPER@example.com",
+                "password123",
+                LocalDate.of(2000, 1, 1)
+        );
         authController.register(request);
 
         verify(userRepository).existsByEmail("upper@example.com");
@@ -71,7 +90,7 @@ class AuthControllerTest {
 
     @Test
     void login_success_returnsToken() {
-        User mockUser = new User("user@example.com", "hashedpassword");
+        User mockUser = new User("Test", "User", "user@example.com", "hashedpassword", LocalDate.of(2000, 1, 1));
         when(userRepository.findByEmail("user@example.com")).thenReturn(Optional.of(mockUser));
         when(passwordEncoder.matches("password123", "hashedpassword")).thenReturn(true);
         when(tokenService.issueToken("user@example.com")).thenReturn("mock.jwt.token");
@@ -85,7 +104,7 @@ class AuthControllerTest {
 
     @Test
     void login_wrongPassword_returns401() {
-        User mockUser = new User("user@example.com", "hashedpassword");
+        User mockUser = new User("Test", "User", "user@example.com", "hashedpassword", LocalDate.of(2000, 1, 1));
         when(userRepository.findByEmail("user@example.com")).thenReturn(Optional.of(mockUser));
         when(passwordEncoder.matches("wrongpassword", "hashedpassword")).thenReturn(false);
 
