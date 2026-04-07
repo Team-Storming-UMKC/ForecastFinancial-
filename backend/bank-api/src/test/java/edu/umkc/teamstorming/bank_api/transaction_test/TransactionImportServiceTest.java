@@ -3,6 +3,7 @@ package edu.umkc.teamstorming.bank_api.transaction;
 import edu.umkc.teamstorming.bank_api.ai.AiClientService;
 import edu.umkc.teamstorming.bank_api.ai.LmStudioParser;
 import edu.umkc.teamstorming.bank_api.dto.CsvImportResultDto;
+import edu.umkc.teamstorming.bank_api.dto.TextExtractRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -14,6 +15,7 @@ import java.time.LocalDate;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -95,5 +97,31 @@ class TransactionImportServiceTest {
 
         assertEquals(1, result.failedRows());
         assertEquals("Invalid amount", result.results().getFirst().message());
+    }
+
+    @Test
+    void importText_savesValidTransaction() {
+        TextExtractRequest request = new TextExtractRequest();
+        request.setText("I spent 60 dollars at Gas Station today");
+        Transaction saved = new Transaction("Gas Station", new BigDecimal("60.0"),
+                LocalDate.of(2022, 1, 2), "Auto & transport", null);
+
+        when(aiClientService.extractFinancialEntities(any())).thenReturn("""
+                [{"amount":60.0,"currency":"USD","date":"2022-01-02","merchant":"Gas Station","category":"Auto & transport","note":null,"confidence":0.97}]
+                """);
+        when(transactionService.create(any(), any(Transaction.class))).thenReturn(saved);
+
+        Transaction result = transactionImportService.importText("user@example.com", request);
+
+        assertEquals("Gas Station", result.getMerchantName());
+        verify(transactionService).create(any(), any(Transaction.class));
+    }
+
+    @Test
+    void importText_rejectsBlankText() {
+        TextExtractRequest request = new TextExtractRequest();
+        request.setText("   ");
+
+        assertThrows(RuntimeException.class, () -> transactionImportService.importText("user@example.com", request));
     }
 }

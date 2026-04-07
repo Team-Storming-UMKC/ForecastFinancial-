@@ -91,7 +91,7 @@ public class AiClientService {
 
             Always return a JSON array, even if there is only one transaction.
             
-            If a field is not present or cannot be confidently determined, use null (not an empty string).
+            For CSV import, do not return null for date, amount, merchant, or category. If you cannot determine all required fields confidently, return an empty JSON array instead.
             
             Normalize amount to a number (use negative for spending, positive for income if direction is stated).
             

@@ -1,6 +1,7 @@
 package edu.umkc.teamstorming.bank_api.transaction;
 
 import edu.umkc.teamstorming.bank_api.dto.CsvImportResultDto;
+import edu.umkc.teamstorming.bank_api.dto.TextExtractRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.bind.annotation.*;
@@ -33,6 +34,11 @@ public class TransactionController {
     @PostMapping("/import-csv")
     public CsvImportResultDto importCsv(@RequestParam("file") MultipartFile file, Authentication auth) {
         return transactionImportService.importCsv(auth.getName(), file);
+    }
+
+    @PostMapping("/from-text")
+    public Transaction createFromText(@RequestBody TextExtractRequest request, Authentication auth) {
+        return transactionImportService.importText(auth.getName(), request);
     }
 
     @PutMapping("/{id}")

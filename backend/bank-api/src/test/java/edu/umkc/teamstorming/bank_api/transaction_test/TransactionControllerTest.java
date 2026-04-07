@@ -1,6 +1,7 @@
 package edu.umkc.teamstorming.bank_api.transaction_test;
 import edu.umkc.teamstorming.bank_api.dto.CsvImportResultDto;
 import edu.umkc.teamstorming.bank_api.dto.CsvImportRowResultDto;
+import edu.umkc.teamstorming.bank_api.dto.TextExtractRequest;
 import edu.umkc.teamstorming.bank_api.transaction.Transaction;
 import edu.umkc.teamstorming.bank_api.transaction.TransactionController;
 import edu.umkc.teamstorming.bank_api.transaction.TransactionImportService;
@@ -92,6 +93,20 @@ class TransactionControllerTest {
         assertEquals(1, result.totalRows());
         assertEquals(1, result.importedRows());
         verify(transactionImportService).importCsv("user@example.com", file);
+    }
+
+    @Test
+    void createFromText_returnsSavedTransaction() {
+        TextExtractRequest request = new TextExtractRequest();
+        request.setText("I spent 60 dollars at Gas Station today");
+        Transaction saved = new Transaction("Gas Station", new BigDecimal("60.00"),
+                LocalDate.of(2026, 4, 7), "Auto & transport", null);
+        when(transactionImportService.importText("user@example.com", request)).thenReturn(saved);
+
+        Transaction result = transactionController.createFromText(request, auth);
+
+        assertEquals("Gas Station", result.getMerchantName());
+        verify(transactionImportService).importText("user@example.com", request);
     }
 
     // ─── UPDATE TESTS ─────────────────────────────────────────────
