@@ -8,6 +8,7 @@ import {
     Typography,
     Stack,
     CircularProgress,
+    Alert,
 } from "@mui/material";
 import AutoFixHighIcon from "@mui/icons-material/AutoFixHigh";
 import ExtractionResultDisplay, {
@@ -32,11 +33,13 @@ export default function RawDataInput({ onExtractionComplete }: RawDataInputProps
     const [rawData, setRawData] = React.useState("");
     const [loading, setLoading] = React.useState(false);
     const [result, setResult] = React.useState<ExtractionResult | null>(null);
+    const [error, setError] = React.useState<string | null>(null);
 
     const handleExtract = async () => {
         if (!rawData.trim()) return;
         setLoading(true);
         setResult(null);
+        setError(null);
 
         try {
             const res = await fetch("/api/ai/extract", {
@@ -45,10 +48,20 @@ export default function RawDataInput({ onExtractionComplete }: RawDataInputProps
                 headers: { "Content-Type": "application/json" },
             });
 
-            if (!res.ok) throw new Error("Extraction failed");
+            if (!res.ok) {
+                let message = "Failed to process data.";
+                try {
+                    const errBody = await res.json();
+                    if (errBody?.message) message = errBody.message;
+                } catch {
+                    // ignore parse errors
+                }
+                setError(message);
+                return;
+            }
 
-            const data: unknown = await res.json();
-
+            // Conflict Resolved: We are using the newer logic from the feature branch
+            const data = await res.json();
             const raw = Array.isArray(data) ? data : [data];
 
             const transactions: ExtractedTransaction[] = raw.map((item, idx: number) => {
@@ -58,13 +71,13 @@ export default function RawDataInput({ onExtractionComplete }: RawDataInputProps
                         : {};
 
                 return {
-                id: `tx-${idx}`,
-                date: parsed.date ?? new Date().toISOString().split("T")[0],
-                description: parsed.merchant ?? "Unknown",
-                amount: parsed.amount ?? 0,
-                category: parsed.category ?? undefined,
-                confidence: parsed.confidence ?? undefined,
-                status: "confirmed" as const,
+                    id: `tx-${idx}`,
+                    date: parsed.date ?? new Date().toISOString().split("T")[0],
+                    description: parsed.merchant ?? "Unknown",
+                    amount: parsed.amount ?? 0,
+                    category: parsed.category ?? undefined,
+                    confidence: parsed.confidence ?? undefined,
+                    status: "confirmed" as const,
                 };
             });
 
@@ -77,9 +90,9 @@ export default function RawDataInput({ onExtractionComplete }: RawDataInputProps
             setResult(extractionResult);
             setRawData("");
             await onExtractionComplete();
-        } catch (error) {
-            console.error("AI Extraction Error:", error);
-            alert("Failed to process data. Please check the AI engine connection.");
+        } catch (err) {
+            console.error("AI Extraction Error:", err);
+            setError("Could not connect to the AI engine. Please check the connection and try again.");
         } finally {
             setLoading(false);
         }
@@ -89,7 +102,6 @@ export default function RawDataInput({ onExtractionComplete }: RawDataInputProps
 
     return (
         <Stack spacing={3}>
-            {/* ── Input Card ── */}
             <Box
                 sx={{
                     ...tintedGlass,
@@ -117,6 +129,22 @@ export default function RawDataInput({ onExtractionComplete }: RawDataInputProps
                             Paste your raw bank activity or financial statements below.
                         </Typography>
                     </Box>
+
+                    {error && (
+                        <Alert
+                            severity="error"
+                            onClose={() => setError(null)}
+                            sx={{
+                                bgcolor: "rgba(211,47,47,0.15)",
+                                color: "rgba(255,255,255,0.9)",
+                                border: "1px solid rgba(211,47,47,0.4)",
+                                "& .MuiAlert-icon": { color: "#f44336" },
+                                "& .MuiIconButton-root": { color: "rgba(255,255,255,0.5)" },
+                            }}
+                        >
+                            {error}
+                        </Alert>
+                    )}
 
                     <TextField
                         multiline
@@ -156,8 +184,8 @@ export default function RawDataInput({ onExtractionComplete }: RawDataInputProps
                     <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2 }}>
                         <Button
                             variant="text"
-                            onClick={() => { setRawData(""); setResult(null); }}
-                            disabled={loading || (!rawData && !result)}
+                            onClick={() => { setRawData(""); setResult(null); setError(null); }}
+                            disabled={loading || (!rawData && !result && !error)}
                             sx={{
                                 color: "rgba(255,255,255,0.5)",
                                 "&:hover": { color: "rgba(255,255,255,0.8)" },
@@ -192,7 +220,6 @@ export default function RawDataInput({ onExtractionComplete }: RawDataInputProps
                 </Stack>
             </Box>
 
-            {/* ── Results ── */}
             <ExtractionResultDisplay result={result} onDismiss={handleDismiss} />
         </Stack>
     );
