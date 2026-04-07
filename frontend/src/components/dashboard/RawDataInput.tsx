@@ -39,7 +39,7 @@ export default function RawDataInput({ onExtractionComplete }: RawDataInputProps
         setResult(null);
 
         try {
-            const res = await fetch("/api/ai/extract", {
+            const res = await fetch("/api/transactions/from-text", {
                 method: "POST",
                 body: JSON.stringify({ text: rawData }),
                 headers: { "Content-Type": "application/json" },

@@ -17,6 +17,7 @@ import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,12 +56,26 @@ public class TransactionImportService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "text is required");
         }
 
-        CsvImportRowResultDto result = importRow(email, new CsvRow(1, request.getText()));
-        if (!result.imported()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, result.message());
-        }
+        try {
+            String aiJson = aiClientService.extractFinancialEntities(request.getText());
+            List<ExtractedFinancialEntitiesDto> extractedItems = lmStudioParser.readEntitiesJsonList(aiJson);
 
-        return result.transaction();
+            if (extractedItems.isEmpty()) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "AI did not return any transactions");
+            }
+
+            if (extractedItems.size() > 1) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "AI returned multiple transactions for one text entry");
+            }
+
+            Transaction transaction = toTransactionForText(extractedItems.getFirst());
+            return transactionService.create(email, transaction);
+        } catch (ResponseStatusException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
+        }
     }
 
     private CsvImportRowResultDto importRow(String email, CsvRow row) {
@@ -98,6 +113,17 @@ public class TransactionImportService {
         return transaction;
     }
 
+    private Transaction toTransactionForText(ExtractedFinancialEntitiesDto extracted) {
+        validateExtractedTransactionForText(extracted);
+
+        Transaction transaction = new Transaction();
+        transaction.setDate(parseDateOrToday(extracted.date()));
+        transaction.setAmount(parseAmount(extracted.amount()));
+        transaction.setMerchantName(extracted.merchant());
+        transaction.setCategory(extracted.category());
+        return transaction;
+    }
+
     private void validateExtractedTransaction(ExtractedFinancialEntitiesDto extracted) {
         if (extracted == null) {
             throw new IllegalArgumentException("AI returned an empty transaction");
@@ -116,8 +142,34 @@ public class TransactionImportService {
         }
     }
 
+    private void validateExtractedTransactionForText(ExtractedFinancialEntitiesDto extracted) {
+        if (extracted == null) {
+            throw new IllegalArgumentException("AI returned an empty transaction");
+        }
+        if (extracted.amount() == null) {
+            throw new IllegalArgumentException("AI returned null amount");
+        }
+        if (extracted.merchant() == null || extracted.merchant().isBlank()) {
+            throw new IllegalArgumentException("AI returned null merchant");
+        }
+        if (extracted.category() == null || extracted.category().isBlank()) {
+            throw new IllegalArgumentException("AI returned null category");
+        }
+    }
+
     private LocalDate parseDate(String value) {
         return value == null || value.isBlank() ? null : LocalDate.parse(value);
+    }
+
+    private LocalDate parseDateOrToday(String value) {
+        if (value == null || value.isBlank()) {
+            return LocalDate.now();
+        }
+        try {
+            return LocalDate.parse(value);
+        } catch (DateTimeParseException ex) {
+            return LocalDate.now();
+        }
     }
 
     private BigDecimal parseAmount(Double value) {
