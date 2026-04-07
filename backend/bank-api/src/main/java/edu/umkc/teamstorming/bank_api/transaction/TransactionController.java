@@ -1,6 +1,8 @@
 package edu.umkc.teamstorming.bank_api.transaction;
 
+import edu.umkc.teamstorming.bank_api.dto.CsvImportResultDto;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -10,9 +12,12 @@ import java.util.List;
 public class TransactionController {
 
     private final TransactionService transactionService;
+    private final TransactionImportService transactionImportService;
 
-    public TransactionController(TransactionService transactionService) {
+    public TransactionController(TransactionService transactionService,
+                                 TransactionImportService transactionImportService) {
         this.transactionService = transactionService;
+        this.transactionImportService = transactionImportService;
     }
 
     @GetMapping
@@ -23,6 +28,11 @@ public class TransactionController {
     @PostMapping
     public Transaction create(@RequestBody Transaction transaction, Authentication auth) {
         return transactionService.create(auth.getName(), transaction);
+    }
+
+    @PostMapping("/import-csv")
+    public CsvImportResultDto importCsv(@RequestParam("file") MultipartFile file, Authentication auth) {
+        return transactionImportService.importCsv(auth.getName(), file);
     }
 
     @PutMapping("/{id}")
