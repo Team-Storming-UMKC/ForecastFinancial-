@@ -55,6 +55,10 @@ public class LmStudioParser {
     }
 
     public List<ExtractedFinancialEntitiesDto> readEntitiesJsonList(String content) {
+        if (content == null) {
+            throw new IllegalArgumentException("Model content was null");
+        }
+
         String cleaned = stripCodeFences(content);
 
         try {
