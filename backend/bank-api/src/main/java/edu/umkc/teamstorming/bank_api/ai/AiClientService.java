@@ -83,13 +83,15 @@ public class AiClientService {
             You are a financial information extraction engine.
 
             TASK
-            Given a user-provided raw text describing a financial transaction, extract key entities and return ONLY a single JSON object that matches the schema below. Do not include any extra keys. Do not include markdown. Do not include explanations. Output must be valid JSON.
+            Given user-provided raw text describing one or more financial transactions, extract key entities and return ONLY a JSON array that matches the schema below. Do not include any extra keys. Do not include markdown. Do not include explanations. Output must be valid JSON.
             
             RULES
             
             Output MUST be valid JSON and nothing else.
+
+            Always return a JSON array, even if there is only one transaction.
             
-            If a field is not present or cannot be confidently determined, use null (not an empty string).
+            For CSV import, do not return null for date, amount, merchant, or category. If you cannot determine all required fields confidently, return an empty JSON array instead.
             
             Normalize amount to a number (use negative for spending, positive for income if direction is stated).
             
@@ -99,22 +101,40 @@ public class AiClientService {
             
             Merchant should be the best merchant/payee name; otherwise null.
             
-            Category should be a short label if inferable; otherwise null.
+            Category must be one of these exact values if inferable:
+            Auto & transport
+            Shopping
+            Healthcare
+            Drinks & dining
+            Other
+            Entertainment
+            Groceries
+            Kids
+            Family
+            Childcare & education
+            Household
+            Financial
+            Taxes
+            Personal care
+            Travel & vacation
+            If unsure, use "Other".
             
             Confidence must be a number from 0 to 1 indicating overall confidence.
             
             Never hallucinate. Prefer null when unsure.
             
-            JSON SCHEMA (return exactly this shape)
-            {
-             "amount": null,
-             "currency": null,
-             "date": null,
-             "merchant": null,
-             "category": null,
-             "note": null,
-             "confidence": 0
-            }
+            JSON SCHEMA (return exactly this array shape)
+            [
+              {
+                "amount": null,
+                "currency": null,
+                "date": null,
+                "merchant": null,
+                "category": null,
+                "note": null,
+                "confidence": 0
+              }
+            ]
                 """;
 
         LmStudioChatRequest req = new LmStudioChatRequest(

@@ -3,6 +3,7 @@
 import * as React from "react";
 import { Box, Button, Stack, Typography } from "@mui/material";
 import { CloudUploadOutlined } from "@mui/icons-material";
+import CsvImportDialog from "@/components/transactions/CsvImportDialog";
 import TransactionsPanel from "@/components/transactions/TransactionsPanel";
 import type { Transaction } from "@/types/transaction";
 
@@ -10,6 +11,7 @@ export default function TransactionsPage() {
     const [email, setEmail] = React.useState<string | null>(null);
     const [loading, setLoading] = React.useState(true);
     const [transactions, setTransactions] = React.useState<Transaction[]>([]);
+    const [isImportDialogOpen, setIsImportDialogOpen] = React.useState(false);
 
     const loadTransactions = React.useCallback(async () => {
         setLoading(true);
@@ -48,11 +50,6 @@ export default function TransactionsPage() {
         void loadTransactions();
     }, [loadTransactions]);
 
-    const handleImportTransactions = async () => {
-        // TODO: Implement import transactions functionality
-        console.log("Import transactions clicked");
-    };
-
     async function handleTransactionsChanged() {
         await loadTransactions();
     }
@@ -76,7 +73,7 @@ export default function TransactionsPage() {
                         variant="contained"
                         color="primary"
                         startIcon={<CloudUploadOutlined />}
-                        onClick={handleImportTransactions}
+                        onClick={() => setIsImportDialogOpen(true)}
                         sx={{
                             borderRadius: "8px",
                             textTransform: "none",
@@ -95,6 +92,13 @@ export default function TransactionsPage() {
                     onChanged={handleTransactionsChanged}
                 />
             </Stack>
+
+            <CsvImportDialog
+                open={isImportDialogOpen}
+                onClose={() => setIsImportDialogOpen(false)}
+                onImported={handleTransactionsChanged}
+                endpoint="/api/transactions/import-csv"
+            />
         </Box>
     );
 }

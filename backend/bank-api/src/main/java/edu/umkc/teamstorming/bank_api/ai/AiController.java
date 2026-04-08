@@ -4,6 +4,8 @@ import edu.umkc.teamstorming.bank_api.dto.ExtractedFinancialEntitiesDto;
 import edu.umkc.teamstorming.bank_api.dto.TextExtractRequest;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/ai")
 public class AiController {
@@ -28,11 +30,11 @@ public class AiController {
      * @return structured financial entity data
      */
     @PostMapping("/extract")
-    public ExtractedFinancialEntitiesDto extractFinancialEntities(@RequestBody TextExtractRequest request) {
+    public List<ExtractedFinancialEntitiesDto> extractFinancialEntities(@RequestBody TextExtractRequest request) {
         // 1. Call AI service with system prompt to get JSON response
         String aiJsonContent = aiClientService.extractFinancialEntities(request.getText());
 
         // 2. Parse the AI's JSON response into our DTO
-        return lmStudioParser.readEntitiesJson(aiJsonContent);
+        return lmStudioParser.readEntitiesJsonList(aiJsonContent);
     }
 }
