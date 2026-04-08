@@ -21,7 +21,9 @@ interface RawDataInputProps {
 }
 
 interface ExtractResponseItem {
+    id?: number;
     date?: string;
+    merchantName?: string;
     merchant?: string;
     amount?: number;
     category?: string;
@@ -39,7 +41,7 @@ export default function RawDataInput({ onExtractionComplete }: RawDataInputProps
         setResult(null);
 
         try {
-            const res = await fetch("/api/ai/extract", {
+            const res = await fetch("/api/transactions/from-text", {
                 method: "POST",
                 body: JSON.stringify({ text: rawData }),
                 headers: { "Content-Type": "application/json" },
@@ -58,9 +60,9 @@ export default function RawDataInput({ onExtractionComplete }: RawDataInputProps
                         : {};
 
                 return {
-                id: `tx-${idx}`,
+                id: String(parsed.id ?? `tx-${idx}`),
                 date: parsed.date ?? new Date().toISOString().split("T")[0],
-                description: parsed.merchant ?? "Unknown",
+                description: parsed.merchantName ?? parsed.merchant ?? "Unknown",
                 amount: parsed.amount ?? 0,
                 category: parsed.category ?? undefined,
                 confidence: parsed.confidence ?? undefined,

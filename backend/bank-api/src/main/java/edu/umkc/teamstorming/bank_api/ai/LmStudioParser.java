@@ -1,10 +1,13 @@
 package edu.umkc.teamstorming.bank_api.ai;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import edu.umkc.teamstorming.bank_api.dto.LmStudioChatResponse;
 import edu.umkc.teamstorming.bank_api.dto.ExtractedFinancialEntitiesDto;
+import edu.umkc.teamstorming.bank_api.dto.LmStudioChatResponse;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class LmStudioParser {
@@ -19,13 +22,8 @@ public class LmStudioParser {
      * @param lmStudioRawJson the full JSON response from LM Studio (as a String)
      */
     public ExtractedFinancialEntitiesDto parseEntities(String lmStudioRawJson) {
-        // 1) Map full LM Studio JSON -> DTO
         LmStudioChatResponse resp = readLmStudioResponse(lmStudioRawJson);
-
-        // 2) Extract content string
         String content = extractContent(resp);
-
-        // 3) The content should be JSON-only (from your system prompt). Parse it -> your DTO
         return readEntitiesJson(content);
     }
 
@@ -49,11 +47,23 @@ public class LmStudioParser {
     }
 
     public ExtractedFinancialEntitiesDto readEntitiesJson(String content) {
-        // Optional safety: remove ```json fences if the model ever violates your “JSON only” rule
+        List<ExtractedFinancialEntitiesDto> entities = readEntitiesJsonList(content);
+        if (entities.isEmpty()) {
+            throw new IllegalArgumentException("Model content did not contain any extracted entities");
+        }
+        return entities.getFirst();
+    }
+
+    public List<ExtractedFinancialEntitiesDto> readEntitiesJsonList(String content) {
         String cleaned = stripCodeFences(content);
 
         try {
-            return objectMapper.readValue(cleaned, ExtractedFinancialEntitiesDto.class);
+            if (cleaned.startsWith("[")) {
+                return objectMapper.readValue(cleaned, new TypeReference<List<ExtractedFinancialEntitiesDto>>() {});
+            }
+
+            ExtractedFinancialEntitiesDto single = objectMapper.readValue(cleaned, ExtractedFinancialEntitiesDto.class);
+            return List.of(single);
         } catch (JsonProcessingException e) {
             throw new IllegalArgumentException("Model content was not valid JSON for ExtractedFinancialEntitiesDto. Content=" + cleaned, e);
         }
@@ -62,7 +72,6 @@ public class LmStudioParser {
     private String stripCodeFences(String s) {
         String t = s.trim();
         if (t.startsWith("```")) {
-            // remove first fence line and last fence
             t = t.replaceFirst("^```[a-zA-Z]*\\s*", "");
             t = t.replaceFirst("\\s*```\\s*$", "");
         }
