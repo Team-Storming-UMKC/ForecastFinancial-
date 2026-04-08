@@ -27,6 +27,6 @@ spring:
 lmstudio:
   base-url: ${AI_BASE_URL}
   timeout-ms: 15000
-  model: "google/gemma-3-12b"
+  model: "gemma-4-e4b-it"
   username: ${AI_TUNNEL_USER}
   password: ${AI_TUNNEL_PASS}
