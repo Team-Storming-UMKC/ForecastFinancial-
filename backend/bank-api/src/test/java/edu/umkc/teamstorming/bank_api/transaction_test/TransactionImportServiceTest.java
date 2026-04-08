@@ -92,11 +92,14 @@ class TransactionImportServiceTest {
                 "text/csv",
                 "2022-01-02,Gas Station,not-a-number".getBytes()
         );
+        when(aiClientService.extractFinancialEntities(any())).thenReturn("""
+                [{"amount":null,"currency":"USD","date":"2022-01-02","merchant":"Gas Station","category":"Auto & transport","note":null,"confidence":0.97}]
+                """);
 
         CsvImportResultDto result = transactionImportService.importCsv("user@example.com", file);
 
         assertEquals(1, result.failedRows());
-        assertEquals("Invalid amount", result.results().getFirst().message());
+        assertEquals("AI returned null amount", result.results().getFirst().message());
     }
 
     @Test
