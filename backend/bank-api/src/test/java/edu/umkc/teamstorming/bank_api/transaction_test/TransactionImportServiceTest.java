@@ -17,6 +17,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -46,10 +48,10 @@ class TransactionImportServiceTest {
         Transaction saved = new Transaction("Gas Station", new BigDecimal("60.0"),
                 LocalDate.of(2022, 1, 2), "Auto & transport", null);
 
-        when(aiClientService.extractFinancialEntities(any())).thenReturn("""
+        when(aiClientService.extractFinancialEntitiesBatch(anyList())).thenReturn("""
                 [{"amount":60.0,"currency":"USD","date":"2022-01-02","merchant":"Gas Station","category":"Auto & transport","note":null,"confidence":0.97}]
                 """);
-        when(transactionService.create(any(), any(Transaction.class))).thenReturn(saved);
+        when(transactionService.createAll(any(), anyList())).thenReturn(java.util.List.of(saved));
 
         CsvImportResultDto result = transactionImportService.importCsv("user@example.com", file);
 
@@ -58,7 +60,7 @@ class TransactionImportServiceTest {
         assertEquals(0, result.failedRows());
         assertTrue(result.results().getFirst().imported());
         assertEquals("Success", result.results().getFirst().message());
-        verify(transactionService).create(any(), any(Transaction.class));
+        verify(transactionService).createAll(any(), anyList());
     }
 
     @Test
@@ -70,7 +72,7 @@ class TransactionImportServiceTest {
                 "2022-01-02,Gas Station,60.0".getBytes()
         );
 
-        when(aiClientService.extractFinancialEntities(any())).thenReturn("""
+        when(aiClientService.extractFinancialEntitiesBatch(anyList())).thenReturn("""
                 [
                   {"amount":60.0,"currency":"USD","date":"2022-01-02","merchant":"Gas Station","category":"Fuel","note":null,"confidence":0.97},
                   {"amount":10.0,"currency":"USD","date":"2022-01-02","merchant":"Coffee","category":"Food","note":null,"confidence":0.72}
@@ -92,7 +94,7 @@ class TransactionImportServiceTest {
                 "text/csv",
                 "2022-01-02,Gas Station,not-a-number".getBytes()
         );
-        when(aiClientService.extractFinancialEntities(any())).thenReturn("""
+        when(aiClientService.extractFinancialEntitiesBatch(anyList())).thenReturn("""
                 [{"amount":null,"currency":"USD","date":"2022-01-02","merchant":"Gas Station","category":"Auto & transport","note":null,"confidence":0.97}]
                 """);
 
@@ -126,5 +128,40 @@ class TransactionImportServiceTest {
         request.setText("   ");
 
         assertThrows(RuntimeException.class, () -> transactionImportService.importText("user@example.com", request));
+    }
+
+    @Test
+    void importCsv_fallsBackToSingleRowWhenBatchResponseIsMisaligned() {
+        MockMultipartFile file = new MockMultipartFile(
+                "file",
+                "transactions.csv",
+                "text/csv",
+                "2022-01-02,Gas Station,60.0\n2022-01-03,Coffee Shop,8.5".getBytes()
+        );
+        Transaction savedOne = new Transaction("Gas Station", new BigDecimal("60.0"),
+                LocalDate.of(2022, 1, 2), "Auto & transport", null);
+        Transaction savedTwo = new Transaction("Coffee Shop", new BigDecimal("8.5"),
+                LocalDate.of(2022, 1, 3), "Drinks & dining", null);
+
+        when(aiClientService.extractFinancialEntitiesBatch(anyList())).thenReturn("""
+                [{"amount":60.0,"currency":"USD","date":"2022-01-02","merchant":"Gas Station","category":"Auto & transport","note":null,"confidence":0.97}]
+                """);
+        when(aiClientService.extractFinancialEntities(any()))
+                .thenReturn("""
+                [{"amount":60.0,"currency":"USD","date":"2022-01-02","merchant":"Gas Station","category":"Auto & transport","note":null,"confidence":0.97}]
+                """)
+                .thenReturn("""
+                [{"amount":8.5,"currency":"USD","date":"2022-01-03","merchant":"Coffee Shop","category":"Drinks & dining","note":null,"confidence":0.92}]
+                """);
+        when(transactionService.create(any(), any(Transaction.class)))
+                .thenReturn(savedOne)
+                .thenReturn(savedTwo);
+
+        CsvImportResultDto result = transactionImportService.importCsv("user@example.com", file);
+
+        assertEquals(2, result.importedRows());
+        assertEquals("Success", result.results().get(0).message());
+        assertEquals("Success", result.results().get(1).message());
+        verify(transactionService, times(2)).create(any(), any(Transaction.class));
     }
 }
