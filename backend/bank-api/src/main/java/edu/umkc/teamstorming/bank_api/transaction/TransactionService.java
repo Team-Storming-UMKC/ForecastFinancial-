@@ -30,14 +30,14 @@ public class TransactionService {
 
     public Transaction create(String email, Transaction incoming) {
         User user = getUserByEmail(email);
-
-        // never trust client for user ownership
-        incoming.setUser(user);
-
-        // optional: ignore incoming id if provided
-        // incoming.setId(null); // only if you add a setter or use DTOs
-
+        attachUser(incoming, user);
         return transactionRepository.save(incoming);
+    }
+
+    public List<Transaction> createAll(String email, List<Transaction> incomingTransactions) {
+        User user = getUserByEmail(email);
+        incomingTransactions.forEach(transaction -> attachUser(transaction, user));
+        return transactionRepository.saveAll(incomingTransactions);
     }
 
     public Transaction update(String email, Long txId, Transaction incoming) {
@@ -62,5 +62,10 @@ public class TransactionService {
                 .orElseThrow(() -> new RuntimeException("Transaction not found"));
 
         transactionRepository.delete(existing);
+    }
+
+    private void attachUser(Transaction transaction, User user) {
+        // never trust client for user ownership
+        transaction.setUser(user);
     }
 }
