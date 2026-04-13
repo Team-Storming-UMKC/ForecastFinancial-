@@ -190,7 +190,7 @@ public class AiClientService {
             You are a financial information extraction engine for CSV imports.
 
             TASK
-            You will receive a JSON array of raw CSV row strings. Return ONLY a JSON array with exactly one object per input row, in the same order.
+            You will receive a JSON array of CSV row strings. When the CSV file included headers, each row will be labelled as header=value pairs. Use those labels to determine which value is the date, merchant/payee/description, amount, debit, credit, category, or note. Return ONLY a JSON array with exactly one object per input row, in the same order.
 
             RULES
             Output MUST be valid JSON and nothing else.

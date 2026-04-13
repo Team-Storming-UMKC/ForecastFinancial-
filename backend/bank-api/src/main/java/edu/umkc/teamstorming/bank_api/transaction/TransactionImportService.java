@@ -21,6 +21,7 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 @Service
@@ -86,7 +87,7 @@ public class TransactionImportService {
 
     private CsvImportRowResultDto importRow(String email, CsvRow row) {
         try {
-            String aiJson = aiClientService.extractFinancialEntities(row.rawText());
+            String aiJson = aiClientService.extractFinancialEntities(row.aiText());
             List<ExtractedFinancialEntitiesDto> extractedItems = lmStudioParser.readEntitiesJsonList(aiJson);
 
             if (extractedItems.isEmpty()) {
@@ -111,7 +112,7 @@ public class TransactionImportService {
     private List<CsvImportRowResultDto> importBatch(String email, List<CsvRow> batchRows) {
         try {
             String aiJson = aiClientService.extractFinancialEntitiesBatch(
-                    batchRows.stream().map(CsvRow::rawText).toList()
+                    batchRows.stream().map(CsvRow::aiText).toList()
             );
             List<ExtractedFinancialEntitiesDto> extractedItems = lmStudioParser.readEntitiesJsonList(aiJson);
 
@@ -197,8 +198,8 @@ public class TransactionImportService {
         Transaction transaction = new Transaction();
         transaction.setDate(parseDate(extracted.date()));
         transaction.setAmount(parseAmount(extracted.amount()));
-        transaction.setMerchantName(extracted.merchant());
-        transaction.setCategory(extracted.category());
+        transaction.setMerchantName(formatCsvMerchantName(extracted.merchant()));
+        transaction.setCategory(formatCsvCategory(extracted.category()));
         return transaction;
     }
 
@@ -268,6 +269,18 @@ public class TransactionImportService {
         return value == null ? null : BigDecimal.valueOf(value);
     }
 
+    private String formatCsvMerchantName(String value) {
+        return collapseWhitespace(value).toUpperCase(Locale.ROOT);
+    }
+
+    private String formatCsvCategory(String value) {
+        return collapseWhitespace(value);
+    }
+
+    private String collapseWhitespace(String value) {
+        return value == null ? null : value.trim().replaceAll("\\s+", " ");
+    }
+
     private void validateFile(MultipartFile file) {
         if (file == null || file.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "CSV file is required");
@@ -283,16 +296,26 @@ public class TransactionImportService {
         try (BufferedReader reader = new BufferedReader(
                 new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8))) {
             List<CsvRow> rows = new ArrayList<>();
+            List<String> headers = List.of();
             String line;
             int lineNumber = 0;
+            boolean firstDataLineSeen = false;
 
             while ((line = reader.readLine()) != null) {
                 lineNumber++;
-                if (line.isBlank() || isHeader(line)) {
+                if (line.isBlank()) {
                     continue;
                 }
 
-                rows.add(new CsvRow(lineNumber, line));
+                List<String> columns = parseCsvLine(line);
+                if (!firstDataLineSeen && looksLikeHeader(columns)) {
+                    headers = columns;
+                    firstDataLineSeen = true;
+                    continue;
+                }
+
+                firstDataLineSeen = true;
+                rows.add(new CsvRow(lineNumber, line, toAiText(headers, columns, line)));
             }
 
             if (rows.isEmpty()) {
@@ -305,11 +328,90 @@ public class TransactionImportService {
         }
     }
 
-    private boolean isHeader(String line) {
-        String normalized = line.trim().toLowerCase();
-        return normalized.equals("date,merchant,amount");
+    private boolean looksLikeHeader(List<String> columns) {
+        int recognizedHeaders = 0;
+        for (String column : columns) {
+            if (isKnownTransactionHeader(column)) {
+                recognizedHeaders++;
+            }
+        }
+
+        return recognizedHeaders >= 2;
     }
 
-    private record CsvRow(int rowNumber, String rawText) {
+    private boolean isKnownTransactionHeader(String value) {
+        String normalized = normalizeHeader(value);
+        return normalized.contains("date")
+                || normalized.contains("posted")
+                || normalized.contains("merchant")
+                || normalized.contains("description")
+                || normalized.contains("payee")
+                || normalized.contains("name")
+                || normalized.contains("vendor")
+                || normalized.contains("memo")
+                || normalized.contains("amount")
+                || normalized.contains("debit")
+                || normalized.contains("credit")
+                || normalized.contains("withdrawal")
+                || normalized.contains("deposit")
+                || normalized.contains("charge")
+                || normalized.contains("payment")
+                || normalized.contains("category");
+    }
+
+    private String normalizeHeader(String value) {
+        return value == null ? "" : value.trim().toLowerCase();
+    }
+
+    private String toAiText(List<String> headers, List<String> columns, String rawLine) {
+        if (headers.isEmpty()) {
+            return rawLine;
+        }
+
+        StringBuilder labelledRow = new StringBuilder("CSV row with headers: ");
+        int labelledColumnCount = Math.max(headers.size(), columns.size());
+        for (int i = 0; i < labelledColumnCount; i++) {
+            if (i > 0) {
+                labelledRow.append("; ");
+            }
+
+            String header = i < headers.size() && !headers.get(i).isBlank()
+                    ? headers.get(i).trim()
+                    : "column " + (i + 1);
+            String value = i < columns.size() ? columns.get(i).trim() : "";
+            labelledRow.append(header).append("=").append(value);
+        }
+        labelledRow.append(". Original CSV row: ").append(rawLine);
+        return labelledRow.toString();
+    }
+
+    private List<String> parseCsvLine(String line) {
+        List<String> values = new ArrayList<>();
+        StringBuilder current = new StringBuilder();
+        boolean inQuotes = false;
+
+        for (int i = 0; i < line.length(); i++) {
+            char currentChar = line.charAt(i);
+            if (currentChar == '"') {
+                boolean escapedQuote = inQuotes && i + 1 < line.length() && line.charAt(i + 1) == '"';
+                if (escapedQuote) {
+                    current.append('"');
+                    i++;
+                } else {
+                    inQuotes = !inQuotes;
+                }
+            } else if (currentChar == ',' && !inQuotes) {
+                values.add(current.toString());
+                current.setLength(0);
+            } else {
+                current.append(currentChar);
+            }
+        }
+
+        values.add(current.toString());
+        return values;
+    }
+
+    private record CsvRow(int rowNumber, String rawText, String aiText) {
     }
 }
