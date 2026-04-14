@@ -14,7 +14,7 @@ const shimmer = keyframes`
 export const rootSx = {
   ...tintedGlass,
   borderRadius: (theme) => `${theme.customTokens.radii.card}px`,
-  p: { xs: 2, md: 3 },
+  p: { xs: 3, md: 3.5 },
   position: "relative",
   overflow: "hidden",
   "&::before": {
@@ -31,12 +31,13 @@ export const rootSx = {
 export const contentSx = {
   position: "relative",
   zIndex: 1,
-  px: { xs: 1.5, md: 2 },
-  py: { xs: 1.5, md: 2 },
+  px: { xs: 1, md: 1.5 },
+  py: { xs: 1, md: 1.5 },
 } satisfies SxProps<Theme>;
 
 export const headerSx = {
   display: "flex",
+  flexDirection: "row",
   alignItems: "flex-start",
   justifyContent: "space-between",
   gap: 2,
@@ -67,10 +68,9 @@ export const listSx = {
 } satisfies SxProps<Theme>;
 
 export const listItemSx = {
-  display: "grid",
-  gridTemplateColumns: "auto 1fr",
+  display: "flex",
   gap: 1.25,
-  alignItems: "start",
+  alignItems: "baseline",
   color: "rgba(255,255,255,0.84)",
   fontSize: "0.95rem",
   lineHeight: 1.55,
@@ -79,8 +79,9 @@ export const listItemSx = {
 export const bulletSx = {
   width: 8,
   height: 8,
+  minWidth: 8,
   borderRadius: "50%",
-  mt: "0.55rem",
+  transform: "translateY(-1px)",
   backgroundColor: "primary.main",
   boxShadow: "0 0 12px rgba(255,135,15,0.55)",
 } satisfies SxProps<Theme>;
