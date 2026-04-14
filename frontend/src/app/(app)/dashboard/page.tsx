@@ -3,6 +3,7 @@ import * as React from "react";
 import { Box, Stack, Typography } from "@mui/material";
 import TransactionCharts from "@/components/dashboard/TransactionCharts";
 import RawDataInput from "@/components/dashboard/RawDataInput";
+import InsightsCard from "@/components/dashboard/InsightsCard";
 
 export default function DashboardPage() {
     const [email, setEmail] = React.useState<string | null>(null);
@@ -47,6 +48,9 @@ export default function DashboardPage() {
 
                 {/* AI Data Import */}
                 <RawDataInput onExtractionComplete={handleTransactionsChanged} />
+
+                {/* AI Savings Tips */}
+                <InsightsCard refreshKey={chartsKey} />
 
                 {/* Charts */}
                 <TransactionCharts refreshKey={chartsKey} />
