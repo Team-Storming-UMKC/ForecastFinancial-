@@ -73,6 +73,27 @@ public class LmStudioParser {
         }
     }
 
+    public List<String> readThreeStringArray(String content) {
+        if (content == null) {
+            throw new IllegalArgumentException("Model content was null");
+        }
+
+        String cleaned = stripCodeFences(content);
+
+        try {
+            List<String> insights = objectMapper.readValue(cleaned, new TypeReference<List<String>>() {});
+            if (insights.size() != 3) {
+                throw new IllegalArgumentException("Model content must contain exactly 3 insights");
+            }
+            if (insights.stream().anyMatch(insight -> insight == null || insight.isBlank())) {
+                throw new IllegalArgumentException("Model content contained a blank insight");
+            }
+            return insights;
+        } catch (JsonProcessingException e) {
+            throw new IllegalArgumentException("Model content was not valid JSON for a string array. Content=" + cleaned, e);
+        }
+    }
+
     private String stripCodeFences(String s) {
         String t = s.trim();
         if (t.startsWith("```")) {
