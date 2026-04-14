@@ -283,4 +283,61 @@ public class AiClientService {
                     "AI batch call failed: " + ex.getMessage());
         }
     }
+
+    public String generateExpenseCuttingInsights(String spendingDataJson) {
+        String systemPrompt = """
+            Analyze this spending data. Provide exactly 3 actionable bullet points on how to save money. Output strictly as a JSON array of 3 strings.
+
+            RULES
+            Output valid JSON only.
+            Output exactly 3 strings.
+            Each string must be one concise, actionable recommendation.
+            Do not include markdown, numbering, extra keys, explanations, or surrounding text.
+            Base the recommendations only on the provided spending totals and profile data.
+            """;
+
+        LmStudioChatRequest req = new LmStudioChatRequest(
+                modelName,
+                List.of(
+                        new LmStudioChatRequest.Message("system", systemPrompt),
+                        new LmStudioChatRequest.Message("user", spendingDataJson)
+                ),
+                0.1,
+                350
+        );
+
+        try {
+            LmStudioChatResponse resp = aiWebClient.post()
+                    .uri("/chat/completions")
+                    .bodyValue(req)
+                    .retrieve()
+                    .onStatus(HttpStatusCode::isError, r ->
+                            r.bodyToMono(String.class).map(body ->
+                                    new ResponseStatusException(
+                                            HttpStatusCode.valueOf(r.statusCode().value()),
+                                            "AI error: " + body
+                                    )
+                            )
+                    )
+                    .bodyToMono(LmStudioChatResponse.class)
+                    .timeout(Duration.ofSeconds(30))
+                    .block();
+
+            if (resp == null || resp.choices() == null || resp.choices().isEmpty()
+                    || resp.choices().get(0).message() == null) {
+                throw new ResponseStatusException(HttpStatusCode.valueOf(502), "AI returned an empty response");
+            }
+
+            return resp.choices().get(0).message().content();
+
+        } catch (WebClientRequestException ex) {
+            throw new ResponseStatusException(HttpStatusCode.valueOf(503),
+                    "AI tunnel unreachable (connection refused/timeout): " + ex.getMessage());
+        } catch (ResponseStatusException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            throw new ResponseStatusException(HttpStatusCode.valueOf(502),
+                    "AI insight call failed: " + ex.getMessage());
+        }
+    }
 }
