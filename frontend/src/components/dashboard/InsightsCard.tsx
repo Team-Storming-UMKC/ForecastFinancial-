@@ -125,7 +125,7 @@ export default function InsightsCard({ refreshKey }: InsightsCardProps) {
     <Box sx={rootSx}>
       <Box sx={contentSx}>
         <Stack sx={headerSx}>
-          <Box>
+          <Box sx={{ minWidth: 0, flex: 1 }}>
             <Typography variant="h6" sx={titleSx}>
               AI Savings Tips
             </Typography>
@@ -134,7 +134,7 @@ export default function InsightsCard({ refreshKey }: InsightsCardProps) {
             </Typography>
           </Box>
 
-          <TipsAndUpdatesIcon sx={{ color: "primary.main", mt: 0.5 }} />
+          <TipsAndUpdatesIcon sx={{ color: "primary.main", flexShrink: 0, mt: 0.5 }} />
         </Stack>
 
         <Divider sx={dividerSx} />
