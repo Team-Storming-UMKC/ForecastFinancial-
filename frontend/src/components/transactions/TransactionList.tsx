@@ -36,13 +36,15 @@ function formatAmount(amount: number) {
 }
 
 function formatDate(date: string) {
-  const parsed = new Date(date);
-  if (Number.isNaN(parsed.getTime())) return date;
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  }).format(parsed);
+    const parsed = new Date(date);
+    if (Number.isNaN(parsed.getTime())) return date;
+
+    return new Intl.DateTimeFormat("en-US", {
+        timeZone: "UTC", // <-- Add this line right here
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+    }).format(parsed);
 }
 
 export default function TransactionList({
