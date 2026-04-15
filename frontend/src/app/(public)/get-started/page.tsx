@@ -9,6 +9,8 @@ import AuthDateField from "@/components/auth/AuthDateField";
 import AuthInputField from "@/components/auth/AuthInputField";
 import { getRegisterPageStyles } from "./page.styles";
 
+const SUCCESS_TRANSITION_MS = 1450;
+
 function normalizeDateOfBirth(value: string) {
     const digits = value.replace(/\D/g, "");
 
@@ -47,6 +49,7 @@ export default function RegisterPage() {
     const [password, setPassword] = React.useState("");
     const [confirmPassword, setConfirmPassword] = React.useState("");
     const [loading, setLoading] = React.useState(false);
+    const [clearing, setClearing] = React.useState(false);
     const [error, setError] = React.useState<string | null>(null);
 
     async function handleRegister(e: React.FormEvent<HTMLFormElement>) {
@@ -81,16 +84,32 @@ export default function RegisterPage() {
             });
 
             if (!res.ok) {
-                const errorResponse = await res.json();
-                setError(errorResponse.message || "Registration failed");
+                const errorResponse = await res.text();
+                setError(errorResponse || "Registration failed");
                 return;
             }
 
-            router.push("/login");
+            const loginRes = await fetch("/api/auth/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, password }),
+            });
+
+            if (!loginRes.ok) {
+                setError("Account created. Sign in to continue.");
+                return;
+            }
+
+            setClearing(true);
+            window.setTimeout(() => {
+                router.push("/dashboard");
+            }, SUCCESS_TRANSITION_MS);
         } catch {
             setError("Registration failed. Try a different email.");
         } finally {
-            setLoading(false);
+            if (!clearing) {
+                setLoading(false);
+            }
         }
     }
 
@@ -101,6 +120,7 @@ export default function RegisterPage() {
             submitLabel="Sign Up"
             onSubmit={handleRegister}
             loading={loading}
+            clearing={clearing}
             footerLink={{ label: "Already have an account? Sign in", href: "/login" }}
         >
                 <AuthFieldGrid>
