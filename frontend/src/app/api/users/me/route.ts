@@ -73,3 +73,31 @@ export async function PATCH(req: Request) {
     const text = await r.text();
     return proxyResponse(r, text);
 }
+
+export async function DELETE() {
+    if (!BACKEND_URL) {
+        return NextResponse.json({ error: "BACKEND_URL not set" }, { status: 500 });
+    }
+
+    const token = await getToken();
+    if (!token) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const r = await fetch(`${BACKEND_URL}/users/me`, {
+        method: "DELETE",
+        headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/json",
+        },
+    });
+
+    const text = await r.text();
+    const response = proxyResponse(r, text);
+
+    if (r.ok) {
+        response.cookies.set("auth_token", "", { path: "/", maxAge: 0 });
+    }
+
+    return response;
+}

@@ -60,6 +60,8 @@ export default function SettingsPage() {
     const [loadingProfile, setLoadingProfile] = React.useState(true);
     const [savingProfile, setSavingProfile] = React.useState(false);
     const [savingPassword, setSavingPassword] = React.useState(false);
+    const [deletingTransactions, setDeletingTransactions] = React.useState(false);
+    const [deletingAccount, setDeletingAccount] = React.useState(false);
     const [profileError, setProfileError] = React.useState<string | null>(null);
     const [profile, setProfile] = React.useState<UserProfile>(emptyProfile);
     const [initialProfile, setInitialProfile] = React.useState<UserProfile>(emptyProfile);
@@ -196,6 +198,50 @@ export default function SettingsPage() {
         }
     }
 
+    async function handleDeleteTransactions() {
+        setDeletingTransactions(true);
+        try {
+            const response = await fetch("/api/transactions", {
+                method: "DELETE",
+                credentials: "include",
+            });
+
+            if (!response.ok) {
+                throw new Error(await readApiError(response));
+            }
+
+            showToast("All transactions deleted.", { severity: "success" });
+        } catch (error) {
+            showToast(error instanceof Error ? error.message : "Failed to delete transactions", {
+                severity: "error",
+            });
+        } finally {
+            setDeletingTransactions(false);
+        }
+    }
+
+    async function handleDeleteAccount() {
+        setDeletingAccount(true);
+        try {
+            const response = await fetch("/api/users/me", {
+                method: "DELETE",
+                credentials: "include",
+            });
+
+            if (!response.ok) {
+                throw new Error(await readApiError(response));
+            }
+
+            showToast("Account deleted.", { severity: "success" });
+            window.location.href = "/login";
+        } catch (error) {
+            showToast(error instanceof Error ? error.message : "Failed to delete account", {
+                severity: "error",
+            });
+            setDeletingAccount(false);
+        }
+    }
+
     return (
         <Box sx={{ width: "100%", maxWidth: 1100, px: { xs: 2, sm: 3, md: 4 }, pb: 6 }}>
             <Stack spacing={3.5}>
@@ -226,7 +272,7 @@ export default function SettingsPage() {
                         <CircularProgress sx={{ color: "primary.main" }} />
                     </Box>
                 ) : (
-                    <Stack spacing={3.25}>
+                    <Stack spacing={3.25} gap={2}>
                         <ProfileSettingsForm
                             profile={profile}
                             loading={loadingProfile}
@@ -239,8 +285,12 @@ export default function SettingsPage() {
                         <PasswordSettingsForm
                             value={passwordDraft}
                             loading={savingPassword}
+                            deletingTransactions={deletingTransactions}
+                            deletingAccount={deletingAccount}
                             onChange={setPasswordDraft}
                             onSubmit={handlePasswordSubmit}
+                            onDeleteTransactions={handleDeleteTransactions}
+                            onDeleteAccount={handleDeleteAccount}
                         />
                     </Stack>
                 )}

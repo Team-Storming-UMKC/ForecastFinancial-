@@ -2,6 +2,7 @@ package edu.umkc.teamstorming.bank_api.transaction;
 
 import edu.umkc.teamstorming.bank_api.user.User;
 import edu.umkc.teamstorming.bank_api.user.UserRepository;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -62,6 +63,12 @@ public class TransactionService {
                 .orElseThrow(() -> new RuntimeException("Transaction not found"));
 
         transactionRepository.delete(existing);
+    }
+
+    @Transactional
+    public void deleteAll(String email) {
+        User user = getUserByEmail(email);
+        transactionRepository.deleteByUserId(user.getId());
     }
 
     private void attachUser(Transaction transaction, User user) {

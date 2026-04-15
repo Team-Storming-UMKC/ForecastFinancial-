@@ -1,5 +1,6 @@
 package edu.umkc.teamstorming.bank_api.user;
 
+import edu.umkc.teamstorming.bank_api.transaction.TransactionRepository;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.verify;
@@ -19,6 +20,7 @@ class UserControllerTest {
 
     private UserController userController;
     private UserRepository userRepository;
+    private TransactionRepository transactionRepository;
     private PasswordEncoder passwordEncoder;
     private Authentication auth;
     private User user;
@@ -26,6 +28,7 @@ class UserControllerTest {
     @BeforeEach
     void setUp() {
         userRepository = Mockito.mock(UserRepository.class);
+        transactionRepository = Mockito.mock(TransactionRepository.class);
         passwordEncoder = Mockito.mock(PasswordEncoder.class);
         auth = Mockito.mock(Authentication.class);
         when(auth.getName()).thenReturn("user@example.com");
@@ -35,7 +38,7 @@ class UserControllerTest {
 
         when(userRepository.findByEmail("user@example.com")).thenReturn(Optional.of(user));
 
-        userController = new UserController(userRepository, passwordEncoder);
+        userController = new UserController(userRepository, transactionRepository, passwordEncoder);
     }
 
     @Test
@@ -146,5 +149,23 @@ class UserControllerTest {
 
         assertEquals(400, response.getStatusCode().value());
         assertEquals(Map.of("error", "New password must be different"), response.getBody());
+    }
+
+    @Test
+    void deleteMe_deletesTransactionsThenUser() {
+        ResponseEntity<?> response = userController.deleteMe(auth);
+
+        assertEquals(200, response.getStatusCode().value());
+        assertEquals(Map.of("status", "account-deleted"), response.getBody());
+        verify(transactionRepository).deleteByUserId(user.getId());
+        verify(userRepository).delete(user);
+    }
+
+    @Test
+    void deleteMe_rejectsUnauthorizedRequest() {
+        ResponseEntity<?> response = userController.deleteMe(null);
+
+        assertEquals(401, response.getStatusCode().value());
+        assertEquals(Map.of("error", "Unauthorized"), response.getBody());
     }
 }
