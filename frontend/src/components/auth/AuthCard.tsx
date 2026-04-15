@@ -6,6 +6,7 @@ import { getAuthCardStyles } from "@/components/auth/AuthCard.styles";
 import BrandHeader from "@/components/auth/BrandHeader";
 import AuthSubmitButton from "@/components/auth/AuthSubmitButton";
 import AuthRainScene from "@/components/auth/AuthRainScene";
+import AuthSuccessTransition from "@/components/auth/AuthSuccessTransition";
 
 export interface AuthCardProps {
     /** e.g. "Welcome back" or "Create an account" */
@@ -23,6 +24,8 @@ export interface AuthCardProps {
     };
     /** Optional loading state for the submit button */
     loading?: boolean;
+    /** Plays the clear-up transition after auth succeeds. */
+    clearing?: boolean;
 }
 
 export default function AuthCard({
@@ -32,19 +35,21 @@ export default function AuthCard({
                                      children,
                                      footerLink,
                                      loading = false,
+                                     clearing = false,
                                  }: AuthCardProps) {
     const theme = useTheme();
     const styles = getAuthCardStyles(theme);
 
     return (
         <Box sx={styles.page}>
-            <AuthRainScene />
-            <Box component="form" onSubmit={onSubmit} sx={styles.form}>
+            <AuthRainScene clearing={clearing} />
+            {clearing && <AuthSuccessTransition />}
+            <Box component="form" onSubmit={onSubmit} sx={[styles.form, clearing && styles.formClearing]}>
                 <BrandHeader title={title} />
 
                 <Box sx={styles.content}>{children}</Box>
 
-                <AuthSubmitButton label={submitLabel} loading={loading} />
+                <AuthSubmitButton label={submitLabel} loading={loading || clearing} />
 
                 {footerLink && (
                     <Link href={footerLink.href} sx={styles.footerLink}>

@@ -29,6 +29,11 @@ export const getAuthCardStyles = (theme: Theme) => ({
     backdropFilter: "blur(6px)",
     WebkitBackdropFilter: "blur(6px)",
     boxShadow: theme.customTokens.elevation.authCardInset,
+    transition: "opacity 0.42s ease, transform 0.42s ease",
+  },
+  formClearing: {
+    opacity: 0,
+    transform: "translateY(-18px) scale(0.98)",
   },
   content: {
     display: "flex",

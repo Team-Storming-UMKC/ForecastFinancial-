@@ -23,7 +23,11 @@ const softRipples = Array.from({ length: 18 }, (_, i) => ({
     delay: `${-(i % 7) * 0.16}s`,
 }));
 
-export default function AuthRainScene() {
+interface AuthRainSceneProps {
+    clearing?: boolean;
+}
+
+export default function AuthRainScene({ clearing = false }: AuthRainSceneProps) {
     return (
         <Box
             aria-hidden="true"
@@ -32,6 +36,8 @@ export default function AuthRainScene() {
                 inset: 0,
                 overflow: "hidden",
                 pointerEvents: "none",
+                transition: "background-color 0.8s ease",
+                backgroundColor: clearing ? "rgba(255, 176, 72, 0.08)" : "transparent",
             }}
         >
             <Box
@@ -47,7 +53,8 @@ export default function AuthRainScene() {
                 sx={{
                     position: "absolute",
                     inset: 0,
-                    opacity: 0.9,
+                    opacity: clearing ? 0 : 0.9,
+                    transition: "opacity 0.72s ease",
                 }}
             >
                 {rainDrops.map((drop) => (
