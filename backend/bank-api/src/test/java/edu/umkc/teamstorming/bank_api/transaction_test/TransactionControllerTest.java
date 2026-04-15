@@ -1,11 +1,16 @@
 package edu.umkc.teamstorming.bank_api.transaction_test;
+import edu.umkc.teamstorming.bank_api.dto.CsvImportResultDto;
+import edu.umkc.teamstorming.bank_api.dto.CsvImportRowResultDto;
+import edu.umkc.teamstorming.bank_api.dto.TextExtractRequest;
 import edu.umkc.teamstorming.bank_api.transaction.Transaction;
 import edu.umkc.teamstorming.bank_api.transaction.TransactionController;
+import edu.umkc.teamstorming.bank_api.transaction.TransactionImportService;
 import edu.umkc.teamstorming.bank_api.transaction.TransactionService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.security.core.Authentication;
+import org.springframework.mock.web.MockMultipartFile;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -18,12 +23,14 @@ class TransactionControllerTest {
 
     private TransactionController transactionController;
     private TransactionService transactionService;
+    private TransactionImportService transactionImportService;
     private Authentication auth;
 
     @BeforeEach
     void setUp() {
         transactionService = Mockito.mock(TransactionService.class);
-        transactionController = new TransactionController(transactionService);
+        transactionImportService = Mockito.mock(TransactionImportService.class);
+        transactionController = new TransactionController(transactionService, transactionImportService);
         auth = Mockito.mock(Authentication.class);
         when(auth.getName()).thenReturn("user@example.com");
     }
@@ -63,6 +70,43 @@ class TransactionControllerTest {
         assertEquals("Netflix", result.getMerchantName());
         assertEquals(new BigDecimal("15.99"), result.getAmount());
         verify(transactionService).create("user@example.com", incoming);
+    }
+
+    @Test
+    void importCsv_returnsImportSummary() {
+        MockMultipartFile file = new MockMultipartFile(
+                "file",
+                "transactions.csv",
+                "text/csv",
+                "date,merchant,amount\n2022-01-02,Gas Station,60.0".getBytes()
+        );
+        CsvImportResultDto resultDto = new CsvImportResultDto(
+                1,
+                1,
+                0,
+                List.of(new CsvImportRowResultDto(2, "2022-01-02,Gas Station,60.0", true, "Imported", null))
+        );
+        when(transactionImportService.importCsv("user@example.com", file)).thenReturn(resultDto);
+
+        CsvImportResultDto result = transactionController.importCsv(file, auth);
+
+        assertEquals(1, result.totalRows());
+        assertEquals(1, result.importedRows());
+        verify(transactionImportService).importCsv("user@example.com", file);
+    }
+
+    @Test
+    void createFromText_returnsSavedTransaction() {
+        TextExtractRequest request = new TextExtractRequest();
+        request.setText("I spent 60 dollars at Gas Station today");
+        Transaction saved = new Transaction("Gas Station", new BigDecimal("60.00"),
+                LocalDate.of(2026, 4, 7), "Auto & transport", null);
+        when(transactionImportService.importText("user@example.com", request)).thenReturn(saved);
+
+        Transaction result = transactionController.createFromText(request, auth);
+
+        assertEquals("Gas Station", result.getMerchantName());
+        verify(transactionImportService).importText("user@example.com", request);
     }
 
     // ─── UPDATE TESTS ─────────────────────────────────────────────
