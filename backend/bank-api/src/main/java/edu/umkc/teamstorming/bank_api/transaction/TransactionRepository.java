@@ -11,4 +11,5 @@ import java.util.Optional;
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
     List<Transaction> findByUserId(Long userId);
     Optional<Transaction> findByIdAndUserId(Long id, Long userId);
+    void deleteByUserId(Long userId);
 }

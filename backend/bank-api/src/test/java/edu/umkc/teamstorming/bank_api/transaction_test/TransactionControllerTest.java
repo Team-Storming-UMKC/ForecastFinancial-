@@ -86,4 +86,11 @@ class TransactionControllerTest {
 
         verify(transactionService).delete("user@example.com", 1L);
     }
+
+    @Test
+    void deleteAll_callsServiceWithAuthenticatedUser() {
+        transactionController.deleteAll(auth);
+
+        verify(transactionService).deleteAll("user@example.com");
+    }
 }
