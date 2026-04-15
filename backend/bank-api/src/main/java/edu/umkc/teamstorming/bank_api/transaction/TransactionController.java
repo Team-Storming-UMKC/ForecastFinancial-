@@ -52,4 +52,9 @@ public class TransactionController {
     public void delete(@PathVariable Long id, Authentication auth) {
         transactionService.delete(auth.getName(), id);
     }
+
+    @DeleteMapping
+    public void deleteAll(Authentication auth) {
+        transactionService.deleteAll(auth.getName());
+    }
 }
