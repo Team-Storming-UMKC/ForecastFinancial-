@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Stack, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 
 export default function AuthSuccessTransition() {
     return (
@@ -18,78 +18,45 @@ export default function AuthSuccessTransition() {
             <Box
                 sx={{
                     position: "absolute",
-                    top: { xs: "6%", sm: "8%" },
+                    top: { xs: "7%", sm: "8%" },
                     right: { xs: "-18%", sm: "8%" },
-                    width: { xs: 220, sm: 320 },
-                    height: { xs: 220, sm: 320 },
+                    width: { xs: 220, sm: 330 },
+                    height: { xs: 220, sm: 330 },
                     borderRadius: "50%",
                     background:
-                        "radial-gradient(circle, rgba(255,195,90,0.92) 0%, rgba(255,135,15,0.42) 42%, rgba(255,135,15,0) 72%)",
+                        "radial-gradient(circle, rgba(255,203,112,0.95) 0%, rgba(255,154,58,0.5) 36%, rgba(255,154,58,0.13) 60%, rgba(255,154,58,0) 76%)",
                     filter: "blur(8px)",
-                    animation: "authSunBreak 1.25s ease-out forwards",
+                    opacity: 0,
+                    transform: "scale(0.72)",
+                    animation: "authSunBreak 1.18s ease-out 0.18s forwards",
                 }}
             />
 
-            <Stack
-                spacing={1.5}
+            <Box
                 sx={{
                     position: "absolute",
-                    left: "50%",
-                    bottom: { xs: "14%", sm: "16%" },
-                    width: "min(86vw, 520px)",
-                    p: { xs: 2, sm: 2.5 },
-                    borderRadius: "8px",
-                    border: "1px solid rgba(255,255,255,0.16)",
-                    backgroundColor: "rgba(15,22,34,0.78)",
-                    backdropFilter: "blur(10px)",
-                    WebkitBackdropFilter: "blur(10px)",
-                    boxShadow: "0 24px 80px rgba(0,0,0,0.34)",
-                    transform: "translate(-50%, 42px)",
+                    inset: 0,
+                    background:
+                        "linear-gradient(180deg, rgba(255,190,96,0.14) 0%, rgba(118,155,220,0.12) 48%, rgba(255,255,255,0) 100%)",
                     opacity: 0,
-                    animation: "authDashboardRise 1s ease-out 0.28s forwards",
+                    animation: "authSkyWarm 1s ease-out 0.22s forwards",
                 }}
-            >
-                <Stack direction="row" alignItems="center" justifyContent="space-between">
-                    <Box>
-                        <Typography sx={{ fontSize: "0.78rem", color: "rgba(255,255,255,0.62)" }}>
-                            Forecast Financial
-                        </Typography>
-                        <Typography sx={{ fontSize: "1.25rem", fontWeight: 700, color: "#ffffff" }}>
-                            Dashboard
-                        </Typography>
-                    </Box>
-                    <Box
-                        sx={{
-                            width: 46,
-                            height: 46,
-                            borderRadius: "8px",
-                            background:
-                                "linear-gradient(135deg, rgba(255,135,15,0.96), rgba(255,195,90,0.78))",
-                            boxShadow: "0 10px 30px rgba(255,135,15,0.28)",
-                        }}
-                    />
-                </Stack>
+            />
 
-                <Stack direction="row" spacing={1} sx={{ height: 72, alignItems: "flex-end" }}>
-                    {[36, 54, 30, 66, 46, 62].map((height, index) => (
-                        <Box
-                            key={height + index}
-                            sx={{
-                                flex: 1,
-                                height: `${height}%`,
-                                borderRadius: "6px 6px 0 0",
-                                background:
-                                    index % 2 === 0
-                                        ? "rgba(118,155,220,0.72)"
-                                        : "rgba(255,135,15,0.72)",
-                                transformOrigin: "bottom",
-                                transform: "scaleY(0.2)",
-                                animation: `authChartGrow 0.58s ease-out ${0.48 + index * 0.06}s forwards`,
-                            }}
-                        />
-                    ))}
-                </Stack>
-            </Stack>
+            <Box
+                sx={{
+                    position: "absolute",
+                    right: "-12%",
+                    bottom: "-14%",
+                    left: "-12%",
+                    height: "34%",
+                    background:
+                        "linear-gradient(180deg, rgba(115,153,208,0) 0%, rgba(115,153,208,0.1) 46%, rgba(255,190,96,0.16) 100%)",
+                    filter: "blur(18px)",
+                    opacity: 0,
+                    animation: "authMistLift 1.12s ease-out 0.2s forwards",
+                }}
+            />
 
             <style jsx global>{`
         @keyframes authClearWash {
@@ -97,10 +64,10 @@ export default function AuthSuccessTransition() {
             background: rgba(12, 18, 30, 0);
           }
           58% {
-            background: rgba(255, 190, 96, 0.18);
+            background: rgba(255, 190, 96, 0.16);
           }
           100% {
-            background: rgba(14, 24, 38, 0.34);
+            background: rgba(19, 36, 56, 0.22);
           }
         }
 
@@ -115,23 +82,23 @@ export default function AuthSuccessTransition() {
           }
         }
 
-        @keyframes authDashboardRise {
+        @keyframes authSkyWarm {
           0% {
             opacity: 0;
-            transform: translate(-50%, 42px) scale(0.97);
           }
           100% {
             opacity: 1;
-            transform: translate(-50%, 0) scale(1);
           }
         }
 
-        @keyframes authChartGrow {
+        @keyframes authMistLift {
           0% {
-            transform: scaleY(0.2);
+            opacity: 0;
+            transform: translateY(24px);
           }
           100% {
-            transform: scaleY(1);
+            opacity: 1;
+            transform: translateY(0);
           }
         }
 
@@ -139,7 +106,7 @@ export default function AuthSuccessTransition() {
           @keyframes authClearWash {
             from,
             to {
-              background: rgba(14, 24, 38, 0.34);
+              background: rgba(19, 36, 56, 0.22);
             }
           }
 
@@ -151,18 +118,18 @@ export default function AuthSuccessTransition() {
             }
           }
 
-          @keyframes authDashboardRise {
+          @keyframes authSkyWarm {
             from,
             to {
               opacity: 1;
-              transform: translate(-50%, 0) scale(1);
             }
           }
 
-          @keyframes authChartGrow {
+          @keyframes authMistLift {
             from,
             to {
-              transform: scaleY(1);
+              opacity: 1;
+              transform: translateY(0);
             }
           }
         }

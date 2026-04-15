@@ -45,7 +45,7 @@ export default function AuthRainScene({ clearing = false }: AuthRainSceneProps) 
                     position: "absolute",
                     inset: 0,
                     background:
-                        "radial-gradient(circle at 24% 18%, rgba(118,155,220,0.22), transparent 30%), radial-gradient(circle at 76% 10%, rgba(255,135,15,0.1), transparent 26%), linear-gradient(180deg, rgba(5,9,18,0.18) 0%, rgba(7,12,23,0.04) 44%, rgba(5,9,18,0.28) 100%)",
+                        "radial-gradient(circle at 24% 18%, rgba(118,155,220,0.22), transparent 30%), radial-gradient(circle at 76% 10%, rgba(62,86,128,0.14), transparent 26%), linear-gradient(180deg, rgba(5,9,18,0.18) 0%, rgba(7,12,23,0.04) 44%, rgba(5,9,18,0.28) 100%)",
                 }}
             />
 
