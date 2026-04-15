@@ -5,6 +5,7 @@ import { Box, Link, useTheme } from "@mui/material";
 import { getAuthCardStyles } from "@/components/auth/AuthCard.styles";
 import BrandHeader from "@/components/auth/BrandHeader";
 import AuthSubmitButton from "@/components/auth/AuthSubmitButton";
+import AuthRainScene from "@/components/auth/AuthRainScene";
 
 export interface AuthCardProps {
     /** e.g. "Welcome back" or "Create an account" */
@@ -37,6 +38,7 @@ export default function AuthCard({
 
     return (
         <Box sx={styles.page}>
+            <AuthRainScene />
             <Box component="form" onSubmit={onSubmit} sx={styles.form}>
                 <BrandHeader title={title} />
 

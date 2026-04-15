@@ -2,17 +2,20 @@ import { Theme } from "@mui/material/styles";
 
 export const getAuthCardStyles = (theme: Theme) => ({
   page: {
+    position: "relative",
     minHeight: "100vh",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
     px: { xs: theme.spacing(2), sm: theme.spacing(3) },
     py: { xs: theme.spacing(6), sm: theme.spacing(8) },
+    overflow: "hidden",
     backgroundColor: "background.default",
     backgroundImage: theme.customTokens.surfaces.pageGradient,
   },
   form: {
     position: "relative",
+    zIndex: 1,
     width: "100%",
     maxWidth: 410,
     minWidth: { xs: "auto", sm: 320 },
