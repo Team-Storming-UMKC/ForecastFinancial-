@@ -71,3 +71,25 @@ export async function POST(req: Request) {
     const text = await r.text();
     return proxyResponse(r, text);
 }
+
+export async function DELETE() {
+    if (!BACKEND_URL) {
+        return NextResponse.json({ error: "BACKEND_URL not set" }, { status: 500 });
+    }
+
+    const token = await getToken();
+    if (!token) {
+        return NextResponse.json({ error: "Unauthorized (no auth_token cookie)" }, { status: 401 });
+    }
+
+    const r = await fetch(`${BACKEND_URL}/transactions`, {
+        method: "DELETE",
+        headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/json",
+        },
+    });
+
+    const text = await r.text();
+    return proxyResponse(r, text);
+}
