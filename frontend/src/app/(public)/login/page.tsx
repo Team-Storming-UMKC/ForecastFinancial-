@@ -48,7 +48,7 @@ export default function LoginPage() {
             submitLabel="Sign In"
             onSubmit={handleLogin}
             loading={loading}
-            footerLink={{ label: "Forgot password?", href: "/forgot-password" }}
+            footerLink={{ label: "Don't have a account? Get Started", href: "/get-started" }}
         >
             <AuthInputField
                 fullWidth
