@@ -1,5 +1,6 @@
 package edu.umkc.teamstorming.bank_api.user;
 
+import edu.umkc.teamstorming.bank_api.transaction.TransactionRepository;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -8,6 +9,8 @@ import java.util.Map;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -20,10 +23,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
     private final UserRepository userRepository;
+    private final TransactionRepository transactionRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public UserController(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserController(UserRepository userRepository,
+                          TransactionRepository transactionRepository,
+                          PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.transactionRepository = transactionRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -123,6 +130,20 @@ public class UserController {
         userRepository.save(user);
 
         return ResponseEntity.ok(Map.of("status", "password-updated"));
+    }
+
+    @DeleteMapping("/me")
+    @Transactional
+    public ResponseEntity<?> deleteMe(Authentication auth) {
+        if (auth == null) {
+            return ResponseEntity.status(401).body(Map.of("error", "Unauthorized"));
+        }
+
+        User user = findUser(auth.getName());
+        transactionRepository.deleteByUserId(user.getId());
+        userRepository.delete(user);
+
+        return ResponseEntity.ok(Map.of("status", "account-deleted"));
     }
 
     private User findUser(String email) {
