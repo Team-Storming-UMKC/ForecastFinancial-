@@ -168,4 +168,18 @@ class transaction_service_test {
 
         assertThrows(RuntimeException.class, () -> transactionService.delete("ghost@example.com", 1L));
     }
+
+    @Test
+    void deleteAll_deletesTransactionsForUser() {
+        transactionService.deleteAll("user@example.com");
+
+        verify(transactionRepository).deleteByUserId(mockUser.getId());
+    }
+
+    @Test
+    void deleteAll_userNotFound_throwsException() {
+        when(userRepository.findByEmail("ghost@example.com")).thenReturn(Optional.empty());
+
+        assertThrows(RuntimeException.class, () -> transactionService.deleteAll("ghost@example.com"));
+    }
 }
