@@ -14,7 +14,7 @@ import ExtractionResultDisplay, {
     type ExtractionResult,
     type ExtractedTransaction,
 } from "@/components/dashboard/ExtractionResultDisplay";
-import { tintedGlass } from "@/theme/tintedGlass";
+import { cardSurfaceSx } from "@/theme/tintedGlass";
 
 interface RawDataInputProps {
     onExtractionComplete: () => Promise<void>;
@@ -94,23 +94,11 @@ export default function RawDataInput({ onExtractionComplete }: RawDataInputProps
             {/* ── Input Card ── */}
             <Box
                 sx={{
-                    ...tintedGlass,
-                    borderRadius: 3,
+                    ...cardSurfaceSx,
                     p: 3,
-                    position: "relative",
-                    overflow: "hidden",
-                    "&::before": {
-                        content: '""',
-                        position: "absolute",
-                        inset: 0,
-                        borderRadius: "inherit",
-                        background: "linear-gradient(135deg, rgba(255,255,255,0.07) 0%, transparent 60%)",
-                        pointerEvents: "none",
-                        zIndex: 0,
-                    },
                 }}
             >
-                <Stack spacing={2} sx={{ position: "relative", zIndex: 1 }}>
+                <Stack spacing={2}>
                     <Box>
                         <Typography variant="h6" fontWeight={800} sx={{ color: "text.primary", letterSpacing: "-0.3px" }}>
                             AI Data Import

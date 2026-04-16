@@ -18,7 +18,7 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import { tintedGlass } from "@/theme/tintedGlass";
+import { cardContentSx, cardSurfaceSx } from "@/theme/tintedGlass";
 import { amountBadgeSx, categoryPillSx } from "./categoryTagStyles";
 import TransactionControlDropdown from "./TransactionControlDropdown";
 
@@ -137,22 +137,11 @@ export default function TransactionList({
   return (
     <Box
       sx={{
-        ...tintedGlass,
-        borderRadius: "20px",
+        ...cardSurfaceSx,
         overflow: "visible",
-        position: "relative",
-        "&::before": {
-          content: '""',
-          position: "absolute",
-          inset: 0,
-          borderRadius: "inherit",
-          background: "linear-gradient(135deg, rgba(255,255,255,0.07) 0%, transparent 60%)",
-          pointerEvents: "none",
-          zIndex: 0,
-        },
       }}
     >
-      <Box sx={{ position: "relative", zIndex: 1, p: { xs: 2, md: 2.5 } }}>
+      <Box sx={{ ...cardContentSx, p: { xs: 2, md: 2.5 } }}>
         {showHeader ? (
           <>
             <Stack

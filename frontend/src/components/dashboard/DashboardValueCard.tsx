@@ -2,7 +2,7 @@
 
 import { Box, Typography } from "@mui/material";
 import type { SxProps, Theme } from "@mui/material/styles";
-import { tintedGlass } from "@/theme/tintedGlass";
+import { cardSurfaceSx } from "@/theme/tintedGlass";
 
 type ValueTone =
     | "auto"
@@ -53,25 +53,14 @@ export default function DashboardValueCard({
         <Box
             sx={[
                 (theme) => ({
-                    ...tintedGlass,
+                    ...cardSurfaceSx,
                     minHeight: { xs: 118, sm: 132 },
                     borderRadius: `${theme.customTokens.radii.card}px`,
-                    position: "relative",
-                    overflow: "hidden",
                     display: "grid",
                     gridTemplateRows: "auto 1fr",
                     placeItems: "center",
                     px: { xs: 2, sm: 2.5 },
                     py: { xs: 2, sm: 2.25 },
-                    "&::before": {
-                        content: '""',
-                        position: "absolute",
-                        inset: 0,
-                        borderRadius: "inherit",
-                        background: "linear-gradient(135deg, rgba(255,255,255,0.07) 0%, transparent 60%)",
-                        pointerEvents: "none",
-                        zIndex: 0,
-                    },
                 }),
                 ...(Array.isArray(sx) ? sx : sx ? [sx] : []),
             ]}

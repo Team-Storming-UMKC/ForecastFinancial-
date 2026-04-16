@@ -14,7 +14,7 @@ import {
   CartesianGrid,
   LabelList,
 } from "recharts";
-import { tintedGlass } from "@/theme/tintedGlass";
+import { cardSurfaceSx } from "@/theme/tintedGlass";
 
 function money(n: number) {
   return n.toLocaleString(undefined, { style: "currency", currency: "USD" });
@@ -54,24 +54,12 @@ export default function TopCategoriesChart({ data }: TopCategoriesChartProps) {
   return (
       <Box
           sx={{
-            ...tintedGlass,
-            borderRadius: (theme) => `${theme.customTokens.radii.card}px`,
+            ...cardSurfaceSx,
             p: { xs: 2, md: 2.5 },
-            position: "relative",
-            overflow: "hidden",
             minHeight: { xs: 620, md: 433 },
-            "&::before": {
-              content: '""',
-              position: "absolute",
-              inset: 0,
-              borderRadius: "inherit",
-              background: "linear-gradient(135deg, rgba(255,255,255,0.07) 0%, transparent 60%)",
-              pointerEvents: "none",
-              zIndex: 0,
-            },
           }}
       >
-        <Box sx={{ position: "relative", zIndex: 1 }}>
+        <Box>
           <Stack
             direction="row"
             justifyContent="center"

@@ -4,7 +4,7 @@ import * as React from "react";
 import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
 import NotificationsNoneOutlinedIcon from "@mui/icons-material/NotificationsNoneOutlined";
 import { Alert, Box, Chip, CircularProgress, Divider, Stack, Typography } from "@mui/material";
-import { tintedGlass } from "@/theme/tintedGlass";
+import { cardContentSx, cardSurfaceSx } from "@/theme/tintedGlass";
 
 type RecurringBill = {
   id: string;
@@ -248,11 +248,8 @@ export default function  RecurringBillsCalendar() {
         spacing={2}
         gap ={2}
         sx={{
-          ...tintedGlass,
-          borderRadius: "8px",
+          ...cardSurfaceSx,
           p: { xs: 2, md: 2.5 },
-          position: "relative",
-          overflow: "hidden",
         }}
       >
         <Stack spacing={0.5} gap={1} sx={{ flex: 1, minWidth: 0 }}>
@@ -539,10 +536,10 @@ export default function  RecurringBillsCalendar() {
 }
 
 const panelSx = {
-  ...tintedGlass,
-  borderRadius: "8px",
+  ...cardSurfaceSx,
   p: { xs: 2, md: 2.5 },
   overflow: "hidden",
+  "& > *": cardContentSx,
 };
 
 const summaryTileSx = {

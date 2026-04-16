@@ -16,7 +16,7 @@ import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import { AnimatePresence, motion } from "framer-motion";
 import AuthInputField from "@/components/auth/AuthInputField";
 import AuthSubmitButton from "@/components/auth/AuthSubmitButton";
-import { tintedGlass } from "@/theme/tintedGlass";
+import { cardSurfaceSx } from "@/theme/tintedGlass";
 
 export interface PasswordDraft {
     currentPassword: string;
@@ -80,9 +80,8 @@ function ConfirmDialog({
             onClose={loading ? undefined : onClose}
             PaperProps={{
                 sx: {
-                    ...tintedGlass,
+                    ...cardSurfaceSx,
                     color: "text.primary",
-                    borderRadius: 3,
                 },
             }}
         >
@@ -131,23 +130,11 @@ export default function PasswordSettingsForm({
         <Box
             data-node-id="348:868"
             sx={{
-                ...tintedGlass,
+                ...cardSurfaceSx,
                 position: "relative",
                 width: "100%",
                 minHeight: { xs: "auto", md: 130 },
-                overflow: "hidden",
-                borderRadius: "23px",
                 p: { xs: 2.5, md: 3.25 },
-                "&::before": {
-                    content: '""',
-                    position: "absolute",
-                    inset: 0,
-                    borderRadius: "inherit",
-                    background:
-                        "linear-gradient(135deg, rgba(255,255,255,0.06) 0%, transparent 60%)",
-                    pointerEvents: "none",
-                    zIndex: 0,
-                },
             }}
         >
             <Typography

@@ -23,7 +23,7 @@ import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import CloseIcon from "@mui/icons-material/Close";
 import AutoFixHighIcon from "@mui/icons-material/AutoFixHigh";
-import { tintedGlass } from "@/theme/tintedGlass";
+import { cardSurfaceSx } from "@/theme/tintedGlass";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -145,19 +145,8 @@ export default function ExtractionResultDisplay({
         <Fade in timeout={400}>
             <Box
                 sx={{
-                    ...tintedGlass,
-                    borderRadius: 3,
+                    ...cardSurfaceSx,
                     overflow: "hidden",
-                    position: "relative",
-                    "&::before": {
-                        content: '""',
-                        position: "absolute",
-                        inset: 0,
-                        borderRadius: "inherit",
-                        background: "linear-gradient(135deg, rgba(255,255,255,0.07) 0%, transparent 60%)",
-                        pointerEvents: "none",
-                        zIndex: 0,
-                    },
                 }}
             >
                 {/* ── Header ── */}

@@ -8,6 +8,7 @@ import StatsRow from "@/components/dashboard/StatsRow";
 import TransactionList from "@/components/transactions/TransactionList";
 import CsvImportDialog from "@/components/transactions/CsvImportDialog";
 import StormScene from "@/components/landing/StormScene";
+import { cardSurfaceSx } from "@/theme/tintedGlass";
 import {
     fetchSpendingForecast,
     forecastLabel,
@@ -223,30 +224,16 @@ function DashboardStormLoader() {
             <StormScene visible />
             <Box
                 sx={{
+                    ...cardSurfaceSx,
                     position: "relative",
                     zIndex: 2,
                     width: "min(420px, calc(100vw - 32px))",
-                    borderRadius: (theme) => `${theme.customTokens.radii.card}px`,
-                    border: (theme) => theme.customTokens.borders.card,
-                    background: "rgba(28, 28, 30, 0.58)",
-                    backdropFilter: "blur(24px) saturate(180%)",
-                    WebkitBackdropFilter: "blur(24px) saturate(180%)",
-                    boxShadow: (theme) => theme.customTokens.elevation.card,
                     px: { xs: 3, sm: 4 },
                     py: { xs: 3, sm: 3.5 },
                     textAlign: "center",
-                    overflow: "hidden",
-                    "&::before": {
-                        content: '""',
-                        position: "absolute",
-                        inset: 0,
-                        borderRadius: "inherit",
-                        background: (theme) => theme.customTokens.surfaces.cardHighlight,
-                        pointerEvents: "none",
-                    },
                 }}
             >
-                <Stack spacing={1.25} sx={{ position: "relative", zIndex: 1 }}>
+                <Stack spacing={1.25}>
                     <Typography
                         sx={{
                             color: "primary.main",
