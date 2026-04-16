@@ -9,6 +9,8 @@ import {
     Menu,
     MenuItem,
     Divider,
+    useMediaQuery,
+    useTheme,
 } from "@mui/material";
 import { KeyboardArrowDown, SettingsOutlined, LogoutOutlined } from "@mui/icons-material";
 import { useState, useMemo } from "react";
@@ -19,6 +21,8 @@ import { appDropdownColors, appDropdownRadius } from "@/theme/dropdown";
 export default function AuthNavbar() {
     const router = useRouter();
     const pathname = usePathname();
+    const theme = useTheme();
+    const isCompactNav = useMediaQuery(theme.breakpoints.down("sm"));
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
 
@@ -58,6 +62,15 @@ export default function AuthNavbar() {
         window.location.href = "/settings";
     };
 
+    const navItems = useMemo(
+        () => [
+            { id: "dashboard", label: isCompactNav ? "Home" : "Dashboard" },
+            { id: "transactions", label: isCompactNav ? "Txns" : "Transactions" },
+            { id: "recurring", label: isCompactNav ? "Bills" : "Recurring Bills" },
+        ],
+        [isCompactNav],
+    );
+
     return (
         <FloatingNavbar>
             {/* Logo */}
@@ -75,21 +88,22 @@ export default function AuthNavbar() {
                     fontWeight={700}
                     component={Link}
                     href="/dashboard"
-                    sx={{ textDecoration: "none", color: "primary.main" }}
+                    sx={{
+                        display: { xs: "none", md: "block" },
+                        textDecoration: "none",
+                        color: "primary.main",
+                        whiteSpace: "nowrap",
+                    }}
                 >
                     Forecast Financial
                 </Typography>
             </Box>
 
             {/* Navigation Segmented Control + Avatar */}
-            <Box sx={{ display: "flex", gap: 3, alignItems: "center" }}>
+            <Box sx={{ display: "flex", gap: { xs: 1, sm: 1.5, md: 3 }, alignItems: "center", minWidth: 0 }}>
                 {/* Segmented Control */}
                 <SegmentedControl
-                    items={[
-                        { id: "dashboard", label: "Dashboard" },
-                        { id: "transactions", label: "Transactions" },
-                        { id: "recurring", label: "Recurring Bills" },
-                    ]}
+                    items={navItems}
                     activeId={activeNav}
                     onChange={handleNavChange}
                 />

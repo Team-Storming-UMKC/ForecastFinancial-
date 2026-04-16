@@ -58,7 +58,12 @@ export default function TransactionsPage() {
         <Box sx={{ width: "100%", px: { xs: 2, sm: 3, md: 4 }, py: 4 }}>
             <Stack spacing={4} sx={{ width: "100%" }}>
                 {/* Header */}
-                <Stack direction="row" alignItems="center" justifyContent="space-between">
+                <Stack
+                    direction={{ xs: "column", sm: "row" }}
+                    alignItems={{ xs: "stretch", sm: "center" }}
+                    justifyContent="space-between"
+                    spacing={2}
+                >
                     <Box>
                         <Typography variant="h4" fontWeight={700}>
                             Transactions
@@ -75,11 +80,13 @@ export default function TransactionsPage() {
                         startIcon={<CloudUploadOutlined />}
                         onClick={() => setIsImportDialogOpen(true)}
                         sx={{
+                            alignSelf: { xs: "stretch", sm: "center" },
                             borderRadius: "8px",
                             textTransform: "none",
                             fontWeight: 600,
                             px: 2.5,
                             py: 1.25,
+                            whiteSpace: "nowrap",
                         }}
                     >
                         Import Transactions
