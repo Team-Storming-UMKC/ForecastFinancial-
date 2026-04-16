@@ -2,8 +2,9 @@
 
 import { Box, Typography } from "@mui/material";
 import type { SxProps, Theme } from "@mui/material/styles";
+import { tintedGlass } from "@/theme/tintedGlass";
 
-type ValueTone = "auto" | "positive" | "negative" | "neutral";
+type ValueTone = "auto" | "positive" | "negative" | "neutral" | "orange";
 
 interface DashboardValueCardProps {
     title: string;
@@ -17,6 +18,7 @@ const toneColors = {
     positive: "#4b944b",
     negative: "#d85b5b",
     neutral: "rgba(255,255,255,0.86)",
+    orange: "#ff870f",
 } as const;
 
 function resolveTone(amount: number | undefined, tone: ValueTone) {
@@ -38,13 +40,9 @@ export default function DashboardValueCard({
         <Box
             sx={[
                 (theme) => ({
+                    ...tintedGlass,
                     minHeight: { xs: 150, sm: 170 },
                     borderRadius: `${theme.customTokens.radii.card}px`,
-                    border: theme.customTokens.borders.subtle,
-                    backgroundColor: "rgba(255,255,255,0.02)",
-                    backdropFilter: "blur(10px)",
-                    WebkitBackdropFilter: "blur(10px)",
-                    boxShadow: theme.customTokens.elevation.authCardInset,
                     position: "relative",
                     overflow: "hidden",
                     display: "grid",
@@ -52,6 +50,15 @@ export default function DashboardValueCard({
                     placeItems: "center",
                     px: { xs: 2, sm: 2.5 },
                     py: { xs: 2.5, sm: 3 },
+                    "&::before": {
+                        content: '""',
+                        position: "absolute",
+                        inset: 0,
+                        borderRadius: "inherit",
+                        background: "linear-gradient(135deg, rgba(255,255,255,0.07) 0%, transparent 60%)",
+                        pointerEvents: "none",
+                        zIndex: 0,
+                    },
                 }),
                 ...(Array.isArray(sx) ? sx : sx ? [sx] : []),
             ]}
@@ -63,6 +70,8 @@ export default function DashboardValueCard({
                     fontSize: 16,
                     fontWeight: 600,
                     lineHeight: 1.5,
+                    position: "relative",
+                    zIndex: 1,
                     textAlign: "center",
                 }}
             >
@@ -75,6 +84,8 @@ export default function DashboardValueCard({
                     fontSize: { xs: 34, sm: 40 },
                     fontWeight: 600,
                     lineHeight: 1.5,
+                    position: "relative",
+                    zIndex: 1,
                     textAlign: "center",
                     overflowWrap: "anywhere",
                 }}

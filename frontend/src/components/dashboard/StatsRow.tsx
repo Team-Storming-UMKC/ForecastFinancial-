@@ -37,7 +37,7 @@ export default function StatsRow({ netBalance, totalSpending }: StatsRowProps) {
             <DashboardValueCard
                 title="Monthly Spending"
                 value={money(totalSpending)}
-                tone="negative"
+                tone="orange"
             />
             <DashboardValueCard
                 title="Forecast Trend"
