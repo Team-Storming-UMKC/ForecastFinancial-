@@ -1,6 +1,6 @@
 import type { SxProps, Theme } from "@mui/material/styles";
 import { keyframes } from "@mui/system";
-import { tintedGlass } from "@/theme/tintedGlass";
+import { cardContentSx, cardSurfaceSx } from "@/theme/tintedGlass";
 
 const shimmer = keyframes`
   0% {
@@ -12,25 +12,12 @@ const shimmer = keyframes`
 `;
 
 export const rootSx = {
-  ...tintedGlass,
-  borderRadius: (theme) => `${theme.customTokens.radii.card}px`,
+  ...cardSurfaceSx,
   p: { xs: 3, md: 3.5 },
-  position: "relative",
-  overflow: "hidden",
-  "&::before": {
-    content: '""',
-    position: "absolute",
-    inset: 0,
-    borderRadius: "inherit",
-    background: "linear-gradient(135deg, rgba(255,255,255,0.07) 0%, transparent 60%)",
-    pointerEvents: "none",
-    zIndex: 0,
-  },
 } satisfies SxProps<Theme>;
 
 export const contentSx = {
-  position: "relative",
-  zIndex: 1,
+  ...cardContentSx,
   px: { xs: 1, md: 1.5 },
   py: { xs: 1, md: 1.5 },
 } satisfies SxProps<Theme>;

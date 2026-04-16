@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { Box, BoxProps, Stack, Typography } from "@mui/material";
-import { tintedGlass } from "@/theme/tintedGlass";
+import { cardSurfaceSx } from "@/theme/tintedGlass";
 
 interface SettingsSectionCardProps extends Omit<BoxProps, "title"> {
     title: string;
@@ -21,21 +21,8 @@ export default function SettingsSectionCard({
         <Box
             sx={[
                 {
-                    ...tintedGlass,
-                    borderRadius: "23px",
+                    ...cardSurfaceSx,
                     p: { xs: 2.5, md: 3.25 },
-                    position: "relative",
-                    overflow: "hidden",
-                    "&::before": {
-                        content: '""',
-                        position: "absolute",
-                        inset: 0,
-                        borderRadius: "inherit",
-                        background:
-                            "linear-gradient(135deg, rgba(255,255,255,0.06) 0%, transparent 60%)",
-                        pointerEvents: "none",
-                        zIndex: 0,
-                    },
                 },
                 ...(Array.isArray(sx) ? sx : sx ? [sx] : []),
             ]}

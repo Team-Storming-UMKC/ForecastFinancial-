@@ -139,9 +139,9 @@ export default function TransactionForm({
   const isEditing = Boolean(initialDraft);
 
   return (
-    <Box sx={containerSx}>
-      <Box sx={contentSx}>
-        <Stack sx={headerRowSx}>
+    <Box gap={2} sx={containerSx} >
+      <Box  sx={contentSx}>
+        <Stack gap={2} sx={headerRowSx} >
           <Box>
             <Typography sx={titleSx}>{title}</Typography>
             <Typography sx={supportingTextSx}>{description}</Typography>
@@ -154,7 +154,7 @@ export default function TransactionForm({
         </Stack>
 
         <form onSubmit={handleSubmit}>
-          <Stack sx={stackSx}>
+          <Stack sx={stackSx} spacing={2}>
             <TransactionInput
               label="Merchant"
               value={draft.merchantName}

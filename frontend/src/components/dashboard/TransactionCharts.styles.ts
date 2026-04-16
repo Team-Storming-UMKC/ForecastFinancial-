@@ -1,26 +1,13 @@
 import type { SxProps, Theme } from "@mui/material/styles";
-import { tintedGlass } from "@/theme/tintedGlass";
+import { cardContentSx, cardSurfaceSx } from "@/theme/tintedGlass";
 
 export const rootSx: SxProps<Theme> = {
-  ...tintedGlass,
-  borderRadius: (theme) => `${theme.customTokens.radii.card}px`,
+  ...cardSurfaceSx,
   p: { xs: 2, md: 3 },
-  position: "relative",
-  overflow: "hidden",
-  "&::before": {
-    content: '""',
-    position: "absolute",
-    inset: 0,
-    borderRadius: "inherit",
-    background: "linear-gradient(135deg, rgba(255,255,255,0.07) 0%, transparent 60%)",
-    pointerEvents: "none",
-    zIndex: 0,
-  },
 };
 
 export const contentSx: SxProps<Theme> = {
-  position: "relative",
-  zIndex: 1,
+  ...cardContentSx,
   backgroundColor: "transparent",
   borderRadius: 0,
   px: { xs: 1.5, md: 2 },

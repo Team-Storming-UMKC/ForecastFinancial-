@@ -11,7 +11,7 @@ import {
   CartesianGrid,
   Legend,
 } from "recharts";
-import { tintedGlass } from "@/theme/tintedGlass";
+import { cardSurfaceSx } from "@/theme/tintedGlass";
 
 function money(n: number) {
   return n.toLocaleString(undefined, { style: "currency", currency: "USD" });
@@ -30,23 +30,11 @@ export default function SpendingTrendChart({ data }: SpendingTrendChartProps) {
   return (
       <Box
           sx={{
-            ...tintedGlass,
-            borderRadius: "20px",
+            ...cardSurfaceSx,
             p: { xs: 2.5, sm: 3 },
-            position: "relative",
-            overflow: "hidden",
-            "&::before": {
-              content: '""',
-              position: "absolute",
-              inset: 0,
-              borderRadius: "inherit",
-              background: "linear-gradient(135deg, rgba(255,255,255,0.07) 0%, transparent 60%)",
-              pointerEvents: "none",
-              zIndex: 0,
-            },
           }}
       >
-        <Box sx={{ position: "relative", zIndex: 1 }}>
+        <Box>
           <Typography fontWeight={700} sx={{ mb: 2, color: "text.primary", letterSpacing: "-0.3px" }}>
             Spending Trend
           </Typography>
