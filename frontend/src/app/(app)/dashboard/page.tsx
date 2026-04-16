@@ -71,6 +71,11 @@ export default function DashboardPage() {
         [transactions],
     );
 
+    const recentTransactions = React.useMemo(
+        () => transactions.slice(0, 20),
+        [transactions],
+    );
+
     return (
         <Box
             sx={{
@@ -133,9 +138,11 @@ export default function DashboardPage() {
 
                     <TransactionList
                         loading={transactionsLoading}
-                        transactions={transactions}
+                        transactions={recentTransactions}
                         onEdit={undefined}
                         onDelete={undefined}
+                        showHeader={false}
+                        showControls={false}
                     />
                 </Box>
             </Stack>
