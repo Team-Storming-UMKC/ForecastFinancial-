@@ -1,5 +1,3 @@
-import type { SxProps, Theme } from "@mui/material/styles";
-
 type CategoryPalette = {
   bg: string;
   border: string;
@@ -61,7 +59,7 @@ export function getCategoryColors(category: string): CategoryPalette {
   return FALLBACK_COLORS[hashCategory(normalized) % FALLBACK_COLORS.length];
 }
 
-export function categoryPillSx(category: string): SxProps<Theme> {
+export function categoryPillSx(category: string) {
   const colors = getCategoryColors(category);
 
   return {
@@ -80,7 +78,7 @@ export function categoryPillSx(category: string): SxProps<Theme> {
   };
 }
 
-export function amountBadgeSx(isIncome: boolean): SxProps<Theme> {
+export function amountBadgeSx(isIncome: boolean) {
   return {
     height: 24,
     borderRadius: "8px",
