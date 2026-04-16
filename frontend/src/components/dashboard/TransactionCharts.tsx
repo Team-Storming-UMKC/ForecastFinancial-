@@ -55,9 +55,10 @@ function formatGroupKey(date: Date, group: GroupKey) {
 
 interface TransactionChartsProps {
     refreshKey?: number;
+    showStats?: boolean;
 }
 
-export default function TransactionCharts({ refreshKey }: TransactionChartsProps) {
+export default function TransactionCharts({ refreshKey, showStats = true }: TransactionChartsProps) {
     const [range, setRange] = React.useState<RangeKey>("30d");
     const [group, setGroup] = React.useState<GroupKey>("day");
     const [data, setData] = React.useState<Transaction[]>([]);
@@ -134,6 +135,10 @@ export default function TransactionCharts({ refreshKey }: TransactionChartsProps
             spendingOnly.reduce((sum, t) => sum + Math.abs(Number(t.amount) || 0), 0),
         [spendingOnly]);
 
+    const netBalance = React.useMemo(() =>
+            filtered.reduce((sum, t) => sum + (Number(t.amount) || 0), 0),
+        [filtered]);
+
     const topMerchants = React.useMemo(() => {
         const map = new Map<string, number>();
         for (const t of spendingOnly) {
@@ -201,7 +206,12 @@ export default function TransactionCharts({ refreshKey }: TransactionChartsProps
                     </Typography>
                 ) : (
                     <Stack spacing={2.25}>
-                        <StatsRow totalSpending={totalSpending} transactionCount={spendingOnly.length} />
+                        {showStats ? (
+                            <StatsRow
+                                netBalance={netBalance}
+                                totalSpending={totalSpending}
+                            />
+                        ) : null}
 
                         <Box sx={chartGridSx}>
                             <SpendingTrendChart data={timeSeries} />
