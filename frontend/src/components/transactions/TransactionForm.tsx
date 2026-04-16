@@ -12,6 +12,7 @@ import {
   supportingTextSx,
   titleSx,
 } from "./TransactionForm.styles";
+import { categoryPillSx } from "./categoryTagStyles";
 import TransactionInput from "./TransactionInput";
 
 export type TransactionDraft = {
@@ -207,8 +208,21 @@ export default function TransactionForm({
                   clickable
                   onClick={() => updateDraft("category", suggestion)}
                   disabled={submitting}
-                  color={draft.category === suggestion ? "primary" : "default"}
-                  variant={draft.category === suggestion ? "filled" : "outlined"}
+                  variant="filled"
+                  sx={[
+                    categoryPillSx(suggestion),
+                    draft.category === suggestion
+                      ? {
+                          outline: "2px solid rgba(255,255,255,0.85)",
+                          outlineOffset: "2px",
+                        }
+                      : {
+                          opacity: 0.86,
+                          "&:hover": {
+                            opacity: 1,
+                          },
+                        },
+                  ]}
                 />
               ))}
             </Stack>
