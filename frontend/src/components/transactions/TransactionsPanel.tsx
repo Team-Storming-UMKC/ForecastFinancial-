@@ -8,13 +8,13 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  Stack,
   Typography,
 } from "@mui/material";
 import TransactionForm, { TransactionDraft } from "./TransactionForm";
 import TransactionList from "./TransactionList";
 import type { Transaction } from "@/types/transaction";
 import { useToast } from "@/components/toast/ToastProvider";
+import { cardSurfaceSx } from "@/theme/tintedGlass";
 
 function toDraft(tx: Transaction): TransactionDraft {
   return {
@@ -119,26 +119,6 @@ export default function TransactionsPanel({
 
   return (
     <Box>
-      <Stack
-        direction={{ xs: "column", md: "row" }}
-        alignItems={{ xs: "flex-start", md: "center" }}
-        justifyContent="space-between"
-        sx={{ mb: 2 }}
-        spacing={1.5}
-      >
-        <Box>
-          <Typography variant="h6" fontWeight={800}>
-            Transactions
-          </Typography>
-        </Box>
-
-        <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap">
-          <Button variant="outlined" onClick={onChanged} disabled={loading}>
-            Refresh
-          </Button>
-        </Stack>
-      </Stack>
-
       <Box
         sx={(theme) => ({
           display: "grid",
@@ -177,11 +157,8 @@ export default function TransactionsPanel({
         onClose={() => setTransactionToDelete(null)}
         PaperProps={{
           sx: {
-            background: "rgba(28, 28, 30, 0.96)",
+            ...cardSurfaceSx,
             color: "text.primary",
-            border: "1px solid rgba(255,255,255,0.12)",
-            borderRadius: 3,
-            backdropFilter: "blur(24px)",
           },
         }}
       >

@@ -13,7 +13,7 @@ import {
   Typography,
 } from "@mui/material";
 import { CloudUploadOutlined, DescriptionOutlined } from "@mui/icons-material";
-import { tintedGlass } from "@/theme/tintedGlass";
+import { cardSurfaceSx } from "@/theme/tintedGlass";
 import { useToast } from "@/components/toast/ToastProvider";
 
 type CsvImportDialogProps = {
@@ -106,13 +106,13 @@ export default function CsvImportDialog({
     <Dialog
       open={open}
       onClose={handleClose}
+      disableScrollLock
       fullWidth
       maxWidth="sm"
       PaperProps={{
         sx: {
-          ...tintedGlass,
+          ...cardSurfaceSx,
           color: "text.primary",
-          borderRadius: 3,
           overflow: "hidden",
         },
       }}
@@ -162,8 +162,7 @@ export default function CsvImportDialog({
           }}
           onDrop={handleDrop}
           sx={{
-            ...tintedGlass,
-            borderRadius: 3,
+            ...cardSurfaceSx,
             minHeight: 220,
             px: 3,
             py: 4,
@@ -175,7 +174,7 @@ export default function CsvImportDialog({
             borderColor: isDragging ? "rgba(255,107,0,0.75)" : "rgba(255,255,255,0.12)",
             background: isDragging
               ? "linear-gradient(135deg, rgba(255,107,0,0.12) 0%, rgba(28,28,30,0.7) 100%)"
-              : "rgba(28, 28, 30, 0.5)",
+              : (theme) => theme.customTokens.surfaces.card,
             transform: isDragging ? "translateY(-1px)" : "none",
             pointerEvents: isUploading ? "none" : "auto",
           }}

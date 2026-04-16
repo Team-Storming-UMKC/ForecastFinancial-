@@ -1,13 +1,40 @@
+import { cardSurfaceTokens } from "./cardSurface";
+import type { SxProps, Theme } from "@mui/material/styles";
+
 export const tintedGlass = {
-  background: "rgba(28, 28, 30, 0.55)",
-
-  backdropFilter: "blur(30px) saturate(180%)",
-  WebkitBackdropFilter: "blur(30px) saturate(180%)",
-
-  border: "1px solid rgba(255,255,255,0.12)",
-
-  boxShadow: `
-    0 10px 30px rgba(0,0,0,0.35),
-    inset 0 1px 0 rgba(255,255,255,0.15)
-  `,
+  background: cardSurfaceTokens.background,
+  backdropFilter: cardSurfaceTokens.backdropFilter,
+  WebkitBackdropFilter: cardSurfaceTokens.backdropFilter,
+  border: cardSurfaceTokens.border,
+  boxShadow: cardSurfaceTokens.shadow,
 };
+
+export const cardHighlight = {
+  background: cardSurfaceTokens.highlight,
+};
+
+export const cardSurfaceSx = {
+  ...tintedGlass,
+  borderRadius: (theme) => `${theme.customTokens.radii.card}px`,
+  position: "relative",
+  overflow: "hidden",
+  isolation: "isolate",
+  "&::before": {
+    content: '""',
+    position: "absolute",
+    inset: 0,
+    borderRadius: "inherit",
+    background: (theme) => theme.customTokens.surfaces.cardHighlight,
+    pointerEvents: "none",
+    zIndex: 0,
+  },
+  "& > *": {
+    position: "relative",
+    zIndex: 1,
+  },
+} satisfies SxProps<Theme>;
+
+export const cardContentSx = {
+  position: "relative",
+  zIndex: 1,
+} satisfies SxProps<Theme>;

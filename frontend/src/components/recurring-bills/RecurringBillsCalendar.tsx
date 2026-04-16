@@ -4,7 +4,7 @@ import * as React from "react";
 import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
 import NotificationsNoneOutlinedIcon from "@mui/icons-material/NotificationsNoneOutlined";
 import { Alert, Box, Chip, CircularProgress, Divider, Stack, Typography } from "@mui/material";
-import { tintedGlass } from "@/theme/tintedGlass";
+import { cardContentSx, cardSurfaceSx } from "@/theme/tintedGlass";
 
 type RecurringBill = {
   id: string;
@@ -180,7 +180,7 @@ function mapSubscription(item: ApiSubscription, index: number): RecurringBill {
   };
 }
 
-export default function RecurringBillsCalendar() {
+export default function  RecurringBillsCalendar() {
   const today = React.useMemo(() => new Date(), []);
   const [bills, setBills] = React.useState<RecurringBill[]>([]);
   const [loading, setLoading] = React.useState(true);
@@ -248,15 +248,12 @@ export default function RecurringBillsCalendar() {
         spacing={2}
         gap ={2}
         sx={{
-          ...tintedGlass,
-          borderRadius: "8px",
+          ...cardSurfaceSx,
           p: { xs: 2, md: 2.5 },
-          position: "relative",
-          overflow: "hidden",
         }}
       >
         <Stack spacing={0.5} gap={1} sx={{ flex: 1, minWidth: 0 }}>
-          <Stack direction="row" spacing={1} alignItems="center">
+          <Stack direction="row" spacing={1} gap={1} alignItems="center">
             <CalendarMonthOutlinedIcon sx={{ color: "primary.main" }} />
             <Typography variant="h5" fontWeight={800} sx={{ color: "text.primary", letterSpacing: 0 }}>
               Subscription calendar
@@ -267,7 +264,7 @@ export default function RecurringBillsCalendar() {
           </Typography>
         </Stack>
 
-        <Stack direction={{ xs: "column", sm: "row" }} spacing={1.25}>
+        <Stack direction={{ xs: "column", sm: "row" }} gap={2} spacing={1.25}>
           <Box sx={summaryTileSx}>
             <Typography sx={summaryLabelSx}>Monthly total</Typography>
             <Typography sx={summaryValueSx}>{loading ? "Loading" : currency(monthlyTotal)}</Typography>
@@ -539,10 +536,10 @@ export default function RecurringBillsCalendar() {
 }
 
 const panelSx = {
-  ...tintedGlass,
-  borderRadius: "8px",
+  ...cardSurfaceSx,
   p: { xs: 2, md: 2.5 },
   overflow: "hidden",
+  "& > *": cardContentSx,
 };
 
 const summaryTileSx = {

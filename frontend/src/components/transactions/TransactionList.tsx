@@ -18,7 +18,7 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import { tintedGlass } from "@/theme/tintedGlass";
+import { cardContentSx, cardSurfaceSx } from "@/theme/tintedGlass";
 import { amountBadgeSx, categoryPillSx } from "./categoryTagStyles";
 import TransactionControlDropdown from "./TransactionControlDropdown";
 
@@ -71,11 +71,21 @@ export default function TransactionList({
   transactions,
   onEdit,
   onDelete,
+  showHeader = true,
+  showControls = true,
+  title = "Recent transactions",
+  description = "Review, edit, and remove entries without leaving the dashboard.",
+  headerAction,
 }: {
   loading: boolean;
   transactions?: Transaction[];
   onEdit?: (tx: Transaction) => void | Promise<void>;
   onDelete?: (id: number) => void | Promise<void>;
+  showHeader?: boolean;
+  showControls?: boolean;
+  title?: string;
+  description?: string;
+  headerAction?: React.ReactNode;
 }) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
@@ -127,76 +137,73 @@ export default function TransactionList({
   return (
     <Box
       sx={{
-        ...tintedGlass,
-        borderRadius: "20px",
+        ...cardSurfaceSx,
         overflow: "visible",
-        position: "relative",
-        "&::before": {
-          content: '""',
-          position: "absolute",
-          inset: 0,
-          borderRadius: "inherit",
-          background: "linear-gradient(135deg, rgba(255,255,255,0.07) 0%, transparent 60%)",
-          pointerEvents: "none",
-          zIndex: 0,
-        },
       }}
     >
-      <Box sx={{ position: "relative", zIndex: 1, p: { xs: 2, md: 2.5 } }}>
-        <Stack
-          direction={{ xs: "column", sm: "row" }}
-          alignItems={{ xs: "flex-start", sm: "center" }}
-          justifyContent="space-between"
-          sx={{ mb: 1.25 }}
-          spacing={1}
-        >
-          <Box>
-            <Typography fontWeight={800} sx={{ letterSpacing: 0.2, color: "text.primary" }}>
-              Recent transactions
-            </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-              Review, edit, and remove entries without leaving the dashboard.
-            </Typography>
-          </Box>
+      <Box sx={{ ...cardContentSx, p: { xs: 2, md: 2.5 } }}>
+        {showHeader ? (
+          <>
+            <Stack
+              direction={{ xs: "column", sm: "row" }}
+              alignItems={{ xs: "flex-start", sm: "center" }}
+              justifyContent="space-between"
+              sx={{ mb: 1.25 }}
+              gap={1}
+              spacing={1}
+            >
+              <Box>
+                <Typography fontWeight={800} sx={{ letterSpacing: 0.2, color: "text.primary" }}>
+                  {title}
+                </Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                  {description}
+                </Typography>
+              </Box>
 
-          <Stack
-            direction={{ xs: "column", md: "row" }}
-            alignItems={{ xs: "stretch", md: "flex-end" }}
-            spacing={1.25}
-            gap={2}
-            sx={{ width: { xs: "100%", sm: "auto" } }}
-          >
-            {!loading && rows.length > 0 ? (
-              <>
-                <TransactionControlDropdown
-                  label="Sort"
-                  value={sortKey}
-                  options={SORT_OPTIONS}
-                  onChange={(value) => setSortKey(value as SortKey)}
-                />
-                <TransactionControlDropdown
-                  label="Filter"
-                  value={categoryFilter}
-                  options={categoryFilterOptions}
-                  onChange={setCategoryFilter}
-                />
-              </>
-            ) : null}
+              <Stack
+                direction={{ xs: "column", md: "row" }}
+                alignItems={{ xs: "stretch", md: "flex-end" }}
+                spacing={1.25}
+                gap={2}
+                sx={{ width: { xs: "100%", sm: "auto" } }}
+              >
+                {showControls && !loading && rows.length > 0 ? (
+                  <>
+                    <TransactionControlDropdown
+                      label="Sort"
+                      value={sortKey}
+                      options={SORT_OPTIONS}
+                      onChange={(value) => setSortKey(value as SortKey)}
+                    />
+                    <TransactionControlDropdown
+                      label="Filter"
+                      value={categoryFilter}
+                      options={categoryFilterOptions}
+                      onChange={setCategoryFilter}
+                    />
+                  </>
+                ) : null}
 
-            <Chip
-              label={entryLabel}
-              sx={{
-                height: 42,
-                alignSelf: { xs: "flex-start", md: "flex-end" },
-                bgcolor: "rgba(255,255,255,0.08)",
-                color: "text.primary",
-                fontWeight: 700,
-              }}
-            />
-          </Stack>
-        </Stack>
+                {showControls ? (
+                  <Chip
+                    label={entryLabel}
+                    sx={{
+                      height: 42,
+                      alignSelf: { xs: "flex-start", md: "flex-end" },
+                      bgcolor: "rgba(255,255,255,0.08)",
+                      color: "text.primary",
+                      fontWeight: 700,
+                    }}
+                  />
+                ) : null}
+                {headerAction}
+              </Stack>
+            </Stack>
 
-        <Divider sx={{ mb: 1.5, borderColor: "rgba(255,255,255,0.08)" }} />
+            <Divider sx={{ mb: 1.5, borderColor: "rgba(255,255,255,0.08)" }} />
+          </>
+        ) : null}
 
         {loading ? (
           <Stack direction="row" alignItems="center" spacing={1.25} sx={{ py: 2 }}>

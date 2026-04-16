@@ -8,7 +8,6 @@ import TransactionsPanel from "@/components/transactions/TransactionsPanel";
 import type { Transaction } from "@/types/transaction";
 
 export default function TransactionsPage() {
-    const [email, setEmail] = React.useState<string | null>(null);
     const [loading, setLoading] = React.useState(true);
     const [transactions, setTransactions] = React.useState<Transaction[]>([]);
     const [isImportDialogOpen, setIsImportDialogOpen] = React.useState(false);
@@ -43,8 +42,6 @@ export default function TransactionsPage() {
                 window.location.href = "/login";
                 return;
             }
-            const data = await res.json();
-            setEmail(data.email);
         }
         void loadUser();
         void loadTransactions();
@@ -56,30 +53,31 @@ export default function TransactionsPage() {
 
     return (
         <Box sx={{ width: "100%", px: { xs: 2, sm: 3, md: 4 }, py: 4 }}>
-            <Stack spacing={4} sx={{ width: "100%" }}>
-                {/* Header */}
-                <Stack direction="row" alignItems="center" justifyContent="space-between">
-                    <Box>
-                        <Typography variant="h4" fontWeight={700}>
-                            Transactions
-                        </Typography>
-                        <Typography sx={{ mt: 1, color: "text.secondary" }}>
-                            {email ? `Logged in as: ${email}` : "Loading..."}
-                        </Typography>
-                    </Box>
+            <Stack spacing={4} gap={2} sx={{ width: "100%" }}>
+                <Stack
+                    direction={{ xs: "column", sm: "row" }}
+                    alignItems={{ xs: "stretch", sm: "center" }}
+                    justifyContent="space-between"
+                    spacing={2}
+                    gap={2}
+                >
+                    <Typography variant="h4" fontWeight={700}>
+                        Transactions
+                    </Typography>
 
-                    {/* Import Transactions Button */}
                     <Button
                         variant="contained"
                         color="primary"
                         startIcon={<CloudUploadOutlined />}
                         onClick={() => setIsImportDialogOpen(true)}
                         sx={{
+                            alignSelf: { xs: "stretch", sm: "center" },
                             borderRadius: "8px",
                             textTransform: "none",
                             fontWeight: 600,
                             px: 2.5,
                             py: 1.25,
+                            whiteSpace: "nowrap",
                         }}
                     >
                         Import Transactions

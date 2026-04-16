@@ -15,6 +15,7 @@ export const getSegmentedControlStyles = (theme: Theme) => ({
     width: "fit-content",
     height: "fit-content",
     overflow: "hidden",
+    maxWidth: "100%",
   },
   indicator: {
     position: "absolute" as const,
@@ -35,6 +36,7 @@ export const getSegmentedControlStyles = (theme: Theme) => ({
     justifyContent: "center",
     padding: `0 ${theme.spacing(1.5)}`,
     height: theme.spacing(4),
+    minWidth: 0,
     borderRadius: theme.customTokens.radii.card,
     border: "none",
     outline: "none",
@@ -46,6 +48,7 @@ export const getSegmentedControlStyles = (theme: Theme) => ({
     color: theme.palette.text.primary,
     appearance: "none",
     WebkitAppearance: "none",
+    whiteSpace: "nowrap",
 
     "&:hover": {
       opacity: 0.8,
