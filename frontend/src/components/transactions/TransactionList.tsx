@@ -19,6 +19,7 @@ import {
   useTheme,
 } from "@mui/material";
 import { tintedGlass } from "@/theme/tintedGlass";
+import { amountBadgeSx, categoryPillSx } from "./categoryTagStyles";
 
 export type Transaction = {
   id: number;
@@ -146,27 +147,27 @@ export default function TransactionList({
                       </Typography>
                     </Box>
 
-                    <Typography
-                      fontWeight={800}
-                      sx={{
-                        color: isNegative ? "error.light" : "success.light",
-                        fontVariantNumeric: "tabular-nums",
-                        whiteSpace: "nowrap",
-                      }}
-                    >
-                      {isNegative ? "-" : "+"}
-                      {formatAmount(amt)}
-                    </Typography>
+                    <Stack alignItems="flex-end" spacing={0.75}>
+                      <Typography
+                        fontWeight={800}
+                        sx={{
+                          color: isNegative ? "error.light" : "success.light",
+                          fontVariantNumeric: "tabular-nums",
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        {isNegative ? "-" : "+"}
+                        {formatAmount(amt)}
+                      </Typography>
+                      <Chip label={isNegative ? "Expense" : "Income"} size="small" sx={amountBadgeSx(!isNegative)} />
+                    </Stack>
                   </Stack>
 
                   <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mt: 1.25 }}>
                     <Chip
                       label={tx.category}
                       size="small"
-                      sx={{
-                        bgcolor: "rgba(255,255,255,0.08)",
-                        color: "text.primary",
-                      }}
+                      sx={categoryPillSx(tx.category)}
                     />
 
                     {(onEdit || onDelete) && (
@@ -233,24 +234,25 @@ export default function TransactionList({
                         <Chip
                           label={tx.category}
                           size="small"
-                          sx={{
-                            bgcolor: "rgba(255,255,255,0.08)",
-                            color: "text.primary",
-                          }}
+                          sx={categoryPillSx(tx.category)}
                         />
                       </TableCell>
                       <TableCell sx={{ color: "text.primary" }}>{formatDate(tx.date)}</TableCell>
                       <TableCell align="right" sx={{ fontWeight: 800 }}>
-                        <Box
-                          component="span"
-                          sx={{
-                            color: isNegative ? "error.light" : "success.light",
-                            fontVariantNumeric: "tabular-nums",
-                          }}
-                        >
-                          {isNegative ? "-" : "+"}
-                          {formatAmount(amt)}
-                        </Box>
+                        <Stack direction="row" spacing={1} alignItems="center" justifyContent="flex-end">
+                          <Chip label={isNegative ? "Expense" : "Income"} size="small" sx={amountBadgeSx(!isNegative)} />
+                          <Box
+                            component="span"
+                            sx={{
+                              color: isNegative ? "error.light" : "success.light",
+                              fontVariantNumeric: "tabular-nums",
+                              minWidth: 88,
+                            }}
+                          >
+                            {isNegative ? "-" : "+"}
+                            {formatAmount(amt)}
+                          </Box>
+                        </Stack>
                       </TableCell>
                       {(onEdit || onDelete) && (
                         <TableCell align="right">
