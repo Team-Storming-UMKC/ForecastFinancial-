@@ -160,6 +160,7 @@ export default function TransactionList({
               alignItems={{ xs: "flex-start", sm: "center" }}
               justifyContent="space-between"
               sx={{ mb: 1.25 }}
+              gap={1}
               spacing={1}
             >
               <Box>

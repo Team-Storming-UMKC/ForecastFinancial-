@@ -54,7 +54,7 @@ export default function DashboardValueCard({
             sx={[
                 (theme) => ({
                     ...tintedGlass,
-                    minHeight: { xs: 150, sm: 170 },
+                    minHeight: { xs: 118, sm: 132 },
                     borderRadius: `${theme.customTokens.radii.card}px`,
                     position: "relative",
                     overflow: "hidden",
@@ -62,7 +62,7 @@ export default function DashboardValueCard({
                     gridTemplateRows: "auto 1fr",
                     placeItems: "center",
                     px: { xs: 2, sm: 2.5 },
-                    py: { xs: 2.5, sm: 3 },
+                    py: { xs: 2, sm: 2.25 },
                     "&::before": {
                         content: '""',
                         position: "absolute",
