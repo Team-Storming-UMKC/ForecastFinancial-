@@ -1,4 +1,5 @@
 import { createTheme } from "@mui/material/styles";
+import { cardSurfaceTokens } from "./cardSurface";
 
 declare module "@mui/material/styles" {
   interface Theme {
@@ -6,9 +7,12 @@ declare module "@mui/material/styles" {
       surfaces: {
         pageGradient: string;
         authCard: string;
+        card: string;
+        cardHighlight: string;
       };
       borders: {
         subtle: string;
+        card: string;
         input: string;
       };
       radii: {
@@ -17,6 +21,7 @@ declare module "@mui/material/styles" {
       };
       elevation: {
         authCardInset: string;
+        card: string;
       };
       text: {
         placeholder: string;
@@ -32,9 +37,12 @@ declare module "@mui/material/styles" {
       surfaces?: {
         pageGradient?: string;
         authCard?: string;
+        card?: string;
+        cardHighlight?: string;
       };
       borders?: {
         subtle?: string;
+        card?: string;
         input?: string;
       };
       radii?: {
@@ -43,6 +51,7 @@ declare module "@mui/material/styles" {
       };
       elevation?: {
         authCardInset?: string;
+        card?: string;
       };
       text?: {
         placeholder?: string;
@@ -63,7 +72,7 @@ const theme = createTheme({
     },
     background: {
       default: "#1f2124",
-      paper: "rgba(255, 255, 255, 0.02)",
+      paper: cardSurfaceTokens.background,
     },
     text: {
       primary: "#ffffff",
@@ -112,10 +121,13 @@ const theme = createTheme({
   customTokens: {
     surfaces: {
       pageGradient: "radial-gradient(circle at 10% 10%, #26282d 0%, #1f2124 60%, #1b1d20 100%)",
-      authCard: "rgba(255, 255, 255, 0.02)",
+      authCard: cardSurfaceTokens.background,
+      card: cardSurfaceTokens.background,
+      cardHighlight: cardSurfaceTokens.highlight,
     },
     borders: {
       subtle: "0.5px solid rgba(255, 255, 255, 0.05)",
+      card: cardSurfaceTokens.border,
       input: "1px solid #d9d9d9",
     },
     radii: {
@@ -125,6 +137,7 @@ const theme = createTheme({
     elevation: {
       authCardInset:
         "inset 0 -2px 4px rgba(0, 0, 0, 0.2), inset 0 2px 4px rgba(255, 255, 255, 0.4)",
+      card: cardSurfaceTokens.shadow,
     },
     text: {
       placeholder: "#b3b3b3",

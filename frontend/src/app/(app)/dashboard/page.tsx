@@ -1,6 +1,6 @@
 "use client";
 import * as React from "react";
-import { Box, Button, Stack, Typography } from "@mui/material";
+import { Box, Button, Stack } from "@mui/material";
 import { CloudUploadOutlined } from "@mui/icons-material";
 import TransactionCharts from "@/components/dashboard/TransactionCharts";
 import InsightsCard from "@/components/dashboard/InsightsCard";
@@ -103,23 +103,15 @@ export default function DashboardPage() {
 
                 <TransactionCharts refreshKey={chartsKey} showStats={false} />
 
-                <Box>
-                    <Stack
-                        direction={{ xs: "column", sm: "row" }}
-                        justifyContent="space-between"
-                        alignItems={{ xs: "stretch", sm: "center" }}
-                        spacing={1.5}
-                        sx={{ mb: 2 }}
-                    >
-                        <Box>
-                            <Typography variant="h6" fontWeight={800}>
-                                Recent Transactions
-                            </Typography>
-                            <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                                Latest activity from your account.
-                            </Typography>
-                        </Box>
-
+                <TransactionList
+                    loading={transactionsLoading}
+                    transactions={recentTransactions}
+                    onEdit={undefined}
+                    onDelete={undefined}
+                    title="Recent Transactions"
+                    description="Latest activity from your account."
+                    showControls={false}
+                    headerAction={
                         <Button
                             variant="contained"
                             startIcon={<CloudUploadOutlined />}
@@ -134,17 +126,8 @@ export default function DashboardPage() {
                         >
                             Import Transactions
                         </Button>
-                    </Stack>
-
-                    <TransactionList
-                        loading={transactionsLoading}
-                        transactions={recentTransactions}
-                        onEdit={undefined}
-                        onDelete={undefined}
-                        showHeader={false}
-                        showControls={false}
-                    />
-                </Box>
+                    }
+                />
             </Stack>
 
             <CsvImportDialog

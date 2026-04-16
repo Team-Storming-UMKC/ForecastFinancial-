@@ -106,6 +106,7 @@ export default function CsvImportDialog({
     <Dialog
       open={open}
       onClose={handleClose}
+      disableScrollLock
       fullWidth
       maxWidth="sm"
       PaperProps={{

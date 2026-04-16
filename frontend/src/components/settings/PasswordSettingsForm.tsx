@@ -80,11 +80,9 @@ function ConfirmDialog({
             onClose={loading ? undefined : onClose}
             PaperProps={{
                 sx: {
-                    background: "rgba(28, 28, 30, 0.96)",
+                    ...tintedGlass,
                     color: "text.primary",
-                    border: "1px solid rgba(255,255,255,0.12)",
                     borderRadius: 3,
-                    backdropFilter: "blur(24px)",
                 },
             }}
         >

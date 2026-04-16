@@ -15,6 +15,7 @@ import TransactionForm, { TransactionDraft } from "./TransactionForm";
 import TransactionList from "./TransactionList";
 import type { Transaction } from "@/types/transaction";
 import { useToast } from "@/components/toast/ToastProvider";
+import { tintedGlass } from "@/theme/tintedGlass";
 
 function toDraft(tx: Transaction): TransactionDraft {
   return {
@@ -177,11 +178,9 @@ export default function TransactionsPanel({
         onClose={() => setTransactionToDelete(null)}
         PaperProps={{
           sx: {
-            background: "rgba(28, 28, 30, 0.96)",
+            ...tintedGlass,
             color: "text.primary",
-            border: "1px solid rgba(255,255,255,0.12)",
             borderRadius: 3,
-            backdropFilter: "blur(24px)",
           },
         }}
       >
