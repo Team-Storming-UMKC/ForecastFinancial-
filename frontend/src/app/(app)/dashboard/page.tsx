@@ -1,18 +1,21 @@
 "use client";
 import * as React from "react";
-import { Box, Button, Stack } from "@mui/material";
+import { Box, Button, Stack, Typography } from "@mui/material";
 import { CloudUploadOutlined } from "@mui/icons-material";
 import TransactionCharts from "@/components/dashboard/TransactionCharts";
 import InsightsCard from "@/components/dashboard/InsightsCard";
 import StatsRow from "@/components/dashboard/StatsRow";
 import TransactionList from "@/components/transactions/TransactionList";
 import CsvImportDialog from "@/components/transactions/CsvImportDialog";
+import StormScene from "@/components/landing/StormScene";
 import type { Transaction } from "@/types/transaction";
 
 export default function DashboardPage() {
     const [transactions, setTransactions] = React.useState<Transaction[]>([]);
     const [transactionsLoading, setTransactionsLoading] = React.useState(true);
     const [isImportDialogOpen, setIsImportDialogOpen] = React.useState(false);
+    const [isCheckingAuth, setIsCheckingAuth] = React.useState(true);
+    const [minimumLoaderElapsed, setMinimumLoaderElapsed] = React.useState(false);
     const [chartsKey, setChartsKey] = React.useState(0);
 
     const loadTransactions = React.useCallback(async () => {
@@ -47,10 +50,19 @@ export default function DashboardPage() {
                 window.location.href = "/login";
                 return;
             }
+            setIsCheckingAuth(false);
         }
         void loadUser();
         void loadTransactions();
     }, [loadTransactions]);
+
+    React.useEffect(() => {
+        const timer = window.setTimeout(() => {
+            setMinimumLoaderElapsed(true);
+        }, 1200);
+
+        return () => window.clearTimeout(timer);
+    }, []);
 
     async function handleTransactionsChanged() {
         await loadTransactions();
@@ -76,6 +88,8 @@ export default function DashboardPage() {
         [transactions],
     );
 
+    const showStormLoader = isCheckingAuth || transactionsLoading || !minimumLoaderElapsed;
+
     return (
         <Box
             sx={{
@@ -85,7 +99,17 @@ export default function DashboardPage() {
                 pb: { xs: 4, md: 7 },
             }}
         >
-            <Stack spacing={{ xs: 2.5, md: 4 }} gap={2} sx={{ width: "100%" }}>
+            {showStormLoader ? <DashboardStormLoader /> : null}
+
+            <Stack
+                spacing={{ xs: 2.5, md: 4 }}
+                gap={2}
+                sx={{
+                    width: "100%",
+                    opacity: showStormLoader ? 0 : 1,
+                    transition: "opacity 420ms ease",
+                }}
+            >
                 <Box
                     sx={{
                         display: "grid",
@@ -136,6 +160,79 @@ export default function DashboardPage() {
                 onImported={handleTransactionsChanged}
                 endpoint="/api/transactions/import-csv"
             />
+        </Box>
+    );
+}
+
+function DashboardStormLoader() {
+    return (
+        <Box
+            role="status"
+            aria-live="polite"
+            aria-label="Loading dashboard"
+            sx={{
+                position: "fixed",
+                inset: 0,
+                zIndex: (theme) => theme.zIndex.modal + 1,
+                overflow: "hidden",
+                display: "grid",
+                placeItems: "center",
+                bgcolor: "background.default",
+            }}
+        >
+            <StormScene visible />
+            <Box
+                sx={{
+                    position: "relative",
+                    zIndex: 2,
+                    width: "min(420px, calc(100vw - 32px))",
+                    borderRadius: (theme) => `${theme.customTokens.radii.card}px`,
+                    border: (theme) => theme.customTokens.borders.card,
+                    background: "rgba(28, 28, 30, 0.58)",
+                    backdropFilter: "blur(24px) saturate(180%)",
+                    WebkitBackdropFilter: "blur(24px) saturate(180%)",
+                    boxShadow: (theme) => theme.customTokens.elevation.card,
+                    px: { xs: 3, sm: 4 },
+                    py: { xs: 3, sm: 3.5 },
+                    textAlign: "center",
+                    overflow: "hidden",
+                    "&::before": {
+                        content: '""',
+                        position: "absolute",
+                        inset: 0,
+                        borderRadius: "inherit",
+                        background: (theme) => theme.customTokens.surfaces.cardHighlight,
+                        pointerEvents: "none",
+                    },
+                }}
+            >
+                <Stack spacing={1.25} sx={{ position: "relative", zIndex: 1 }}>
+                    <Typography
+                        sx={{
+                            color: "primary.main",
+                            fontSize: { xs: 18, sm: 20 },
+                            fontWeight: 800,
+                            letterSpacing: 0,
+                        }}
+                    >
+                        Forecast Financial
+                    </Typography>
+                    <Typography
+                        sx={{
+                            color: "text.primary",
+                            fontSize: { xs: 24, sm: 30 },
+                            fontWeight: 800,
+                            lineHeight: 1.15,
+                            letterSpacing: 0,
+                        }}
+                    >
+                        Gathering the forecast
+                    </Typography>
+                    <Typography sx={{ color: "text.secondary", lineHeight: 1.5 }}>
+                        Loading your dashboard.
+                    </Typography>
+                </Stack>
+            </Box>
         </Box>
     );
 }

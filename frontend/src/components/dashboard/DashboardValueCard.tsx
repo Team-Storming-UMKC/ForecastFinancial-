@@ -81,7 +81,7 @@ export default function DashboardValueCard({
             <Typography
                 sx={{
                     color: toneColors[resolvedTone],
-                    fontSize: { xs: 34, sm: 40 },
+                    fontSize: { xs: 28, sm:34 },
                     fontWeight: 600,
                     lineHeight: 1.5,
                     position: "relative",

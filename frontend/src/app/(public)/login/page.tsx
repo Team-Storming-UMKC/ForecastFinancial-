@@ -7,8 +7,6 @@ import AuthCard from "@/components/auth/AuthCard";
 import AuthInputField from "@/components/auth/AuthInputField";
 import { getLoginPageStyles } from "./page.styles";
 
-const SUCCESS_TRANSITION_MS = 1450;
-
 export default function LoginPage() {
     const router = useRouter();
     const theme = useTheme();
@@ -17,7 +15,6 @@ export default function LoginPage() {
     const [email, setEmail] = React.useState("");
     const [password, setPassword] = React.useState("");
     const [loading, setLoading] = React.useState(false);
-    const [clearing, setClearing] = React.useState(false);
     const [error, setError] = React.useState<string | null>(null);
 
     async function handleLogin(e: React.FormEvent) {
@@ -37,17 +34,10 @@ export default function LoginPage() {
                 throw new Error(t || "Invalid credentials");
             }
 
-            setClearing(true);
-            window.setTimeout(() => {
-                router.push("/dashboard");
-            }, SUCCESS_TRANSITION_MS);
+            router.push("/dashboard");
         } catch {
             setError("Login failed. Check your email and password.");
             setLoading(false);
-        } finally {
-            if (!clearing) {
-                setLoading(false);
-            }
         }
     }
 
@@ -57,7 +47,6 @@ export default function LoginPage() {
             submitLabel="Sign In"
             onSubmit={handleLogin}
             loading={loading}
-            clearing={clearing}
             footerLink={{ label: "Don't have a account? Get Started", href: "/get-started" }}
         >
             <AuthInputField
