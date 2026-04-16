@@ -180,7 +180,7 @@ function mapSubscription(item: ApiSubscription, index: number): RecurringBill {
   };
 }
 
-export default function RecurringBillsCalendar() {
+export default function  RecurringBillsCalendar() {
   const today = React.useMemo(() => new Date(), []);
   const [bills, setBills] = React.useState<RecurringBill[]>([]);
   const [loading, setLoading] = React.useState(true);
@@ -256,7 +256,7 @@ export default function RecurringBillsCalendar() {
         }}
       >
         <Stack spacing={0.5} gap={1} sx={{ flex: 1, minWidth: 0 }}>
-          <Stack direction="row" spacing={1} alignItems="center">
+          <Stack direction="row" spacing={1} gap={1} alignItems="center">
             <CalendarMonthOutlinedIcon sx={{ color: "primary.main" }} />
             <Typography variant="h5" fontWeight={800} sx={{ color: "text.primary", letterSpacing: 0 }}>
               Subscription calendar
@@ -267,7 +267,7 @@ export default function RecurringBillsCalendar() {
           </Typography>
         </Stack>
 
-        <Stack direction={{ xs: "column", sm: "row" }} spacing={1.25}>
+        <Stack direction={{ xs: "column", sm: "row" }} gap={2} spacing={1.25}>
           <Box sx={summaryTileSx}>
             <Typography sx={summaryLabelSx}>Monthly total</Typography>
             <Typography sx={summaryValueSx}>{loading ? "Loading" : currency(monthlyTotal)}</Typography>
