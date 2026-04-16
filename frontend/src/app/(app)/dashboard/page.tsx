@@ -8,11 +8,21 @@ import StatsRow from "@/components/dashboard/StatsRow";
 import TransactionList from "@/components/transactions/TransactionList";
 import CsvImportDialog from "@/components/transactions/CsvImportDialog";
 import StormScene from "@/components/landing/StormScene";
+import {
+    fetchSpendingForecast,
+    forecastLabel,
+    FORECAST_STORAGE_KEY,
+    FORECAST_UPDATED_EVENT,
+    publishForecast,
+    type ForecastKind,
+} from "@/components/forecast/ForecastBackground";
 import type { Transaction } from "@/types/transaction";
 
 export default function DashboardPage() {
     const [transactions, setTransactions] = React.useState<Transaction[]>([]);
     const [transactionsLoading, setTransactionsLoading] = React.useState(true);
+    const [forecastTrend, setForecastTrend] = React.useState("Loading");
+    const [forecastLoading, setForecastLoading] = React.useState(true);
     const [isImportDialogOpen, setIsImportDialogOpen] = React.useState(false);
     const [isCheckingAuth, setIsCheckingAuth] = React.useState(true);
     const [minimumLoaderElapsed, setMinimumLoaderElapsed] = React.useState(false);
@@ -43,6 +53,33 @@ export default function DashboardPage() {
         }
     }, []);
 
+    const loadForecast = React.useCallback(async () => {
+        setForecastLoading(true);
+        try {
+            const forecast = await fetchSpendingForecast();
+            setForecastTrend(forecastLabel(forecast));
+            publishForecast(forecast);
+        } catch {
+            setForecastTrend("Unavailable");
+        } finally {
+            setForecastLoading(false);
+        }
+    }, []);
+
+    React.useEffect(() => {
+        const storedForecast = window.sessionStorage.getItem(FORECAST_STORAGE_KEY);
+        if (storedForecast) {
+            setForecastTrend(forecastLabel(storedForecast as ForecastKind));
+        }
+
+        function handleForecastUpdated(event: Event) {
+            setForecastTrend(forecastLabel((event as CustomEvent).detail as ForecastKind));
+        }
+
+        window.addEventListener(FORECAST_UPDATED_EVENT, handleForecastUpdated);
+        return () => window.removeEventListener(FORECAST_UPDATED_EVENT, handleForecastUpdated);
+    }, []);
+
     React.useEffect(() => {
         async function loadUser() {
             const res = await fetch("/api/auth/me");
@@ -54,7 +91,8 @@ export default function DashboardPage() {
         }
         void loadUser();
         void loadTransactions();
-    }, [loadTransactions]);
+        void loadForecast();
+    }, [loadForecast, loadTransactions]);
 
     React.useEffect(() => {
         const timer = window.setTimeout(() => {
@@ -66,6 +104,7 @@ export default function DashboardPage() {
 
     async function handleTransactionsChanged() {
         await loadTransactions();
+        await loadForecast();
     }
 
     const spendingOnly = React.useMemo(
@@ -88,7 +127,7 @@ export default function DashboardPage() {
         [transactions],
     );
 
-    const showStormLoader = isCheckingAuth || transactionsLoading || !minimumLoaderElapsed;
+    const showStormLoader = isCheckingAuth || transactionsLoading || forecastLoading || !minimumLoaderElapsed;
 
     return (
         <Box
@@ -121,6 +160,7 @@ export default function DashboardPage() {
                     <StatsRow
                         netBalance={netBalance}
                         totalSpending={totalSpending}
+                        forecastTrend={forecastTrend}
                     />
                     <InsightsCard refreshKey={chartsKey} />
                 </Box>

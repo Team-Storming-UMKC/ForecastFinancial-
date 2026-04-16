@@ -4,7 +4,16 @@ import { Box, Typography } from "@mui/material";
 import type { SxProps, Theme } from "@mui/material/styles";
 import { tintedGlass } from "@/theme/tintedGlass";
 
-type ValueTone = "auto" | "positive" | "negative" | "neutral" | "orange";
+type ValueTone =
+    | "auto"
+    | "positive"
+    | "negative"
+    | "neutral"
+    | "orange"
+    | "sunny"
+    | "cloudy"
+    | "raining"
+    | "thunderstorm";
 
 interface DashboardValueCardProps {
     title: string;
@@ -19,6 +28,10 @@ const toneColors = {
     negative: "#d85b5b",
     neutral: "rgba(255,255,255,0.86)",
     orange: "#ff870f",
+    sunny: "#f7b731",
+    cloudy: "#a4a4a4",
+    raining: "#4aa3ff",
+    thunderstorm: "#ff474c",
 } as const;
 
 function resolveTone(amount: number | undefined, tone: ValueTone) {
@@ -81,7 +94,7 @@ export default function DashboardValueCard({
             <Typography
                 sx={{
                     color: toneColors[resolvedTone],
-                    fontSize: { xs: 28, sm:34 },
+                    fontSize: { xs: 22, sm:28 },
                     fontWeight: 600,
                     lineHeight: 1.5,
                     position: "relative",

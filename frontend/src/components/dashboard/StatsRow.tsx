@@ -18,9 +18,21 @@ function signedMoney(n: number) {
 interface StatsRowProps {
     netBalance: number;
     totalSpending: number;
+    forecastTrend?: string;
 }
 
-export default function StatsRow({ netBalance, totalSpending }: StatsRowProps) {
+function forecastTone(forecastTrend: string) {
+    const normalized = forecastTrend.toLowerCase().replace(/\s+/g, "");
+
+    if (normalized.includes("thunderstorm")) return "thunderstorm";
+    if (normalized.includes("rain")) return "raining";
+    if (normalized.includes("cloud")) return "cloudy";
+    if (normalized.includes("sun")) return "sunny";
+
+    return "neutral";
+}
+
+export default function StatsRow({ netBalance, totalSpending, forecastTrend = "Loading" }: StatsRowProps) {
     return (
         <Box
             sx={{
@@ -41,8 +53,8 @@ export default function StatsRow({ netBalance, totalSpending }: StatsRowProps) {
             />
             <DashboardValueCard
                 title="Forecast Trend"
-                value="Coming Soon"
-                tone="neutral"
+                value={forecastTrend}
+                tone={forecastTone(forecastTrend)}
             />
         </Box>
     );
