@@ -14,6 +14,7 @@ import { KeyboardArrowDown, SettingsOutlined, LogoutOutlined } from "@mui/icons-
 import { useState, useMemo } from "react";
 import FloatingNavbar from "@/components/layout/FloatingAppBar";
 import SegmentedControl from "@/components/SegmentedControl";
+import { appDropdownColors, appDropdownRadius } from "@/theme/dropdown";
 
 export default function AuthNavbar() {
     const router = useRouter();
@@ -104,12 +105,12 @@ export default function AuthNavbar() {
                         py: 0.5,
                         borderRadius: "10px",
                         border: "1px solid rgba(255,255,255,0.1)",
-                        bgcolor: open ? "rgba(255,255,255,0.08)" : "rgba(255,255,255,0.04)",
+                        bgcolor: open ? appDropdownColors.triggerBg : "rgba(255,255,255,0.04)",
                         cursor: "pointer",
                         transition: "all 0.2s ease",
                         "&:hover": {
-                            bgcolor: "rgba(255,255,255,0.08)",
-                            borderColor: "rgba(255,255,255,0.2)",
+                            bgcolor: appDropdownColors.triggerHoverBg,
+                            borderColor: "rgba(255,255,255,0.22)",
                         },
                     }}
                 >
@@ -126,7 +127,7 @@ export default function AuthNavbar() {
                     <KeyboardArrowDown
                         sx={{
                             fontSize: 18,
-                            color: "rgba(255,255,255,0.5)",
+                            color: appDropdownColors.triggerText,
                             transform: open ? "rotate(180deg)" : "rotate(0deg)",
                             transition: "transform 0.2s ease",
                         }}
@@ -137,6 +138,7 @@ export default function AuthNavbar() {
                     anchorEl={anchorEl}
                     open={open}
                     onClose={handleMenuClose}
+                    disableScrollLock
                     transformOrigin={{ horizontal: "right", vertical: "top" }}
                     anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
                     slotProps={{
@@ -144,13 +146,10 @@ export default function AuthNavbar() {
                             sx: {
                                 mt: 1,
                                 minWidth: 180,
-                                borderRadius: "14px",
-                                bgcolor: "background.paper",
-                                color: "text.primary",
-                                backdropFilter: "blur(22px)",
-                                WebkitBackdropFilter: "blur(22px)",
-                                border: "1px solid",
-                                borderColor: "divider",
+                                borderRadius: appDropdownRadius,
+                                bgcolor: appDropdownColors.menuBg,
+                                color: appDropdownColors.menuText,
+                                border: `1px solid ${appDropdownColors.menuBorder}`,
                                 boxShadow: "0 16px 40px rgba(0,0,0,0.5)",
                                 overflow: "hidden",
                             },
@@ -163,12 +162,12 @@ export default function AuthNavbar() {
                             gap: 1.5,
                             py: 1.25,
                             px: 2,
-                            color: "text.primary",
+                            color: appDropdownColors.menuText,
                             fontSize: 14,
                             fontWeight: 600,
                             "&:hover": {
-                                bgcolor: "action.hover",
-                                color: "text.primary",
+                                bgcolor: appDropdownColors.selectedBg,
+                                color: appDropdownColors.menuText,
                             },
                         }}
                     >
@@ -176,7 +175,7 @@ export default function AuthNavbar() {
                         Settings
                     </MenuItem>
 
-                    <Divider sx={{ borderColor: "divider", mx: 1 }} />
+                    <Divider sx={{ borderColor: appDropdownColors.menuDivider, mx: 1 }} />
 
                     <MenuItem
                         onClick={handleLogout}
@@ -184,12 +183,12 @@ export default function AuthNavbar() {
                             gap: 1.5,
                             py: 1.25,
                             px: 2,
-                            color: "error.light",
+                            color: appDropdownColors.dangerText,
                             fontSize: 14,
                             fontWeight: 600,
                             "&:hover": {
-                                bgcolor: "action.hover",
-                                color: "error.main",
+                                bgcolor: appDropdownColors.hoverBg,
+                                color: appDropdownColors.dangerHoverText,
                             },
                         }}
                     >
