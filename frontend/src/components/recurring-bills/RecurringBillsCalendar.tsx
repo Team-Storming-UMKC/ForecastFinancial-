@@ -242,10 +242,11 @@ export default function RecurringBillsCalendar() {
   }
 
   return (
-    <Stack spacing={2.5}>
+    <Stack spacing={2.5} gap={2}>
       <Stack
         direction={{ xs: "column", md: "row" }}
         spacing={2}
+        gap ={2}
         sx={{
           ...tintedGlass,
           borderRadius: "8px",
@@ -254,7 +255,7 @@ export default function RecurringBillsCalendar() {
           overflow: "hidden",
         }}
       >
-        <Stack spacing={0.5} sx={{ flex: 1, minWidth: 0 }}>
+        <Stack spacing={0.5} gap={1} sx={{ flex: 1, minWidth: 0 }}>
           <Stack direction="row" spacing={1} alignItems="center">
             <CalendarMonthOutlinedIcon sx={{ color: "primary.main" }} />
             <Typography variant="h5" fontWeight={800} sx={{ color: "text.primary", letterSpacing: 0 }}>
@@ -278,7 +279,7 @@ export default function RecurringBillsCalendar() {
         </Stack>
       </Stack>
 
-      <Stack direction={{ xs: "column", lg: "row" }} spacing={2.5} alignItems="stretch">
+      <Stack direction={{ xs: "column", lg: "row" }} spacing={2.5} gap={2} alignItems="stretch">
         <Box sx={{ ...panelSx, flex: 1.35 }}>
           {error ? (
             <Alert severity="error" sx={{ mb: 2, bgcolor: "rgba(127,29,29,0.25)", color: "#ffffff" }}>
@@ -286,7 +287,7 @@ export default function RecurringBillsCalendar() {
             </Alert>
           ) : null}
 
-          <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 2 }}>
+          <Stack direction="row" alignItems="center" justifyContent="space-between"  sx={{ mb: 2 }}>
             <Box>
               <Typography fontWeight={800} sx={{ color: "text.primary", letterSpacing: 0 }}>
                 {monthLabel(activeMonth)}
