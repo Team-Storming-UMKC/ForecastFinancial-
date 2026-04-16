@@ -18,6 +18,7 @@ export const headerRowSx: SxProps<Theme> = {
   justifyContent: "space-between",
   gap: 1.5,
   mb: 2.5,
+  pb: 3,
 };
 
 export const titleSx: SxProps<Theme> = {
@@ -36,7 +37,7 @@ export const stackSx: SxProps<Theme> = {
   display: "grid",
   gridTemplateColumns: { xs: "1fr", md: "repeat(2, minmax(0, 1fr))" },
   columnGap: { xs: 0, md: 2 },
-  rowGap: { xs: 2.5, md: 2 },
+  rowGap: { xs: 2.5, md: 4 },
 };
 
 export const categoryChipsSx: SxProps<Theme> = {

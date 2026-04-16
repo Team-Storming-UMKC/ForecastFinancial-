@@ -8,7 +8,6 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  Stack,
   Typography,
 } from "@mui/material";
 import TransactionForm, { TransactionDraft } from "./TransactionForm";
@@ -120,26 +119,6 @@ export default function TransactionsPanel({
 
   return (
     <Box>
-      <Stack
-        direction={{ xs: "column", md: "row" }}
-        alignItems={{ xs: "flex-start", md: "center" }}
-        justifyContent="space-between"
-        sx={{ mb: 2 }}
-        spacing={1.5}
-      >
-        <Box>
-          <Typography variant="h6" fontWeight={800}>
-            Transactions
-          </Typography>
-        </Box>
-
-        <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap">
-          <Button variant="outlined" onClick={onChanged} disabled={loading}>
-            Refresh
-          </Button>
-        </Stack>
-      </Stack>
-
       <Box
         sx={(theme) => ({
           display: "grid",
