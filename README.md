@@ -4,9 +4,9 @@ This project is a client banking portal capstone application.
 Tech Stack:
 - Frontend: Next.js + TypeScript + MUI
 - Backend: Spring Boot (Java)
-- Database: NeonDB, PostgreSQL (Docker)
+- Database: Supabase, PostgreSQL (Docker)
 - Infra: Docker Compose
-- AI: Gemma 3 12B (local)
+- AI: Gemma 4 E4B (local)
 - Server: Azure
 
 # Members and Roles
