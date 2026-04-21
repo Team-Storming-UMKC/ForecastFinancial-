@@ -190,14 +190,18 @@ export default function DashboardPage() {
                     headerAction={
                         <Button
                             variant="contained"
+                            size="small"
                             startIcon={<CloudUploadOutlined />}
                             onClick={() => setIsImportDialogOpen(true)}
                             sx={{
                                 alignSelf: { xs: "stretch", sm: "center" },
                                 borderRadius: "8px",
+                                textTransform: "none",
                                 fontWeight: 700,
-                                px: 2.5,
-                                py: 1.25,
+                                minHeight: 36,
+                                px: 1.75,
+                                py: 0.75,
+                                whiteSpace: "nowrap",
                             }}
                         >
                             Import Transactions

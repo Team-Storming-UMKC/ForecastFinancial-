@@ -42,6 +42,7 @@ export const subtitleSx = {
 } satisfies SxProps<Theme>;
 
 export const dividerSx = {
+  pb: "0.5rem",
   my: 2,
   borderColor: "rgba(255,255,255,0.06)",
 } satisfies SxProps<Theme>;
@@ -56,6 +57,7 @@ export const listSx = {
 
 export const listItemSx = {
   display: "flex",
+  padding: "0.5rem",
   gap: 1.25,
   alignItems: "baseline",
   color: "rgba(255,255,255,0.84)",

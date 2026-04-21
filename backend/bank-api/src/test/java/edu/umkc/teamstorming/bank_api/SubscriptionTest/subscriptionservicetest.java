@@ -16,6 +16,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Collections;
@@ -41,10 +42,20 @@ class SubscriptionServiceTest {
 
     private User stubUser(String email) {
         User user = new User();
-        user.setId(42L);
+        setUserField(user, "id", 42L);
         user.setEmail(email);
         when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
         return user;
+    }
+
+    private void setUserField(User user, String fieldName, Object value) {
+        try {
+            Field field = User.class.getDeclaredField(fieldName);
+            field.setAccessible(true);
+            field.set(user, value);
+        } catch (ReflectiveOperationException e) {
+            throw new AssertionError("Failed to set User." + fieldName + " in test setup", e);
+        }
     }
 
     /**

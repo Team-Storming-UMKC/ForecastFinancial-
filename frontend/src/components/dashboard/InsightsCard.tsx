@@ -33,6 +33,24 @@ interface InsightsCardProps {
   refreshKey?: number;
 }
 
+function messageFromFailedInsightsResponse(status: number, body: string) {
+  try {
+    const parsed = JSON.parse(body) as { errorCode?: unknown; error?: unknown };
+
+    if (typeof parsed.errorCode === "string" && parsed.errorCode.trim()) {
+      return `Error code: ${parsed.errorCode.trim()}`;
+    }
+
+    if (typeof parsed.error === "string" && parsed.error.trim()) {
+      return parsed.error.trim();
+    }
+  } catch {
+    // Fall through to the generic status message when the response is not valid JSON.
+  }
+
+  return `Request failed: ${status}`;
+}
+
 function textFromInsight(item: InsightResponseItem) {
   if (typeof item === "string") return item.trim();
   if (!item || typeof item !== "object") return "";
@@ -86,7 +104,7 @@ export default function InsightsCard({ refreshKey }: InsightsCardProps) {
       try {
         const response = await fetch("/api/insights", { cache: "no-store" });
         if (!response.ok) {
-          throw new Error((await response.text()) || `Request failed: ${response.status}`);
+          throw new Error(messageFromFailedInsightsResponse(response.status, await response.text()));
         }
 
         const json = (await response.json()) as unknown;

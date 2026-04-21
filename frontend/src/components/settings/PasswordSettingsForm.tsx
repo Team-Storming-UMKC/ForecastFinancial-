@@ -15,6 +15,7 @@ import {
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import { AnimatePresence, motion } from "framer-motion";
 import AuthInputField from "@/components/auth/AuthInputField";
+import PasswordStrengthPanel from "@/components/auth/PasswordStrengthPanel";
 import AuthSubmitButton from "@/components/auth/AuthSubmitButton";
 import { cardSurfaceSx } from "@/theme/tintedGlass";
 
@@ -253,7 +254,7 @@ export default function PasswordSettingsForm({
                         transition={panelTransition}
                         sx={{ position: "relative", zIndex: 1, mt: 2.5, overflow: "hidden" }}
                     >
-                        <Stack spacing={3}>
+                        <Stack spacing={3} gap={1.5}>
                             <Box>
                                 <FieldLabel>Current Password</FieldLabel>
                                 <AuthInputField
@@ -283,6 +284,8 @@ export default function PasswordSettingsForm({
                                     required
                                 />
                             </Box>
+
+                            <PasswordStrengthPanel password={value.newPassword} />
 
                             <Box>
                                 <FieldLabel>Confirm New Password</FieldLabel>
