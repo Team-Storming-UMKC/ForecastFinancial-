@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
@@ -37,62 +38,96 @@ class SpendingForecastServiceTest {
     }
 
     @Test
-    void getSpendingForecast_returnsRainingWhenCurrentSpendingIsAboveAverage() {
+    void getSpendingForecast_returnsRainingWhenCurrentSpendingIsAboveIncome() {
         YearMonth currentMonth = YearMonth.now();
         when(transactionRepository.findByUserId(user.getId())).thenReturn(List.of(
-                transaction("Current Grocery", "3200.00", currentMonth.atDay(5)),
-                transaction("Last Month", "2800.00", currentMonth.minusMonths(1).atDay(5))
+                transaction("Current Grocery", "-3200.00", currentMonth.atDay(5)),
+                transaction("Paycheck", "2800.00", currentMonth.atDay(10))
         ));
 
         SpendingForecastResponse result = spendingForecastService.getSpendingForecast("user@example.com");
 
         assertEquals("raining", result.forecastTrend());
         assertEquals(new BigDecimal("3200.00"), result.monthlySpending());
-        assertEquals(new BigDecimal("2800.00"), result.averageMonthlySpending());
-        assertEquals(new BigDecimal("1.14"), result.spendingRatio());
+        assertEquals(new BigDecimal("2800.00"), result.monthlyIncome());
+        assertEquals(new BigDecimal("1.14"), result.spendingToIncomeRatio());
     }
 
     @Test
-    void getSpendingForecast_returnsSunnyWhenCurrentSpendingIsUnderEightyPercentOfAverage() {
+    void getSpendingForecast_returnsSunnyWhenCurrentSpendingIsUnderEightyPercentOfIncome() {
         YearMonth currentMonth = YearMonth.now();
         when(transactionRepository.findByUserId(user.getId())).thenReturn(List.of(
-                transaction("Current", "700.00", currentMonth.atDay(1)),
-                transaction("Previous", "1000.00", currentMonth.minusMonths(1).atDay(1))
+                transaction("Current", "-700.00", currentMonth.atDay(1)),
+                transaction("Paycheck", "1000.00", currentMonth.atDay(3))
         ));
 
         SpendingForecastResponse result = spendingForecastService.getSpendingForecast("user@example.com");
 
         assertEquals("sunny", result.forecastTrend());
-        assertEquals(new BigDecimal("0.70"), result.spendingRatio());
+        assertEquals(new BigDecimal("0.70"), result.spendingToIncomeRatio());
     }
 
     @Test
-    void getSpendingForecast_returnsThunderstormWhenCurrentSpendingIsOverOneHundredTwentyFivePercentOfAverage() {
+    void getSpendingForecast_returnsThunderstormWhenCurrentSpendingIsOverOneHundredTwentyFivePercentOfIncome() {
         YearMonth currentMonth = YearMonth.now();
         when(transactionRepository.findByUserId(user.getId())).thenReturn(List.of(
-                transaction("Current", "1300.00", currentMonth.atDay(1)),
-                transaction("Previous", "1000.00", currentMonth.minusMonths(1).atDay(1))
+                transaction("Current", "-1300.00", currentMonth.atDay(1)),
+                transaction("Paycheck", "1000.00", currentMonth.atDay(4))
         ));
 
         SpendingForecastResponse result = spendingForecastService.getSpendingForecast("user@example.com");
 
         assertEquals("thunderstorm", result.forecastTrend());
-        assertEquals(new BigDecimal("1.30"), result.spendingRatio());
+        assertEquals(new BigDecimal("1.30"), result.spendingToIncomeRatio());
     }
 
     @Test
-    void getSpendingForecast_usesCurrentMonthAsAverageWhenNoPriorHistoryExists() {
+    void getSpendingForecast_returnsCloudyWhenSpendingMatchesIncome() {
         YearMonth currentMonth = YearMonth.now();
         when(transactionRepository.findByUserId(user.getId())).thenReturn(List.of(
-                transaction("Current", "50.00", currentMonth.atDay(1))
+                transaction("Current", "-50.00", currentMonth.atDay(1)),
+                transaction("Income", "50.00", currentMonth.atDay(2))
         ));
 
         SpendingForecastResponse result = spendingForecastService.getSpendingForecast("user@example.com");
 
         assertEquals("cloudy", result.forecastTrend());
         assertEquals(new BigDecimal("50.00"), result.monthlySpending());
-        assertEquals(new BigDecimal("50.00"), result.averageMonthlySpending());
-        assertEquals(new BigDecimal("1.00"), result.spendingRatio());
+        assertEquals(new BigDecimal("50.00"), result.monthlyIncome());
+        assertEquals(new BigDecimal("1.00"), result.spendingToIncomeRatio());
+    }
+
+    @Test
+    void getSpendingForecast_ignoresPriorMonthsWhenComparingSpendingToIncome() {
+        YearMonth currentMonth = YearMonth.now();
+        when(transactionRepository.findByUserId(user.getId())).thenReturn(List.of(
+                transaction("Current Income", "1000.00", currentMonth.atDay(1)),
+                transaction("Current Groceries", "-700.00", currentMonth.atDay(2)),
+                transaction("Previous Income", "500.00", currentMonth.minusMonths(1).atDay(1)),
+                transaction("Previous Rent", "-2000.00", currentMonth.minusMonths(1).atDay(2))
+        ));
+
+        SpendingForecastResponse result = spendingForecastService.getSpendingForecast("user@example.com");
+
+        assertEquals("sunny", result.forecastTrend());
+        assertEquals(new BigDecimal("700.00"), result.monthlySpending());
+        assertEquals(new BigDecimal("1000.00"), result.monthlyIncome());
+        assertEquals(new BigDecimal("0.70"), result.spendingToIncomeRatio());
+    }
+
+    @Test
+    void getSpendingForecast_returnsThunderstormWhenThereIsSpendingButNoIncome() {
+        YearMonth currentMonth = YearMonth.now();
+        when(transactionRepository.findByUserId(user.getId())).thenReturn(List.of(
+                transaction("Current Groceries", "-700.00", currentMonth.atDay(2))
+        ));
+
+        SpendingForecastResponse result = spendingForecastService.getSpendingForecast("user@example.com");
+
+        assertEquals("thunderstorm", result.forecastTrend());
+        assertEquals(new BigDecimal("700.00"), result.monthlySpending());
+        assertEquals(new BigDecimal("0.00"), result.monthlyIncome());
+        assertNull(result.spendingToIncomeRatio());
     }
 
     @Test
