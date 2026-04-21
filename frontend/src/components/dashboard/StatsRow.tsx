@@ -52,7 +52,7 @@ export default function StatsRow({ netBalance, totalSpending, forecastTrend = "L
                 tone="orange"
             />
             <DashboardValueCard
-                title="Forecast Trend"
+                title="Spending vs Income"
                 value={forecastTrend}
                 tone={forecastTone(forecastTrend)}
             />

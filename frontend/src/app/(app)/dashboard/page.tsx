@@ -108,9 +108,20 @@ export default function DashboardPage() {
         await loadForecast();
     }
 
+    const currentMonthKey = React.useMemo(() => {
+        const now = new Date();
+        const month = String(now.getMonth() + 1).padStart(2, "0");
+        return `${now.getFullYear()}-${month}`;
+    }, []);
+
+    const currentMonthTransactions = React.useMemo(
+        () => transactions.filter((transaction) => transaction.date.startsWith(currentMonthKey)),
+        [currentMonthKey, transactions],
+    );
+
     const spendingOnly = React.useMemo(
-        () => transactions.filter((transaction) => Number(transaction.amount) < 0),
-        [transactions],
+        () => currentMonthTransactions.filter((transaction) => Number(transaction.amount) < 0),
+        [currentMonthTransactions],
     );
 
     const totalSpending = React.useMemo(
