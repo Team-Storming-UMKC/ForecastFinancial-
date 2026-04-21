@@ -14,6 +14,8 @@ import {
   CartesianGrid,
   LabelList,
 } from "recharts";
+import type { TooltipProps } from "recharts";
+import type { NameType, ValueType } from "recharts/types/component/DefaultTooltipContent";
 import { cardSurfaceSx } from "@/theme/tintedGlass";
 
 function money(n: number) {
@@ -39,6 +41,25 @@ export interface CategoryPoint {
 
 interface TopCategoriesChartProps {
   data: CategoryPoint[];
+}
+
+function CategoryTooltip({ active, payload, label }: TooltipProps<ValueType, NameType>) {
+  if (!active || !payload || payload.length === 0) return null;
+
+  const point = payload[0];
+  const category = String(label ?? point.name ?? "Category");
+  const amount = Number(point.value ?? 0);
+
+  return (
+    <Box sx={tooltipSx}>
+      <Typography sx={tooltipTitleSx}>
+        {category}
+      </Typography>
+      <Typography sx={tooltipValueSx}>
+        {money(amount)}
+      </Typography>
+    </Box>
+  );
 }
 
 function currentMonthLabel() {
@@ -141,9 +162,8 @@ export default function TopCategoriesChart({ data }: TopCategoriesChartProps) {
                     tickLine={false}
                   />
                   <Tooltip
-                    formatter={(v?: number) => money(Number(v ?? 0))}
+                    content={<CategoryTooltip />}
                     cursor={{ fill: "rgba(255,255,255,0.04)" }}
-                    contentStyle={tooltipStyle}
                   />
                   <Bar
                     dataKey="value"
@@ -180,7 +200,7 @@ export default function TopCategoriesChart({ data }: TopCategoriesChartProps) {
                       <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
                     ))}
                   </Pie>
-                  <Tooltip formatter={(v?: number) => money(Number(v ?? 0))} contentStyle={tooltipStyle} />
+                  <Tooltip content={<CategoryTooltip />} />
                 </PieChart>
               </ResponsiveContainer>
               <Typography
@@ -246,12 +266,31 @@ export default function TopCategoriesChart({ data }: TopCategoriesChartProps) {
   );
 }
 
-const tooltipStyle = {
-  background: "rgba(15,20,30,0.92)",
-  border: "1px solid rgba(255,255,255,0.1)",
-  borderRadius: "10px",
-  color: "#fff",
-  fontSize: 13,
+const tooltipSx = {
+  background: "rgba(18, 24, 34, 0.96)",
+  border: "1px solid rgba(255,255,255,0.14)",
+  borderRadius: "12px",
+  boxShadow: "0 18px 38px rgba(0,0,0,0.32)",
+  color: "#ffffff",
+  px: 1.5,
+  py: 1.25,
+  minWidth: 140,
+};
+
+const tooltipTitleSx = {
+  color: "rgba(255,255,255,0.72)",
+  fontSize: 12,
+  fontWeight: 600,
+  lineHeight: 1.2,
+  mb: 0.5,
+};
+
+const tooltipValueSx = {
+  color: "#ffffff",
+  fontSize: 15,
+  fontWeight: 700,
+  lineHeight: 1.2,
+  fontVariantNumeric: "tabular-nums",
 };
 
 const selectSx = {
