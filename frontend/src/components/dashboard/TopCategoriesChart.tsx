@@ -14,8 +14,6 @@ import {
   CartesianGrid,
   LabelList,
 } from "recharts";
-import type { TooltipProps } from "recharts";
-import type { NameType, ValueType } from "recharts/types/component/DefaultTooltipContent";
 import { cardSurfaceSx } from "@/theme/tintedGlass";
 
 function money(n: number) {
@@ -31,6 +29,7 @@ const PIE_COLORS = [
   "#72d795",
   "#a370e8",
   "#44c7df",
+  "#44c7df",
   "#4ba7f5",
 ];
 
@@ -43,11 +42,21 @@ interface TopCategoriesChartProps {
   data: CategoryPoint[];
 }
 
-function CategoryTooltip({ active, payload, label }: TooltipProps<ValueType, NameType>) {
+type CategoryTooltipProps = {
+  active?: boolean;
+  label?: string | number;
+  payload?: Array<{
+    name?: string | number;
+    value?: string | number;
+    payload?: CategoryPoint;
+  }>;
+};
+
+function CategoryTooltip({ active, payload, label }: CategoryTooltipProps) {
   if (!active || !payload || payload.length === 0) return null;
 
   const point = payload[0];
-  const category = String(label ?? point.name ?? "Category");
+  const category = String(label ?? point.payload?.name ?? point.name ?? "Category");
   const amount = Number(point.value ?? 0);
 
   return (
