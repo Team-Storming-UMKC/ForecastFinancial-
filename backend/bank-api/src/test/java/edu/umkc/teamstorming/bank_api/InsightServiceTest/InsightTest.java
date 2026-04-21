@@ -19,6 +19,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -63,12 +64,22 @@ class InsightServiceTest {
 
     private User buildUser(String email) {
         User user = new User();
-        user.setId(1L);
+        setUserField(user, "id", 1L);
         user.setEmail(email);
         user.setFirstName("Alice");
         user.setDateOfBirth(LocalDate.of(1990, 1, 15));
-        user.setCreatedAt(LocalDateTime.of(2023, 6, 1, 0, 0));
+        setUserField(user, "createdAt", LocalDateTime.of(2023, 6, 1, 0, 0));
         return user;
+    }
+
+    private void setUserField(User user, String fieldName, Object value) {
+        try {
+            Field field = User.class.getDeclaredField(fieldName);
+            field.setAccessible(true);
+            field.set(user, value);
+        } catch (ReflectiveOperationException e) {
+            throw new AssertionError("Failed to set User." + fieldName + " in test setup", e);
+        }
     }
 
     private CategorySpendingSummary buildSummary(String category, double total, int count) {
@@ -254,7 +265,7 @@ class InsightServiceTest {
         void handlesNullUserFields() {
             String email = "bob@example.com";
             User user = new User();
-            user.setId(2L);
+            setUserField(user, "id", 2L);
             user.setEmail(email);
             user.setFirstName("Bob");
             // dateOfBirth and createdAt intentionally null
