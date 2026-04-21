@@ -9,6 +9,7 @@ import ProfileSettingsForm, {
     UserProfile,
 } from "@/components/settings/ProfileSettingsForm";
 import { useToast } from "@/components/toast/ToastProvider";
+import { validatePassword } from "@/utils/passwordPolicy";
 
 const emptyProfile: UserProfile = {
     firstName: "",
@@ -181,6 +182,12 @@ export default function SettingsPage() {
 
     async function handlePasswordSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
+
+        const passwordError = validatePassword(passwordDraft.newPassword);
+        if (passwordError) {
+            showToast(passwordError, { severity: "error" });
+            return;
+        }
 
         if (passwordDraft.newPassword !== passwordDraft.confirmPassword) {
             showToast("New password and confirmation do not match.", { severity: "error" });
