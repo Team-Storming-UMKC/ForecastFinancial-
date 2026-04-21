@@ -96,12 +96,14 @@ export default function TopCategoriesChart({ data }: TopCategoriesChartProps) {
 
             <Stack
               direction="row"
-              spacing={1}
+              spacing={1.5}
+              gap={1}
               sx={{
                 display: { xs: "none", sm: "flex" },
                 position: "absolute",
                 right: 0,
                 top: 0,
+
               }}
             >
               <Select
