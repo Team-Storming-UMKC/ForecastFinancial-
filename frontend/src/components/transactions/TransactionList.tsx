@@ -152,7 +152,7 @@ export default function TransactionList({
               gap={1}
               spacing={1}
             >
-              <Box>
+              <Box sx={{ pb: 1 }}>
                 <Typography fontWeight={800} sx={{ letterSpacing: 0.2, color: "text.primary" }}>
                   {title}
                 </Typography>
