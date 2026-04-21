@@ -7,7 +7,9 @@ import AuthFieldGrid from "@/components/auth/AuthFieldGrid";
 import AuthCard from "@/components/auth/AuthCard";
 import AuthDateField from "@/components/auth/AuthDateField";
 import AuthInputField from "@/components/auth/AuthInputField";
+import PasswordStrengthPanel from "@/components/auth/PasswordStrengthPanel";
 import { getRegisterPageStyles } from "./page.styles";
+import { validatePassword } from "@/utils/passwordPolicy";
 
 const SUCCESS_TRANSITION_MS = 1450;
 
@@ -57,6 +59,12 @@ export default function RegisterPage() {
         setError(null);
 
         const normalizedDateOfBirth = normalizeDateOfBirth(dateOfBirth);
+        const passwordError = validatePassword(password);
+
+        if (passwordError) {
+            setError(passwordError);
+            return;
+        }
 
         if (password !== confirmPassword) {
             setError("Passwords do not match.");
@@ -172,6 +180,8 @@ export default function RegisterPage() {
                     autoComplete="new-password"
                     required
                 />
+
+                <PasswordStrengthPanel password={password} />
 
                 <AuthInputField
                     fullWidth

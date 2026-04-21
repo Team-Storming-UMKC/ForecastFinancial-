@@ -9,6 +9,7 @@ import ProfileSettingsForm, {
     UserProfile,
 } from "@/components/settings/ProfileSettingsForm";
 import { useToast } from "@/components/toast/ToastProvider";
+import { validatePassword } from "@/utils/passwordPolicy";
 
 const emptyProfile: UserProfile = {
     firstName: "",
@@ -21,6 +22,26 @@ const emptyProfile: UserProfile = {
 function normalizeDateOfBirth(value: string | null) {
     if (!value) {
         return null;
+    }
+
+    const trimmed = value.trim();
+    const isoMatch = trimmed.match(/^(\d{4})-(\d{2})-(\d{2})(?:T.*)?$/);
+    if (isoMatch) {
+        const [, yearText, monthText, dayText] = isoMatch;
+        const year = Number(yearText);
+        const month = Number(monthText);
+        const day = Number(dayText);
+        const parsedDate = new Date(year, month - 1, day);
+        const isValidDate =
+            parsedDate.getFullYear() === year &&
+            parsedDate.getMonth() === month - 1 &&
+            parsedDate.getDate() === day;
+
+        if (!isValidDate) {
+            return null;
+        }
+
+        return `${yearText}-${monthText}-${dayText}`;
     }
 
     const digits = value.replace(/\D/g, "");
@@ -162,6 +183,12 @@ export default function SettingsPage() {
     async function handlePasswordSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
 
+        const passwordError = validatePassword(passwordDraft.newPassword);
+        if (passwordError) {
+            showToast(passwordError, { severity: "error" });
+            return;
+        }
+
         if (passwordDraft.newPassword !== passwordDraft.confirmPassword) {
             showToast("New password and confirmation do not match.", { severity: "error" });
             return;
@@ -245,7 +272,7 @@ export default function SettingsPage() {
     return (
         <Box sx={{ width: "100%", maxWidth: 1100, px: { xs: 2, sm: 3, md: 4 }, pb: 6 }}>
             <Stack spacing={3.5}>
-                <Box>
+                <Box sx={{ pb:1.5}}>
                     <Typography variant="h4" sx={{ color: "text.primary", fontWeight: 700 }}>
                         Settings
                     </Typography>

@@ -11,7 +11,7 @@ export default function RecurringPage() {
           <Typography variant="h4" fontWeight={800} sx={{ color: "text.primary", letterSpacing: 0 }}>
             Recurring Bills
           </Typography>
-          <Typography sx={{ mt: 1, color: "text.secondary", maxWidth: 680 }}>
+          <Typography sx={{ mt: 1, color: "text.secondary", maxWidth: 680, pb: 1.5 }}>
             Visualize upcoming subscriptions and monthly charges before they renew.
           </Typography>
         </Box>

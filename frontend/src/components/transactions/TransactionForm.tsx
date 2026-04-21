@@ -14,6 +14,7 @@ import {
 } from "./TransactionForm.styles";
 import { categoryPillSx } from "./categoryTagStyles";
 import TransactionInput from "./TransactionInput";
+import { AI_TRANSACTION_CATEGORIES } from "@/constants/transactionCategories";
 
 export type TransactionDraft = {
   merchantName: string;
@@ -23,17 +24,6 @@ export type TransactionDraft = {
 };
 
 type DraftErrors = Partial<Record<keyof TransactionDraft, string>>;
-
-const CATEGORY_SUGGESTIONS = [
-  "Groceries",
-  "Dining",
-  "Shopping",
-  "Bills",
-  "Gas",
-  "Travel",
-  "Paycheck",
-  "Entertainment",
-];
 
 function createEmptyDraft(): TransactionDraft {
   return {
@@ -201,7 +191,7 @@ export default function TransactionForm({
             />
 
             <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap" sx={categoryChipsSx}>
-              {CATEGORY_SUGGESTIONS.map((suggestion) => (
+              {AI_TRANSACTION_CATEGORIES.map((suggestion) => (
                 <Chip
                   key={suggestion}
                   label={suggestion}

@@ -9,10 +9,11 @@ import {
     Menu,
     MenuItem,
     Divider,
+    IconButton,
     useMediaQuery,
     useTheme,
 } from "@mui/material";
-import { KeyboardArrowDown, SettingsOutlined, LogoutOutlined } from "@mui/icons-material";
+import { SettingsOutlined, LogoutOutlined } from "@mui/icons-material";
 import { useState, useMemo } from "react";
 import FloatingNavbar from "@/components/layout/FloatingAppBar";
 import SegmentedControl from "@/components/SegmentedControl";
@@ -108,45 +109,32 @@ export default function AuthNavbar() {
                     onChange={handleNavChange}
                 />
 
-                {/* Avatar + Arrow trigger */}
-                <Box
+                {/* Settings trigger */}
+                <IconButton
                     onClick={handleMenuOpen}
+                    aria-label="Open settings menu"
                     sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 0.5,
-                        px: 1,
-                        py: 0.5,
-                        borderRadius: "10px",
+                        width: 40,
+                        height: 40,
+                        borderRadius: "12px",
                         border: "1px solid rgba(255,255,255,0.1)",
                         bgcolor: open ? appDropdownColors.triggerBg : "rgba(255,255,255,0.04)",
-                        cursor: "pointer",
                         transition: "all 0.2s ease",
+                        color: appDropdownColors.triggerText,
                         "&:hover": {
                             bgcolor: appDropdownColors.triggerHoverBg,
                             borderColor: "rgba(255,255,255,0.22)",
                         },
                     }}
                 >
-                    {/* Avatar circle */}
-                    <Box
+                    <SettingsOutlined
                         sx={{
-                            width: 26,
-                            height: 26,
-                            borderRadius: "50%",
-                            bgcolor: "primary.main",
-                            boxShadow: "0px 0px 8px rgba(255,107,0,0.4)",
-                        }}
-                    />
-                    <KeyboardArrowDown
-                        sx={{
-                            fontSize: 18,
-                            color: appDropdownColors.triggerText,
-                            transform: open ? "rotate(180deg)" : "rotate(0deg)",
+                            fontSize: 21,
+                            transform: open ? "rotate(90deg)" : "rotate(0deg)",
                             transition: "transform 0.2s ease",
                         }}
                     />
-                </Box>
+                </IconButton>
 
                 <Menu
                     anchorEl={anchorEl}
