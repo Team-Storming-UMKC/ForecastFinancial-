@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 public record SpendingForecastResponse(
         String forecastTrend,
         BigDecimal monthlySpending,
-        BigDecimal averageMonthlySpending,
-        BigDecimal spendingRatio
+        BigDecimal monthlyIncome,
+        BigDecimal spendingToIncomeRatio
 ) {
 }

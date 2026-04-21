@@ -11,9 +11,6 @@ import org.springframework.web.server.ResponseStatusException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.YearMonth;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 public class SpendingForecastService {
@@ -36,61 +33,53 @@ public class SpendingForecastService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatusCode.valueOf(404), "User not found"));
 
         YearMonth currentMonth = YearMonth.now();
-        Map<YearMonth, BigDecimal> spendingByMonth = transactionRepository.findByUserId(user.getId()).stream()
+        var transactions = transactionRepository.findByUserId(user.getId());
+        BigDecimal monthlySpending = transactions.stream()
                 .filter(transaction -> transaction.getDate() != null && transaction.getAmount() != null)
-                .collect(Collectors.groupingBy(
-                        transaction -> YearMonth.from(transaction.getDate()),
-                        Collectors.reducing(
-                                BigDecimal.ZERO,
-                                transaction -> transaction.getAmount().abs(),
-                                BigDecimal::add
-                        )
-                ));
-
-        BigDecimal monthlySpending = spendingByMonth.getOrDefault(currentMonth, BigDecimal.ZERO);
-        BigDecimal averageMonthlySpending = calculateAverageMonthlySpending(spendingByMonth, currentMonth, monthlySpending);
-        BigDecimal spendingRatio = calculateSpendingRatio(monthlySpending, averageMonthlySpending);
+                .filter(transaction -> YearMonth.from(transaction.getDate()).equals(currentMonth))
+                .filter(transaction -> transaction.getAmount().signum() < 0)
+                .map(transaction -> transaction.getAmount().abs())
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal monthlyIncome = transactions.stream()
+                .filter(transaction -> transaction.getDate() != null && transaction.getAmount() != null)
+                .filter(transaction -> YearMonth.from(transaction.getDate()).equals(currentMonth))
+                .filter(transaction -> transaction.getAmount().signum() > 0)
+                .map(Transaction::getAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal spendingToIncomeRatio = calculateSpendingToIncomeRatio(monthlySpending, monthlyIncome);
 
         return new SpendingForecastResponse(
-                determineForecastTrend(spendingRatio),
+                determineForecastTrend(monthlySpending, monthlyIncome, spendingToIncomeRatio),
                 money(monthlySpending),
-                money(averageMonthlySpending),
-                spendingRatio
+                money(monthlyIncome),
+                spendingToIncomeRatio
         );
     }
 
-    private BigDecimal calculateAverageMonthlySpending(Map<YearMonth, BigDecimal> spendingByMonth,
-                                                       YearMonth currentMonth,
-                                                       BigDecimal monthlySpending) {
-        List<BigDecimal> priorMonthlySpending = spendingByMonth.entrySet().stream()
-                .filter(entry -> entry.getKey().isBefore(currentMonth))
-                .map(Map.Entry::getValue)
-                .toList();
-
-        if (priorMonthlySpending.isEmpty()) {
-            return monthlySpending;
+    private BigDecimal calculateSpendingToIncomeRatio(BigDecimal monthlySpending, BigDecimal monthlyIncome) {
+        if (monthlyIncome.compareTo(BigDecimal.ZERO) == 0) {
+            return null;
         }
-
-        BigDecimal total = priorMonthlySpending.stream()
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-        return total.divide(BigDecimal.valueOf(priorMonthlySpending.size()), 2, RoundingMode.HALF_UP);
+        return monthlySpending.divide(monthlyIncome, 2, RoundingMode.HALF_UP);
     }
 
-    private BigDecimal calculateSpendingRatio(BigDecimal monthlySpending, BigDecimal averageMonthlySpending) {
-        if (averageMonthlySpending.compareTo(BigDecimal.ZERO) == 0) {
-            return BigDecimal.ZERO;
+    private String determineForecastTrend(BigDecimal monthlySpending,
+                                          BigDecimal monthlyIncome,
+                                          BigDecimal spendingToIncomeRatio) {
+        if (monthlyIncome.compareTo(BigDecimal.ZERO) == 0) {
+            if (monthlySpending.compareTo(BigDecimal.ZERO) == 0) {
+                return "cloudy";
+            }
+            return "thunderstorm";
         }
-        return monthlySpending.divide(averageMonthlySpending, 2, RoundingMode.HALF_UP);
-    }
 
-    private String determineForecastTrend(BigDecimal spendingRatio) {
-        if (spendingRatio.compareTo(SUNNY_LIMIT) < 0) {
+        if (spendingToIncomeRatio.compareTo(SUNNY_LIMIT) < 0) {
             return "sunny";
         }
-        if (spendingRatio.compareTo(CLOUDY_LIMIT) <= 0) {
+        if (spendingToIncomeRatio.compareTo(CLOUDY_LIMIT) <= 0) {
             return "cloudy";
         }
-        if (spendingRatio.compareTo(RAINING_LIMIT) <= 0) {
+        if (spendingToIncomeRatio.compareTo(RAINING_LIMIT) <= 0) {
             return "raining";
         }
         return "thunderstorm";
