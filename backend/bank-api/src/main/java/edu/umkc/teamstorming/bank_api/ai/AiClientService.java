@@ -197,7 +197,6 @@ public class AiClientService {
             Output MUST be valid JSON and nothing else.
             Return exactly one object per input row, preserving order.
             Never merge rows. Never split one row into multiple transactions.
-            If a row is unreadable or required fields cannot be determined confidently, return an object with null fields and confidence 0 for that row.
 
             For each output object:
             - amount must be a number or null
