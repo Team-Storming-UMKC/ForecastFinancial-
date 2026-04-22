@@ -14,6 +14,7 @@ export const AI_TRANSACTION_CATEGORIES = [
   "Taxes",
   "Personal care",
   "Travel & vacation",
+  "Income",
 ] as const;
 
 export type AiTransactionCategory = (typeof AI_TRANSACTION_CATEGORIES)[number];

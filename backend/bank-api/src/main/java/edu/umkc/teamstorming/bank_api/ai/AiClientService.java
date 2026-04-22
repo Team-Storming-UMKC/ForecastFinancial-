@@ -118,6 +118,7 @@ public class AiClientService {
             Taxes
             Personal care
             Travel & vacation
+            Income
             If unsure, use "Other".
             
             Confidence must be a number from 0 to 1 indicating overall confidence.
