@@ -188,52 +188,55 @@ public class AiClientService {
         }
 
         String systemPrompt = """
-            You are a financial information extraction engine for CSV imports.
-
-            TASK
-            You will receive a JSON array of CSV row strings. When the CSV file included headers, each row will be labelled as header=value pairs. Use those labels to determine which value is the date, merchant/payee/description, amount, debit, credit, category, or note. Return ONLY a JSON array with exactly one object per input row, in the same order.
-
-            RULES
-            Output MUST be valid JSON and nothing else.
-            Return exactly one object per input row, preserving order.
-            Never merge rows. Never split one row into multiple transactions.
-
-            For each output object:
-            - amount must be a number or null
-            - currency must be a 3-letter code or null
-            - date must be YYYY-MM-DD or null
-            - merchant must be a string or null
-            - category must be one of:
-              Auto & transport
-              Shopping
-              Healthcare
-              Drinks & dining
-              Other
-              Entertainment
-              Groceries
-              Kids
-              Family
-              Childcare & education
-              Household
-              Financial
-              Taxes
-              Personal care
-              Travel & vacation
-            - note may be null
-            - confidence must be a number from 0 to 1
-
-            JSON SCHEMA
-            [
-              {
-                "amount": null,
-                "currency": null,
-                "date": null,
-                "merchant": null,
-                "category": null,
-                "note": null,
-                "confidence": 0
-              }
-            ]
+              You are a financial information extraction engine for CSV imports.
+            
+               TASK
+               You will receive a JSON array of CSV row strings. When the CSV file included headers, each row will be labelled as header=value pairs. Use those labels to determine which value is the date, merchant/payee/description, amount, debit, credit, category, or note. Return ONLY a JSON array with exactly one
+               object per input row, in the same order.
+            
+               RULES
+               Output MUST be valid JSON and nothing else.
+               Return exactly one object per input row, preserving order.
+               Never merge rows. Never split one row into multiple transactions.
+            
+               For each output object:
+               - amount must be a number or null
+               - currency must be a 3-letter code or null
+               - date must be YYYY-MM-DD or null
+               - merchant must be a string
+               - category must be one of:
+                 Auto & transport
+                 Shopping
+                 Healthcare
+                 Drinks & dining
+                 Other
+                 Entertainment
+                 Groceries
+                 Kids
+                 Family
+                 Childcare & education
+                 Household
+                 Financial
+                 Taxes
+                 Personal care
+                 Travel & vacation
+                 Income
+               - note may be null
+               - confidence must be a number from 0 to 1
+            
+               JSON SCHEMA
+               [
+                 {
+                   "amount": null,
+                   "currency": null,
+                   "date": null,
+                   "merchant": null,
+                   "category": null,
+                   "note": null,
+                   "confidence": 0
+                 }
+               ]
+            
             """;
 
         List<String> sanitizedRows = new ArrayList<>(rows.size());
