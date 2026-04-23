@@ -27,7 +27,7 @@ import java.util.Map;
 @Service
 public class TransactionImportService {
 
-    private static final int AI_BATCH_SIZE = 50;
+    private static final int AI_BATCH_SIZE = 10;
     private static final double MIN_CONFIDENCE = 0.70;
 
     private final AiClientService aiClientService;
