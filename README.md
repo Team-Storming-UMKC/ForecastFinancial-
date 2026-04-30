@@ -1,6 +1,22 @@
 # Welcome to Team Storming!⛈️
-This project is a client banking portal capstone application.
+## This project is a budgeting capstone application.
 
+<img width="2541" height="1256" alt="1" src="https://github.com/user-attachments/assets/f21fbbe8-8e1f-4c1d-b1b0-12c101b1644e" />
+
+## <br> Features include...<br>
+
+###  Easy visualization for your transactions
+<img width="2538" height="1266" alt="2" src="https://github.com/user-attachments/assets/5d30ab0a-8003-4bea-988a-38d63af6ba80" />
+<br><br>
+
+### Manual control over transactions, with automatic csv transaction importing & AI categorization
+<img width="2539" height="1266" alt="3" src="https://github.com/user-attachments/assets/7d92f547-bbd9-4119-b121-7fe3b8d6e9bb" />
+<br><br>
+
+### Populated billings page based off your transactions
+<img width="2550" height="1265" alt="4" src="https://github.com/user-attachments/assets/3705263f-3b58-4ed4-8c2d-ec38ced40f58" />
+
+---
 Tech Stack:
 - Frontend: Next.js + TypeScript + MUI
 - Backend: Spring Boot (Java)
