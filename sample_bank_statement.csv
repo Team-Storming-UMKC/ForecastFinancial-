@@ -1,0 +1,37 @@
+Date,Description,Category,Type,Amount,Balance
+2026-03-01,Netflix,Entertainment,Debit,-20,4980
+2026-04-01,Netflix,Entertainment,Debit,-20,4960
+2026-05-01,Acme Corp Salary,Income,Credit,2500,7460
+2026-05-01,Whole Foods Market,Groceries,Debit,-75.84,7384.16
+2026-05-01,Shell Gas Station,Transport,Debit,-55.81,7328.35
+2026-05-01,Chipotle,Dining,Debit,-13.56,7314.79
+2026-05-01,Uber Rides,Transport,Debit,-19.52,7295.27
+2026-05-01,City Utilities,Utilities,Debit,-106.88,7188.39
+2026-05-01,Target,Shopping,Debit,-102.1,7086.29
+2026-05-01,Netflix,Entertainment,Debit,-20,7066.29
+2026-05-02,Shell Gas Station,Transport,Debit,-46.52,7019.77
+2026-05-03,Gym Membership,Health,Debit,-45,6974.77
+2026-05-03,Spotify,Entertainment,Debit,-10.99,6963.78
+2026-05-04,Starbucks,Dining,Debit,-8.71,6955.07
+2026-05-05,City Utilities,Utilities,Debit,-114.44,6840.63
+2026-05-05,Amazon.com,Shopping,Debit,-32.2,6808.43
+2026-05-06,Gym Membership,Health,Debit,-45,6763.43
+2026-05-07,Target,Shopping,Debit,-108.77,6654.66
+2026-05-08,City Utilities,Utilities,Debit,-86.88,6567.78
+2026-05-09,Acme Corp Salary,Income,Credit,2500,9067.78
+2026-05-09,Spotify,Entertainment,Debit,-10.99,9056.79
+2026-05-09,Gym Membership,Health,Debit,-45,9011.79
+2026-05-09,CVS Pharmacy,Health,Debit,-29.18,8982.61
+2026-05-09,Venmo - John Doe,Transfer,Debit,-38.88,8943.73
+2026-05-10,Starbucks,Dining,Debit,-7.78,8935.95
+2026-05-10,Chipotle,Dining,Debit,-16.4,8919.55
+2026-05-10,Uber Rides,Transport,Debit,-16.75,8902.8
+2026-05-10,Starbucks,Dining,Debit,-7.23,8895.57
+2026-05-10,Local Restaurant,Dining,Debit,-54.4,8841.17
+2026-05-10,Chipotle,Dining,Debit,-16.05,8825.12
+2026-05-10,Shell Gas Station,Transport,Debit,-35.35,8789.77
+2026-05-10,Venmo - John Doe,Transfer,Debit,-39.29,8750.48
+2026-05-10,Local Restaurant,Dining,Debit,-42.28,8708.2
+2026-05-10,Shell Gas Station,Transport,Debit,-40.34,8667.86
+2026-05-10,Local Restaurant,Dining,Debit,-43.42,8624.44
+2026-05-10,Starbucks,Dining,Debit,-8.41,8616.03
